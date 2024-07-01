@@ -5,7 +5,19 @@ const app=express();
 const hbs=require('express-handlebars')
 var UserRouter=require('./route/userRouter')
 const path=require('node:path')
-let port=process.env.port;
+const cors=require('cors')
+const session=require('express-session')
+const dbConnection=require('./config/dbConnect')
+
+let port=process.env.port; 
+dbConnection()
+
+// app.use(session({secret:process.env.sessionSecret,cookie:{maxAge:60000}}))
+
+app.use(cors())
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // view engine set up...............................
 app.set('views', path.join(__dirname, 'views'));
