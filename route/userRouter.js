@@ -1,34 +1,27 @@
 let express=require('express')
 var UserRouter=express.Router()
+let userController=require('../controller/user/userController')
 
 
+UserRouter.get('/',userController.loadHome)
 
-UserRouter.get("/",(req,res)=>{
- res.render("user/index.hbs")
-  
-})
-UserRouter.get('/login',(req,res)=>{
-    res.render("user/login.hbs",{log:true})
-})
-UserRouter.get('/register',(req,res)=>{
-    res.render("user/register.hbs",{log:true})
-})
-UserRouter.get('/register/otp',(req,res)=>{
-    res.render("user/otp.hbs",{log:true})
-})
-UserRouter.get('/login/resetpwd',(req,res)=>{
-    res.render('user/resetpwd.hbs')
-})
-UserRouter.get('/cart',(req,res)=>{
-    res.render('user/cart.hbs')
-})
-UserRouter.get('/products',(req,res)=>{
-    res.render('user/products.hbs')
-})
-UserRouter.get('/wishlist',(req,res)=>{
-    res.render('user/wishlist.hbs')
-})
-UserRouter.get('/cart/checkout',(req,res)=>{
-    res.render('user/checkout.hbs')
-})
+UserRouter.get('/login',userController.login)
+
+
+UserRouter.get('/register',userController.register)
+
+UserRouter.get('login/otp',userController.registerOtp)
+
+UserRouter.get('/login/resetpwd',userController.resetpwd)
+
+
+UserRouter.get('/cart',userController.cart)
+
+UserRouter.get('/products',userController.products)
+
+
+UserRouter.get('/wishlist',userController.wishlist)
+
+UserRouter.get('/cart/checkout',userController.checkout)
+
 module.exports=UserRouter;
