@@ -8,6 +8,13 @@ const path=require('node:path')
 const cors=require('cors')
 const session=require('express-session')
 const dbConnection=require('./config/dbConnect')
+const mail=require('./config/mailer');
+
+// mail().then  ((s)=>{
+//   console.log(s)
+// }).catch((e)=>{
+//   console.log(e)
+// })
 
 let port=process.env.port; 
 dbConnection()

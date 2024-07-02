@@ -19,16 +19,18 @@
 
 </div>
 <p id="checking" style="display: none;" class="mismatch">password mismatch</p>
+
+
  </div>
 
               <div class="col-6 md-12">
-                <form action="login/otp" method="post" enctype="application/json" style="width: 20em;" onsubmit="return validateForm()">
+                <form action="/login/otp" method="post" enctype="application/json" style="width: 20em;" onsubmit="return validateForm()">
     <div class="form-outline" data-mdb-input-init>
   <input type="text" id="form12" class="form-control"  placeholder="Name" name="name"  required=""/>
   <label class="form-label" for="form12"></label>
 </div>
 <div class="form-outline" data-mdb-input-init>
-  <input type="email" id="form12" class="form-control" placeholder="Email" name="email" required=""/>
+  <input type="email" id="form12" class="form-control" placeholder="Email" name="email" />
   <label class="form-label" for="form12"></label>
 </div>
 <div class="form-outline" data-mdb-input-init>
@@ -74,7 +76,7 @@ var check=document.getElementById("check")
    
 myInput.onkeyup = function() {
   // Validate lowercase letters
-  var lowerCaseLetters = /[a-z]/g;
+  var lowerCaseLetters = /[a-z]/;
   if(myInput.value.match(lowerCaseLetters)) {  
     letter.classList.remove("invalid");
     letter.classList.add("valid");
@@ -84,7 +86,7 @@ myInput.onkeyup = function() {
   }
   
   // Validate capital letters
-  var upperCaseLetters = /[A-Z]/g;
+  var upperCaseLetters = /[A-Z]/;
   if(myInput.value.match(upperCaseLetters)) {  
     capital.classList.remove("invalid");
     capital.classList.add("valid");
@@ -117,10 +119,8 @@ myInput.onkeyup = function() {
   
 }
 
-//submited.addEventListener("click",function(event){
- // event.preventDefault()
-//})
-function validateForm(){
+
+//function validateForm(){
 passw=document.getElementById("psw").value
 conso=document.getElementById("conform").value
 if(passw==conso){

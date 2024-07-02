@@ -7,13 +7,13 @@ UserRouter.use(bodyParser.urlencoded({ extended: false }))
 
 UserRouter.get('/',userController.loadHome)
 
-UserRouter.post('/',userController.userData)
+// UserRouter.post('/',userController.userData)
 
 UserRouter.get('/login',userController.login)
 
 UserRouter.get('/register',userController.register)
 
-UserRouter.get('/login/otp',userController.registerOtp)
+// UserRouter.get('/login/otp',userController.registerOtp)
 
 UserRouter.post('/login/otp',userController.getOtp)
 
