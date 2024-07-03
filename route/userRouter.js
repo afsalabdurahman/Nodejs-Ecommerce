@@ -16,6 +16,7 @@ UserRouter.get('/register',userController.register)
 // UserRouter.get('/login/otp',userController.registerOtp)
 
 UserRouter.post('/login/otp',userController.getOtp)
+UserRouter.post('/checkotp',userController.checkotp)
 
 UserRouter.get('/login/resetpwd',userController.resetpwd)
 

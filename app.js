@@ -8,18 +8,18 @@ const path=require('node:path')
 const cors=require('cors')
 const session=require('express-session')
 const dbConnection=require('./config/dbConnect')
-const mail=require('./config/mailer');
+//const mail=require('./config/mailer');
 
-// mail().then  ((s)=>{
-//   console.log(s)
-// }).catch((e)=>{
-//   console.log(e)
-// })
+//  mail().then  ((s)=>{
+//    console.log("Send seucce")
+//  }).catch((e)=>{
+//    console.log(e)
+//  })
 
 let port=process.env.port; 
 dbConnection()
 
-// app.use(session({secret:process.env.sessionSecret,cookie:{maxAge:60000}}))
+ app.use(session({secret:process.env.sessionSecret,cookie:{maxAge:600000}}))
 
 app.use(cors())
 
