@@ -5,6 +5,8 @@ var bodyParser = require('body-parser')
 UserRouter.use(bodyParser.json());
 UserRouter.use(bodyParser.urlencoded({ extended: false }))
 
+
+
 UserRouter.get('/',userController.loadHome)
 
 // UserRouter.post('/',userController.userData)
@@ -13,10 +15,12 @@ UserRouter.get('/login',userController.login)
 
 UserRouter.get('/register',userController.register)
 
+UserRouter.get('/details',userController.details)
 // UserRouter.get('/login/otp',userController.registerOtp)
 
 UserRouter.post('/login/otp',userController.getOtp)
 UserRouter.post('/checkotp',userController.checkotp)
+UserRouter.get('/resentotp',userController.resentOtp)
 
 UserRouter.get('/login/resetpwd',userController.resetpwd)
 

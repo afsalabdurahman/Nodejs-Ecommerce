@@ -1,0 +1,71 @@
+<section >
+{{!-- <script src="/js/upload.js"></script>  --}}
+
+ 
+  <div class="container">
+    <div class="row" style="margin-top: 3em; height:30em" >
+      <form action="/admin/uploaded" method="post" enctype="multipart/form-data">
+        <div class="form-group img-details">
+    <label for="inputAddress2">Product name</label>
+    <input type="text" name="product" class="form-control" id="inputAddress2" placeholder="eg:Adidas Gwagon, Wax-outer Shirts,">
+  </div>
+     <div class="form-group img-details"  >
+    <label for="inputAddress2">Description</label>
+     <textarea id="w3review" name="description" rows="4" cols="50"></textarea>
+  </div>
+    <div class="form-group img-details ">
+      <label for="inputState">Category</label>
+      <select id="inputState" class="form-control" name="choose">
+        <option selected>Choose...</option>
+        <option>Shirts</option>
+        <option>Pant</option>
+        <option>Kurtha</option>
+         <option>T-shirts</option>
+
+      </select>
+<label for="files">select mininum 4</label>
+<input type="file" id="files" multiple="multiple" name="uploadimg" >
+
+<button type="submit" class="btn btn-success">Success</button>
+
+      </form>
+    </div>
+  </div>
+</section>
+
+
+<script>
+    $(document).ready(function() {
+    if (window.File && window.FileList && window.FileReader) {
+      $("#files").on("change", function(e) {
+        var files = e.target.files,
+          filesLength = files.length;
+        for (var i = 0; i < filesLength; i++) {
+          var f = files[i]
+          var fileReader = new FileReader();
+          fileReader.onload = (function(e) {
+            var file = e.target;
+            $("<div class=\"imgupload-box\">"+"<span class=\"pip\">" +
+              "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+              "<br/><span class=\"remove\">Remove image</span>" +
+              "</span>"+"</div>" ).insertAfter("#files");
+            $(".remove").click(function(){
+              $(this).parent(".pip").remove();
+            });
+            
+            // Old code here
+            /*$("<img></img>", {
+              class: "imageThumb",
+              src: e.target.result,
+              title: file.name + " | Click to remove"
+            }).insertAfter("#files").click(function(){$(this).remove();});*/
+            
+          });
+          fileReader.readAsDataURL(f);
+        }
+      });
+    } else {
+      alert("Your browser doesn't support to File API")
+    }
+  })
+</script>

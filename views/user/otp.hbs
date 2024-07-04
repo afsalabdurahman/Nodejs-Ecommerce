@@ -5,6 +5,10 @@
 <div class="container height-100 d-flex justify-content-center align-items-center">
     <div class="position-relative"> 
         <div class="card p-2 text-center"> 
+            {{#if msg}}
+            <p>{{msg}}</p>
+            {{else}}
+            {{/if}}
             <h6>Please enter the one time password <br> to verify your account</h6>
              <div> <span>A code has been sent to</span> <small>*******9897</small>
               </div> <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
@@ -19,5 +23,29 @@
 </form>
 
                 </div> </div> <div class="card-2"> <div class="content d-flex justify-content-center align-items-center">
-                     <span>Didn't get the code</span> <a href="#" class="text-decoration-none ms-3">Resend(1/3)</a> </div> </div> </div>
+                     <span>Didn't get the code</span> <a  class="text-decoration-none ms-3" id="refresh" href="/resentotp" >Resend</a> </div> </div> 
+                     <div id="Timer" style="background-color: red;"></div>
+                     </div>
 </div>
+
+
+<script>
+   
+ 
+
+
+    var timeLeft = 30;
+var elem = document.getElementById('Timer');
+
+var timerId = setInterval(countdown, 1000);
+
+function countdown() {
+  if (timeLeft == 0) {
+    clearTimeout(timerId);
+    doSomething();
+  } else {
+    elem.innerHTML = timeLeft + ' seconds remaining';
+    timeLeft--;
+  }
+}
+</script>

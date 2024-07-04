@@ -86,6 +86,8 @@ login=(req,res)=>{
 //     }
 // }
 getOtp= async(req,res)=>{
+
+    
     console.log(req.body)
   try {
     name= req.body.name;
@@ -115,6 +117,8 @@ getOtp= async(req,res)=>{
     res.render('user/otp.hbs')
 }
 checkotp= async(req,res)=>{
+
+
    const userData=req.session.userData
    console.log(req.session.otp,"sesion otp")
    fullOtp=req.body.one+req.body.two+req.body.three+req.body.four
@@ -131,11 +135,29 @@ checkotp= async(req,res)=>{
          is_blocked: 1,
        });
      const dbUserdata= await Userschema.save();
+     req.session.user_id = dbUserdata._id;
      console.log(dbUserdata)
-     res.redirect('/')
-
-
+     res.render('user/index.hbs',{user:userData})
     }
+
+else if(req.session.opt=undefined){
+    res.send("Session expaired")
+
+} else if(req.session.otp!=fullOtp){
+    res.send("wrong otp")
+}
+    else {
+        res.send("404 ")
+    }
+}
+resentOtp=(req,res)=>{
+if(!userData){
+    res.status(400).json({ message: "Invalid or expired session" });
+}else
+
+res.redirect('/login/otp')
+
+    
 }
 resetpwd=(req,res)=>{
     res.render('user/resetpwd.hbs')
@@ -152,12 +174,15 @@ wishlist=(req,res)=>{
 checkout=(req,res)=>{
     res.render('user/wishlist.hbs')
 }
-
+details=(req,res)=>{
+    res.render('user/details.hbs')
+}
 
 module.exports={
 loadHome,
 login,
 register,
+details,
 // registerOtp,
 checkotp,
 resetpwd,
@@ -166,7 +191,8 @@ products,
 wishlist,
 checkout,
 userData,
-getOtp
+getOtp,
+resentOtp
 
 
 

@@ -8,6 +8,7 @@ const path=require('node:path')
 const cors=require('cors')
 const session=require('express-session')
 const dbConnection=require('./config/dbConnect')
+var adminRouter=require('./route/adminRouter')
 //const mail=require('./config/mailer');
 
 //  mail().then  ((s)=>{
@@ -19,7 +20,7 @@ const dbConnection=require('./config/dbConnect')
 let port=process.env.port; 
 dbConnection()
 
- app.use(session({secret:process.env.sessionSecret,cookie:{maxAge:600000}}))
+ app.use(session({secret:process.env.sessionSecret,cookie:{maxAge:60000}}))
 
 app.use(cors())
 
@@ -41,7 +42,7 @@ app.set('view engine', 'hbs');
 
  // Create a Simple Route....................
   app.use('/',UserRouter);
-
+  app.use("/admin", adminRouter);
 
  app.listen(port,()=>{
     console.log(`Server Running on ${port}`)
