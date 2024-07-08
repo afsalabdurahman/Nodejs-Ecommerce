@@ -1,11 +1,13 @@
 const bcrypt = require("bcrypt");
 const User = require("../../model/userModel");
-// const sharp = require('sharp');
+
+
+
 
 
 const loadAdminLogin = async (req, res) => {
-  try {
-    res.render("admin/login.hbs");
+   try {
+    res.render("admin/login.hbs",{msg:"remove"});
   } catch (error) {
     console.log(error.message);
  
@@ -13,8 +15,7 @@ const loadAdminLogin = async (req, res) => {
 };
 
 const verifyadminLogin = async (req, res) => {
-
-  try {
+              try {
     const { email, password } = req.body;
 console.log(req.body)
     const adminData = await User.findOne({ email: email });
@@ -25,19 +26,41 @@ console.log(req.body)
     
         req.session.admin_id = adminData._id;
 
-        res.render("admin/adminHome.hbs",{admin:true} );
+        res.redirect("admin/home");
       } else {
         res.render("admin/login.hbs", {
           message: "Email and password are incorrect"
         });
       }
     } else {
-      res.render("admin/login");
+      res.redirect("/admin"  );
     }
   } catch (error) {
     console.log(error.message);
   }
 };
+
+const adminLogout= async (req,res)=>{
+ delete req.session.admin_id;
+ res.redirect('/admin')
+
+}
+
+const loadHome=async(req,res)=>{
+  try {
+    const adminData = await User.findById(req.session.admin_id);
+console.log(  req.session,"kkkk");
+    if (adminData) {
+      res.render("admin/adminHome.hbs", { admin: adminData });
+    } else {
+      res.status(404).send("User not found");
+    }
+  } catch (error) {
+    console.log(error.message);
+
+  }
+}
+
 
 const addProducts=(req,res)=>{
 res.render('admin/addProducts.hbs',{admin:true})
@@ -46,15 +69,18 @@ res.render('admin/addProducts.hbs',{admin:true})
 
 const uploaded=  (req,res)=>{
     console.log(req.body)
+    console.log(req.files)
+    
     res.send("img uploaded")
 }
 
 module.exports = {
   loadAdminLogin,
   verifyadminLogin,
-  loadHome,
+  adminLogout,
   addProducts,
-  uploaded
+  uploaded,
+  loadHome
 
   
 

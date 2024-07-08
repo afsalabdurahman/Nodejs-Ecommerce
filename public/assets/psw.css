@@ -27,3 +27,10 @@
     .icon-hover:hover i {
     color: #3b71ca !important;
     }
+    .zoom-img img {
+      transition: transform 0.3s ease-in-out;
+  }
+
+  .zoom-img img:hover {
+    transform: scale(2);
+  }

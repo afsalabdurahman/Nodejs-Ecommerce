@@ -13,6 +13,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    
+{{#if msg}}
+{{{body}}}
+{{else}}
+{{/if}}
+
+
     {{#if admin}}
     {{>admin-header}}
         {{{body}}}
@@ -24,5 +31,8 @@
 
     {{>user-footer}}
     {{/if}}
+
+  
+    
 </body>
 </html>

@@ -9,10 +9,7 @@ const Product = new mongoose.Schema({
         type: String,
         required: true,
       },
-      image:[{
-        type:String,
-        required:true
-    }],
+     
     brand:{
       type:String,
         required:true
@@ -34,6 +31,10 @@ const Product = new mongoose.Schema({
         type:Number, 
         required:true
       },
+      image:[{
+        type:String,
+        required:true
+    }],
       is_listed:{
         type:Boolean,
         default:true

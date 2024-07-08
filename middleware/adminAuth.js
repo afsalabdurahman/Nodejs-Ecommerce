@@ -5,7 +5,7 @@ const isLogin = async (req, res, next) => {
 
     const adminData = await User.findOne({ _id: req.session.admin_id });
 
-    if (req.session.admin_id && adminData.isAdmin == 1 ) {
+    if (adminData) {
       next();
     } else {
       res.redirect("/admin");

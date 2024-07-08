@@ -1,6 +1,10 @@
 let User_schema=require('../../model/userModel')
-// let maile=require('../../config/mail2')
 const bcrypt = require("bcrypt");
+const  passport  = require('passport');
+
+
+
+
 const securePassword = async (password) => {
     try {
       const passwordHash = await bcrypt.hash(password, 10);
@@ -14,7 +18,7 @@ const securePassword = async (password) => {
 
 
 
-let otp=require('../../config/mailer')
+
 
 loadHome=(req,res)=>{
     
@@ -29,62 +33,9 @@ login=(req,res)=>{
 }
  register=(req,res)=>{
      console.log(res.body)
-     res.render("user/register.hbs",{log:true})
+     res.render("user/register.hbs")
  }
- 
-// registerOtp=(req,res)=>{
-//     console.log(req.body)
-//     try{
 
-    
-//     name=req.body.name;
-//     email=req.body.email;
-//     phonNo=req.body.phoneNo;
-//     password=req.body.password;
-    
-    
-//     res.render("user/otp.hbs",{log:true})
-// }catch (err){
-//     console.log(err)
-// }
-// }
-// getOtp= async(req,res)=>{
-//     console.log(req.body)
-//     try{
-//         name= req.body.name;
-//         email= req.body.email;
-//         mobile= req.body.phoneNo;
-//         password=req.body.password;
-// const existMail=await User_schema.findOne({email:email})
-// if(existMail){
-//  res.redirect('/login')
-// }else{
-//     req.session.userData = req.body;
-//     req.session.register = 1;
-//     req.session.email = email;
-//     data=maile.sentVerificationMail(req,req.session.email)
-//   console.log(data)
-//   res.render('user/otp.hbs')}
-  
-// }
-
-//         // const Userschema= new User_schema({
-//         //     name: req.body.name,
-//         //     email: req.body.email,
-//         //     mobile: req.body.phoneNo,
-//         //     password:req.body.password,
-//         //     image:'',
-//         //     isAdmin: 0,
-//         //     is_blocked: 1,
-//         //   });
-//         //   Userschema.save();
-
-
-   
-//     catch (err){
-//         console.log(err)
-//     }
-// }
 getOtp= async(req,res)=>{
 
     
@@ -101,13 +52,12 @@ getOtp= async(req,res)=>{
             req.session.userData = req.body;
               req.session.register = 1;
                  req.session.email = email;
-                otp().then((e)=>{
-                    console.log(e,"otp")
-                    req.session.otp=e
-                })
+                 otp=generateOtp()
+                 req.session.otp=otp
+                 console.log(otp)
                 
                
-               res.render('user/otp.hbs')}
+               res.render('user/otp.hbs',)}
          }
    catch (error) {
     console.log(error)
@@ -144,7 +94,7 @@ else if(req.session.opt=undefined){
     res.send("Session expaired")
 
 } else if(req.session.otp!=fullOtp){
-    res.send("wrong otp")
+    res.render('user/otp.hbs',{msg:"Please Enter Correct Otp"})
 }
     else {
         res.send("404 ")
@@ -153,9 +103,15 @@ else if(req.session.opt=undefined){
 resentOtp=(req,res)=>{
 if(!userData){
     res.status(400).json({ message: "Invalid or expired session" });
-}else
+}else{
+  delete req.session.otp
+ otp= generateOtp()
+ req.session.otp=otp
+ console.log(otp,"new")
+ res.render('user/otp.hbs',{msg:"please enter new otp"})
+}
 
-res.redirect('/login/otp')
+
 
     
 }
@@ -178,11 +134,14 @@ details=(req,res)=>{
     res.render('user/details.hbs')
 }
 
+
+
 module.exports={
 loadHome,
 login,
 register,
 details,
+// google,
 // registerOtp,
 checkotp,
 resetpwd,
@@ -198,10 +157,8 @@ resentOtp
 
 }
 
-generateOtp= async()=>{
-    try {
-        const otp = `${Math.floor(1000+Math.random()*9000)}`
-    } catch (error) {
-        
+function generateOtp(){
+
+       otp = `${Math.floor(1000+Math.random()*9000)}`
+    return otp
     }
-}
