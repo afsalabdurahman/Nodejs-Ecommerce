@@ -1,0 +1,90 @@
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.image-container img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.image-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+.container {
+display: flex;
+justify-content: space-between;
+gap: 20px;
+}
+
+.form-section {
+flex: 3;
+background-color: #fff;
+padding: 20px;
+border-radius: 5px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+margin-top: 0;
+}
+
+label {
+display: block;
+margin: 10px 0 5px;
+}
+
+input[type="text"],
+textarea {
+width: 100%;
+padding: 10px;
+margin-bottom: 10px;
+border: 1px solid #ccc;
+border-radius: 5px;
+}
+
+textarea {
+height: 100px;
+resize: vertical;
+}
+
+.price-section {
+display: flex;
+gap: 20px;
+justify-content: space-between;
+}
+
+.price-section div {
+flex: 1;
+}
+
+select {
+width: 100%;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 5px;
+}

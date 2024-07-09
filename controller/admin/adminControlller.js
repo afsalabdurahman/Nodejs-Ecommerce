@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../../model/userModel");
+const Product=require("../../model/productModel");
+const { products } = require("../user/userController");
 
 
 
@@ -62,24 +64,16 @@ console.log(  req.session,"kkkk");
 }
 
 
-const addProducts=(req,res)=>{
-res.render('admin/addProducts.hbs',{admin:true})
-}
 
 
-const uploaded=  (req,res)=>{
-    console.log(req.body)
-    console.log(req.files)
-    
-    res.send("img uploaded")
-}
+
 
 module.exports = {
   loadAdminLogin,
   verifyadminLogin,
   adminLogout,
-  addProducts,
-  uploaded,
+
+  
   loadHome
 
   
