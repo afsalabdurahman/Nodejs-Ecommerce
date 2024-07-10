@@ -4,8 +4,10 @@ let userController=require('../controller/user/userController')
 var bodyParser = require('body-parser')
 UserRouter.use(bodyParser.json());
 UserRouter.use(bodyParser.urlencoded({ extended: false }))
+UserRouter.use(bodyParser.json())
 const passport=require('passport');
-const config=require('../middleware/googleAuth')
+const config=require('../middleware/googleAuth');
+
 
 
 UserRouter.get('/',userController.loadHome)
