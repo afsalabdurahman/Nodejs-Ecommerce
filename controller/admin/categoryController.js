@@ -1,6 +1,7 @@
 
 const Category = require("../../model/categoryMode");
 const Product = require("../../model/productModel");
+
 const { products } = require("../user/userController");
 
 const categoryForm= (req,res)=>{
@@ -73,15 +74,19 @@ const editCategory=async(req,res)=>{
     res.render('admin/EditCategory.hbs',{categoryData})
 }
 
+
+
+
 const newEditcategory=async(req,res)=>{
 
   try {
-    
+    console.log(req.files[0].filename,"filesss")
+    let fileData=req.files
     console.log( req.body.name,"bodiessss")
 let id=req.body.category_id
 
     //console.log(req.body)
-     console.log(req.file,"filesss")
+    
 
 db=await Category.findOne()
 
@@ -90,24 +95,40 @@ console.log(db,"dbbbbbb")
       name: { $regex: new RegExp(`^${req.body.name}$`, 'i') }
       
   });
-// if(existingCategory){
-
-// res.send("chategory already exist")
-
-// }else{
-//   res.send("newwwwwwww MOdify")
-// }
 
 
 
-  } catch (error) {
+ if(existingCategory&&fileData.length==0){
+
+ res.send("chategory already exist")
+
+ }else{
+ 
+  const categoryData = await Category.findByIdAndUpdate(
+    { _id:id },
+    {
+      $set: {
+        name: req.body.name,
+        image: req.files[0].filename,
+        description: req.body.description
+      },
+    }
+  );
+}
+res.redirect("/admin/listcategory")
+ }
+  
+ 
+
+
+
+   catch (error) {
     console.log(error)
   }
  
 
 
 
-  res.send("edited")
 }
 
 module.exports={
