@@ -6,7 +6,7 @@ const { products } = require("../user/userController");
 
 const categoryForm= (req,res)=>{
    
-    res.render('admin/category.hbs')
+    res.render('admin/category.hbs',{admin:true})
 }
 const postcategoryForm= async (req,res)=>{
 
@@ -59,7 +59,7 @@ console.log(error)
          category = await Category.find().lean()
        
         
-        res.render("admin/listCategory.hbs", {category});
+        res.render("admin/listCategory.hbs", {category,admin:true});
       } catch (error) {
         console.log(error.message);
       }
@@ -71,7 +71,7 @@ const editCategory=async(req,res)=>{
   id=req.query.id
   const categoryData = await Category.findById(id).lean();
   console.log(categoryData,"category data")
-    res.render('admin/EditCategory.hbs',{categoryData})
+    res.render('admin/EditCategory.hbs',{categoryData,admit:true})
 }
 
 
@@ -131,10 +131,48 @@ res.redirect("/admin/listcategory")
 
 }
 
+
+const unlistCategory=async(req,res)=>{
+  console.log(req.query.id,"parammssss")
+  try {
+    const id = req.query.id;
+    const categoryvalue = await Category.findById(id);
+    
+    if (categoryvalue.is_listed) {
+      const categoryData = await Category.updateOne(
+        {_id:id},
+        {
+          $set: {
+            is_listed: false
+          },
+        }
+      );
+    }else{
+    
+      const categoryData = await Category.updateOne(
+        {_id:id},
+        {
+          $set: {
+            is_listed: true
+          },
+        }
+      );
+    }
+    
+    res.redirect("/admin/listcategory");
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
+
+
 module.exports={
     categoryForm,
     postcategoryForm,
 listCategory,
 editCategory,
-newEditcategory
+newEditcategory,
+unlistCategory
 }

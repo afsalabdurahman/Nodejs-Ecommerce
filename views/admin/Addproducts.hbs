@@ -24,13 +24,16 @@
                         </div>
                         
                         <div>
+                          
                             <label for="currency">category</label>
                             <select id="currency" name="category">
-                                <option value="shirts">Shirts</option>
-                                <option value="pants">Pants</option>
-                                <option value="saree">saree</option>
+                                 {{#each categories}}
+                                <option value="{{this.name}}"> {{this.name}} </option>
+                               
+                                {{/each}}
                             </select>
                         </div>
+                        
                         <div>
                             <label for="promotional-price"> price</label>
                             <input type="text" id="promotional-price" name="price" placeholder="$">

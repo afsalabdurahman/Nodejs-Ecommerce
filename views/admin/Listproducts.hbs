@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="/assets/admin/listproducts.css" type="text/css">
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+      {{#each listproduct}}
+    <tbody>
+      
+      <tr>
+        <td><input type="checkbox"></td>
+        <td>
+          <img src="/upload/{{image}}" alt="Product Image" class="product-image">
+          <span>{{this.name}} {{this.description}}</span>
+        </td>
+        <td>${{price}}</td>
+        <td><span class="status active">Active</span></td>
+        <td>02.11.2021</td>
+        <td>
+          <button class="edit-button">Edit</button>
+          <button class="delete-button">Delete</button>
+        </td>
+      </tr>
+      <!-- Repeat for other products -->
+    </tbody>
+      {{/each}}
+
+  </table>
+ 

@@ -18,6 +18,7 @@ adminRoute.get('/home',adminAuth.isLogin,adminController.loadHome)
 
 adminRoute.get('/addproducts',adminAuth.isLogin,productController.addProducts)
 adminRoute.post('/uploaded',upload.array('uploadimg',4),productController.uploaded)
+adminRoute.get('/listproducts',productController.Listproducts)
 
 
 adminRoute.get('/category',adminAuth.isLogin,categoryController.categoryForm)
@@ -25,7 +26,7 @@ adminRoute.post('/addcategory',upload.array('image',1),categoryController.postca
 adminRoute.get('/listcategory',categoryController.listCategory)
 adminRoute.get('/editcategory',adminAuth.isLogin,categoryController.editCategory)
 adminRoute.post('/editcategory',upload.array('image',1),categoryController.newEditcategory)
-
+adminRoute.get('/unlist',categoryController.unlistCategory)
 
 
 module.exports = adminRoute;

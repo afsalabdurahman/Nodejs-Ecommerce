@@ -1,9 +1,12 @@
 const sharp = require('sharp');
 const path=require('node:path')
 const Product=require('../../model/productModel')
+const Category=require('../../model/categoryMode')
 
-const addProducts=(req,res)=>{
-    res.render('admin/products.hbs',{admin:true})
+const addProducts=async(req,res)=>{
+    let categories = await Category.find().lean();
+    console.log(categories)
+    res.render('admin/Addproducts.hbs',{categories,admin:true})
     }
 
 
@@ -11,7 +14,8 @@ const addProducts=(req,res)=>{
 
 const uploaded=  async(req,res)=>{
      try {
-        console.log(req.body,"namessssss")
+        
+        console.log(req.body.categories,"namessssss")
         console.log(req.body.name,"$$$$$$$")
 
         const imageData = [];
@@ -42,6 +46,7 @@ if(cropImage){
       name:req.body.name,
       description:  req.body.description,
       brand:req.body.Brand,
+    //   category:req.body.categories,
       price:req.body.price,
       stock:req.body.stock,
    
@@ -59,7 +64,26 @@ if(cropImage){
 
 
     }
+
+const Listproducts=async(req,res)=>{
+try {
+
+  const  listproduct=await Product.find().lean()
+    console.log(listproduct,"listtttt")
+    
+        res.render('admin/Listproducts.hbs',{listproduct}) 
+
+
+
+} catch (error) {
+console.log(error)
+}
+
+}
+
+
 module.exports={
     uploaded,
-    addProducts
+    addProducts,
+    Listproducts
 }
