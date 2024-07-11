@@ -1,6 +1,7 @@
 
 const Category = require("../../model/categoryMode");
 const Product = require("../../model/productModel");
+const { products } = require("../user/userController");
 
 const categoryForm= (req,res)=>{
    
@@ -51,21 +52,68 @@ console.log(error)
  const listCategory=async(req,res)=>{
 
     try {
-        const categorydata = await Category.find();
-        console.log(categorydata,"data from category")
-        res.render("admin/listCategory.hbs", { categorydata });
+
+     
+
+         category = await Category.find().lean()
+       
+        
+        res.render("admin/listCategory.hbs", {category});
       } catch (error) {
         console.log(error.message);
       }
     };
 
 
-const editCategory=(req,res)=>{
-    res.render('admin/EditCategory.hbs')
+const editCategory=async(req,res)=>{
+  
+  id=req.query.id
+  const categoryData = await Category.findById(id).lean();
+  console.log(categoryData,"category data")
+    res.render('admin/EditCategory.hbs',{categoryData})
 }
+
+const newEditcategory=async(req,res)=>{
+
+  try {
+    
+    console.log( req.body.name,"bodiessss")
+let id=req.body.category_id
+
+    //console.log(req.body)
+     console.log(req.file,"filesss")
+
+db=await Category.findOne()
+
+console.log(db,"dbbbbbb")
+ const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${req.body.name}$`, 'i') }
+      
+  });
+// if(existingCategory){
+
+// res.send("chategory already exist")
+
+// }else{
+//   res.send("newwwwwwww MOdify")
+// }
+
+
+
+  } catch (error) {
+    console.log(error)
+  }
+ 
+
+
+
+  res.send("edited")
+}
+
 module.exports={
     categoryForm,
     postcategoryForm,
 listCategory,
-editCategory
+editCategory,
+newEditcategory
 }

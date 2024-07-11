@@ -24,7 +24,7 @@ adminRoute.get('/category',adminAuth.isLogin,categoryController.categoryForm)
 adminRoute.post('/addcategory',upload.array('image',1),categoryController.postcategoryForm)
 adminRoute.get('/listcategory',categoryController.listCategory)
 adminRoute.get('/editcategory',adminAuth.isLogin,categoryController.editCategory)
-
+adminRoute.post('/editcategory',upload.array('image',1),categoryController.newEditcategory)
 
 
 

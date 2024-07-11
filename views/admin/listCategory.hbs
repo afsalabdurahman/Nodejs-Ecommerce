@@ -27,34 +27,45 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-                {{#each categorydata}}
-                <tr>
-                    <td>
+          
+            <div class="loop">
 
-                        
-                        <div class="category-info">
-                            {{!-- <img src="/upload/{{this.image}}" alt="Category Image"> --}}
+        
+                 {{#each category}}  
+            
+            <tbody>
+                
+                <tr>
+                    <td>    <div class="category-info">
+                              <img src="/upload/{{image}}" alt="Category Image">  
                             <div>
-                                <p class="category-name">{{this.name}}</p>
-                                {{!-- <p class="category-subtext">{{name}}</p> --}}
+                                  <p class="category-name">{{this.name}}</p> 
+                             <p class="category-subtext">{{name}}</p> 
                             </div>
                         </div>
                     </td>
                     <td>
-                        {{!-- {{this.description}} --}}
+  {{description}} 
                     </td>
                     <td>
-                        {{!-- <span class="status listed">{{this.is_listed}}</span> --}}
+                       {{#if is_listed}}
+                         <span class="status listed">{{is_listed}}</span>
+                         {{else}}
+<span style="background-color: rgb(165, 20, 88);" class="status ">{{is_listed}}</span>
+{{/if}}
                     </td>
                     <td>
                         <button class="btn action unlist" onclick="showModal()">Unlist</button>
-                        <button class="btn action edit">Edit</button>
+                       <a href="/admin/editcategory/?id={{this._id}}"> <button class="btn action edit">Edit</button></a>
                     </td>
                 </tr>
-                {{/each}}
+            
             
             </tbody>
+             {{/each}} 
+        
+             </div>
+                
         </table>
     </div>
 
