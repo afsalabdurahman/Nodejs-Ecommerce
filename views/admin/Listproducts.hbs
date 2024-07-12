@@ -23,8 +23,9 @@
         <td><span class="status active">Active</span></td>
         <td>02.11.2021</td>
         <td>
-          <button class="edit-button">Edit</button>
+         <a href="/admin/editproduct/?id={{this._id}}"> <button class="edit-button"  >Edit</button> </a>
           <button class="delete-button">Delete</button>
+           <button class="visible-button">visible</button>
         </td>
       </tr>
       <!-- Repeat for other products -->
@@ -32,4 +33,46 @@
       {{/each}}
 
   </table>
- 
+{{!-- popup wind
+ <td>
+                        <button class="btn action unlist" onclick="showModal()">Unlist</button>
+                       <a href="/admin/editcategory/?id={{this._id}}"> <button class="btn action edit">Edit</button></a>
+                    </td>
+
+{{!--  --}}
+
+ <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p>Are you sure?</p>
+            <p>Please confirm to block this product!</p>
+<a href="/admin/unlist/?id={{this._id}}"><button class="btn confirm" onclick="confirmAction()">Yes, delete it!</button></a>
+            <button class="btn cancel" onclick="closeModal()">Cancel</button>
+        </div>
+    </div> --}}
+
+
+
+
+{{!--  
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const editButtons = document.querySelectorAll('.edit-button');
+  const deleteButtons = document.querySelectorAll('.delete-button');
+
+  editButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Handle edit action
+      alert('Edit button clicked');
+    });
+  });
+
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Handle delete action
+      alert('Delete button clicked');
+    });
+  });
+});
+
+</script> --}}

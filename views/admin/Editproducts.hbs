@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="/assets/admin/addproducts.css" type="text/css">
+<script   type="text/javascript" src="/js/remove-products.js"></script>
+
+
+<section>
+
+
+    <div class="container">
+        <div class="form-section">
+            <h1>Edit Product</h1>
+            <div class="basic-section">
+                <h2>Basic</h2>
+                
+                    <form action="/admin/newlistproduct" method="post" enctype="multipart/form-data">
+                    <label for="product-title">Product title</label>
+                   
+                   
+                    <input type="txt" id="product-title" name="name" placeholder="Type here" value="{{productData.name}}">
+                    
+                    <label for="description">Full description</label>
+                    <textarea id="full-description" name="description" placeholder="Type here">{{productData.description}}</textarea>
+                    
+                    <div class="price-section">
+                        <div>
+                            <label for="regular-price">Brand</label>
+                            <input type="text" id="regular-price" name="Brand" placeholder="" value="{{productData.brand}}">
+                        </div>
+                      
+                        <div>
+                          
+                            <label for="currency">category</label>
+                            <select id="currency" name="category">
+                                 {{#each categories}}
+                                <option value="{{this.name}}"> {{this.name}} </option>
+                               
+                                {{/each}}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="promotional-price"> price</label>
+                            <input type="text" id="promotional-price" name="price" placeholder="$" value="{{productData.price}}">
+                        </div>
+                        <div>
+                            <label for="stock - quandity">stock</label>
+                            <input type="text" id="promotional-price" name="stock" placeholder="no" value=" {{productData.stock}}" >
+                        </div>
+                    </div>
+                    
+                    <label for="tax-rate">Discount rate</label>
+                    <input type="text" id="Discount" name="discount_price" placeholder="%" value="{{productData.discount_price}}" >
+
+                    <!-- New Category Section -->
+                    
+
+                    <!-- Publish Button -->
+                   
+           
+            </div>
+        </div>
+          
+        <aside class="image-preview-section">
+            <h2>Image Preview</h2>
+            <input type="file" id="image-upload" name="uploadimg" class="image-upload" accept="image/*" style="display: none;"  multiple="multiple" >
+            <button type="button" id="upload-btn" class="upload-btn">Upload Image</button>
+            <div class="image-preview" id="image-preview" >
+                <!-- Image containers will be added dynamically here -->
+                
+                <img src="/upload/{{productData.image}}" alt=""> 
+            </div>
+        </aside>
+    </div>
+ <input type="hidden" name="product_id" value={{productData._id}}>
+ <div class="publish-button-container">
+                        <button type="submit" class="publish-button">Publish</button>
+                  </div>
+   </form>
+
+</section>

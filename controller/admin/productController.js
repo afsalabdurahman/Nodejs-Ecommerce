@@ -3,6 +3,10 @@ const path=require('node:path')
 const Product=require('../../model/productModel')
 const Category=require('../../model/categoryMode')
 
+
+
+
+
 const addProducts=async(req,res)=>{
     let categories = await Category.find().lean();
     console.log(categories)
@@ -69,7 +73,7 @@ const Listproducts=async(req,res)=>{
 try {
 
   const  listproduct=await Product.find().lean()
-    console.log(listproduct,"listtttt")
+    // console.log(listproduct,"listtttt")
     
         res.render('admin/Listproducts.hbs',{listproduct}) 
 
@@ -81,9 +85,67 @@ console.log(error)
 
 }
 
+const Editproduct=async(req,res)=>{
+ try {
+    
+    // console.log(req.body,"bodysss")
+    id=req.query.id
 
+    const productData = await Product.findById(id).lean();
+    console.log(productData,"dataproduct")
+    let categories = await Category.find().lean();
+
+    res.render('admin/Editproducts.hbs',{productData,categories})
+ } catch (error) {
+    console.log(error)
+    
+ }
+  
+}
+const newlistedProduct=async(req,res)=>{
+
+try {
+    console.log(req.body,"body")
+    id=req.body.product_id
+
+product=await Product.findById(id).lean();
+
+console.log(product,"product")
+console.log(req.body,"body")
+
+const {name,description,Brand,category,price,stock,discount_price}=req.body;
+
+if(product.name==name&&product.description==description&&product.brand==Brand&&product.price==price&&product.stock==stock&&product.discount_price==discount_price){
+    res.send("peoduct already exist")
+}else if(req.files.length==0){
+res.send("already exist")
+}else{
+
+res.send("newa ddproduce")
+
+}
+
+
+
+
+
+
+
+    
+} catch (error) {
+    console.log(error)
+    
+}
+
+
+
+ 
+}
 module.exports={
     uploaded,
     addProducts,
-    Listproducts
+    Listproducts,
+    Editproduct,
+    newlistedProduct
+   
 }

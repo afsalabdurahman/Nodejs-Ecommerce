@@ -19,7 +19,8 @@ adminRoute.get('/home',adminAuth.isLogin,adminController.loadHome)
 adminRoute.get('/addproducts',adminAuth.isLogin,productController.addProducts)
 adminRoute.post('/uploaded',upload.array('uploadimg',4),productController.uploaded)
 adminRoute.get('/listproducts',productController.Listproducts)
-
+adminRoute.get('/editproduct',productController.Editproduct)
+adminRoute.post('/newlistproduct',upload.array('uploadimg',4),productController.newlistedProduct)
 
 adminRoute.get('/category',adminAuth.isLogin,categoryController.categoryForm)
 adminRoute.post('/addcategory',upload.array('image',1),categoryController.postcategoryForm)

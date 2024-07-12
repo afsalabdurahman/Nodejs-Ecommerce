@@ -48,6 +48,7 @@ body {
   }
   
   .edit-button,
+  .visible-button,
   .delete-button {
     padding: 5px 10px;
     border: none;
@@ -63,6 +64,10 @@ body {
   
   .delete-button {
     background-color: #dc3545;
+    color: white;
+  }
+  .visible-button {
+    background-color: #16bc53;
     color: white;
   }
   
