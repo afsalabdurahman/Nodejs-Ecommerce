@@ -1,151 +1,156 @@
-{{!-- <script src="/js/validatePwd.js"></script>  --}}
- <link rel="stylesheet" href="/assets/psw.css">    
-   
-<div class="container">
-<h2 style="text-align: center;">Register</h2>
-  <div class="row">
-       <div class="col-6 md-12" >
-              <div   >
-                <div class="displaymsg" style="height: 200px; width:300px">
-  <div id="message" class="msg" style="margin-top: 8em;">
-  <h2 style="font-size: 1em;">Password must contain the following:</h2>
-  <p id="letter" class="invalid"  >A <b>lowercase</b> letter</p>
-  <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
-  <p id="number" class="invalid">A <b>number</b></p>
-  <p id="length" class="invalid">Minimum <b>8 characters</b></p>
-  
+{{!--
+<script src="/js/validatePwd.js"></script> --}}
+<link rel="stylesheet" href="/assets/psw.css">
+<div class="register" style="background-color: aliceblue;">
+
+
+  <div class="container">
+    <h2 style="text-align: center; font-style">Register</h2>
+    <div class="row">
+      <div class="col-6 md-12">
+        <div>
+          <div class="displaymsg" style="height: 200px; width:300px">
+            <div id="message" class="msg" style="margin-top: 8em;">
+              <h2 style="font-size: 1em;">Password must contain the following:</h2>
+              <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+              <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+              <p id="number" class="invalid">A <b>number</b></p>
+              <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+
+            </div>
+          </div>
+
+        </div>
+        <p id="checking" style="display: none;" class="mismatch">password mismatch</p>
+
+
+      </div>
+
+      <div class="col-6 md-12">
+        <form action="/login/otp" method="post" enctype="application/json" style="width: 20em;"
+          onsubmit="return validateForm()">
+          <div class="form-outline" data-mdb-input-init>
+            <input type="text" id="form12" class="form-control" placeholder="Name" name="name" required="" />
+            <label class="form-label" for="form12"></label>
+          </div>
+          <div class="form-outline" data-mdb-input-init>
+            <input type="email" id="form12" class="form-control" placeholder="Email" name="email" />
+            <label class="form-label" for="form12"></label>
+          </div>
+          <div class="form-outline" data-mdb-input-init>
+            <input type="number" id="form12" class="form-control" placeholder="Phone Number" name="phoneNo"
+              required="" />
+            <label class="form-label" for="form12"></label>
+          </div>
+          <div class="form-outline" data-mdb-input-init>
+            <input type="password" id="psw" class="form-control" placeholder="Password" name="password" required="" />
+            <label class="form-label" for="form12"> </label>
+          </div>
+          <div class="form-outline" data-mdb-input-init>
+            <input type="text" id="conform" class="form-control" placeholder="Conform Password" required="" />
+            <label class="form-label" for="form12"></label>
+          </div>
+
+          <button type="submit" id="submited" class="btn btn-primary">Submit</button>
+
+      </div>
+      </form>
+    </div>
   </div>
-  </div>
-
 </div>
-<p id="checking" style="display: none;" class="mismatch">password mismatch</p>
-
-
- </div>
-
-              <div class="col-6 md-12">
-                <form action="/login/otp" method="post" enctype="application/json" style="width: 20em;" onsubmit="return validateForm()">
-    <div class="form-outline" data-mdb-input-init>
-  <input type="text" id="form12" class="form-control"  placeholder="Name" name="name"  required=""/>
-  <label class="form-label" for="form12"></label>
-</div>
-<div class="form-outline" data-mdb-input-init>
-  <input type="email" id="form12" class="form-control" placeholder="Email" name="email" />
-  <label class="form-label" for="form12"></label>
-</div>
-<div class="form-outline" data-mdb-input-init>
-  <input type="number" id="form12" class="form-control" placeholder="Phone Number" name="phoneNo" required="" />
-  <label class="form-label" for="form12"></label>
-</div>
-<div class="form-outline" data-mdb-input-init>
-  <input type="password"  id="psw" class="form-control" placeholder="Password" name="password" required=""/>
-  <label class="form-label" for="form12"> </label>
-</div>
-<div class="form-outline" data-mdb-input-init>
-  <input type="text" id="conform" class="form-control" placeholder="Conform Password" required=""/>
-  <label class="form-label" for="form12"></label>
-</div>
-
-<button type="submit" id="submited" class="btn btn-primary" >Submit</button>
-
-               </div>  
-               </form>
-</div>
-</div>
-   
 <script>
 
 
 
 
-var myInput = document.getElementById("psw");
-var letter = document.getElementById("letter");
-var capital = document.getElementById("capital");
-var number = document.getElementById("number");
-var length = document.getElementById("length");
-var check=document.getElementById("check")
- console.log(myInput)
+  var myInput = document.getElementById("psw");
+  var letter = document.getElementById("letter");
+  var capital = document.getElementById("capital");
+  var number = document.getElementById("number");
+  var length = document.getElementById("length");
+  var check = document.getElementById("check")
+  console.log(myInput)
 
   myInput.onfocus = function myfunction() {
     console.log(myInput)
-     document.getElementById("message").style.display = "block";
-   
-   }
-     myInput.onblur = function() {
-  document.getElementById("message").style.display = "none";
-     }
-   
-myInput.onkeyup = function() {
-  console.log(myInput.value)
-  // Validate lowercase letters
+    document.getElementById("message").style.display = "block";
+
+  }
+  myInput.onblur = function () {
+    document.getElementById("message").style.display = "none";
+  }
+
+  myInput.onkeyup = function () {
+    console.log(myInput.value)
+    // Validate lowercase letters
+    var lowerCaseLetters = /[a-z]/g;
+    if (myInput.value.match(lowerCaseLetters)) {
+      letter.classList.remove("invalid");
+      letter.classList.add("valid");
+    } else {
+      letter.classList.remove("valid");
+      letter.classList.add("invalid");
+    }
+
+    // Validate capital letters
+    var upperCaseLetters = /[A-Z]/g;
+    if (myInput.value.match(upperCaseLetters)) {
+      capital.classList.remove("invalid");
+      capital.classList.add("valid");
+    } else {
+      capital.classList.remove("valid");
+      capital.classList.add("invalid");
+    }
+
+    // Validate numbers
+    var numbers = /[0-9]/g;
+    if (myInput.value.match(numbers)) {
+      number.classList.remove("invalid");
+      number.classList.add("valid");
+    } else {
+      number.classList.remove("valid");
+      number.classList.add("invalid");
+    }
+
+    // Validate length
+    if (myInput.value.length >= 5) {
+      length.classList.remove("invalid");
+      length.classList.add("valid");
+    } else {
+      length.classList.remove("valid");
+      length.classList.add("invalid");
+    }
+    if (myInput.value == check.value) {
+      console.log(ture + "pass")
+    }
+
+  }
   var lowerCaseLetters = /[a-z]/g;
-  if(myInput.value.match(lowerCaseLetters)) {  
-    letter.classList.remove("invalid");
-    letter.classList.add("valid");
-  } else {
-    letter.classList.remove("valid");
-    letter.classList.add("invalid");
-  }
-  
-  // Validate capital letters
-  var upperCaseLetters = /[A-Z]/g;
-  if(myInput.value.match(upperCaseLetters)) {  
-    capital.classList.remove("invalid");
-    capital.classList.add("valid");
-  } else {
-    capital.classList.remove("valid");
-    capital.classList.add("invalid");
-  }
-
-  // Validate numbers
   var numbers = /[0-9]/g;
-  if(myInput.value.match(numbers)) {  
-    number.classList.remove("invalid");
-    number.classList.add("valid");
-  } else {
-    number.classList.remove("valid");
-    number.classList.add("invalid");
-  }
-  
-  // Validate length
-  if(myInput.value.length >= 5) {
-    length.classList.remove("invalid");
-    length.classList.add("valid");
-  } else {
-    length.classList.remove("valid");
-    length.classList.add("invalid");
-  }
-  if(myInput.value==check.value){
-    console.log(ture +"pass")
-  }
-  
-}
-var lowerCaseLetters = /[a-z]/g;
-var numbers = /[0-9]/g;
-upperCaseLetters = /[A-Z]/g;
-lowerCaseLetters = /[a-z]/g;
-function validateForm(){
-passw=document.getElementById("psw").value
-conso=document.getElementById("conform").value
-if(passw!=conso){
- window.alert("Password do not match")
-return false
-}else if(passw.length<=5){
-   window.alert("must have 5 or more")
-  return false
-} else if(!passw.match(lowerCaseLetters)||!passw.match(upperCaseLetters)||!passw.match(number)){
-window.alert("mut have special key")
-return false
-}
+  upperCaseLetters = /[A-Z]/g;
+  lowerCaseLetters = /[a-z]/g;
+  function validateForm() {
+    passw = document.getElementById("psw").value
+    conso = document.getElementById("conform").value
+    if (passw != conso) {
+      window.alert("Password do not match")
+      return false
+    } else if (passw.length <= 5) {
+      window.alert("must have 5 or more")
+      return false
+    } else if (!passw.match(lowerCaseLetters) || !passw.match(upperCaseLetters) || !passw.match(number)) {
+      window.alert("mut have special key")
+      return false
+    }
 
-else{
-   
-  return true
- 
-}
+    else {
+
+      return true
+
+    }
 
 
-}
+  }
 
 
 </script>

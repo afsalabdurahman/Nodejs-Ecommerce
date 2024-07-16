@@ -1,83 +1,88 @@
-
-<script   type="text/javascript" src="/js/addcategory.js"></script>
+<script type="text/javascript" src="/js/addcategory.js"></script>
 <link rel="stylesheet" href="/assets/admin/listcate.css">
-   <div class="container">
-        <h1>Category List</h1>
-        <p>Lorem ipsum dolor sit amet.</p>
-        <div class="actions">
-            <button class="btn">Export</button>
-            <button class="btn">Import</button>
-            <button class="btn primary">Create new</button>
-        </div>
-        <div class="filter-section">
-            <input type="text" placeholder="Search for products..." id="searchInput">
-            <select id="status">
-                <option value="" selected>All</option>
-                <option value="listed">Listed</option>
-                <option value="unlisted">Unlisted</option>
-            </select>
-            <button class="btn filter">Filter</button>
-        </div>
-        <table id="category">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-          
-            <div class="loop">
+<div class="container">
+    <h1>Category List</h1>
+    <p>Lorem ipsum dolor sit amet.</p>
+    <div class="actions">
+        <button class="btn">Export</button>
+        <button class="btn">Import</button>
+        <button class="btn primary">Create new</button>
+    </div>
+    <div class="filter-section">
+        <input type="text" placeholder="Search for products..." id="searchInput">
+        <select id="status">
+            <option value="" selected>All</option>
+            <option value="listed">Listed</option>
+            <option value="unlisted">Unlisted</option>
+        </select>
+        <button class="btn filter">Filter</button>
+    </div>
+    <table id="category">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-        
-                 {{#each category}}  
-            
+        <div class="loop">
+
+
+            {{#each category}}
+
             <tbody>
-                
+
                 <tr>
-                    <td>    <div class="category-info">
-                              <img src="/upload/{{image}}" alt="Category Image">  
+                    <td>
+                        <div class="category-info">
+                            <img src="/upload/{{image}}" alt="Category Image">
                             <div>
-                                  <p class="category-name">{{this.name}}</p> 
-                             <p class="category-subtext">{{name}}</p> 
+                                <p class="category-name">{{this.name}}</p>
+                                <p class="category-subtext">{{name}}</p>
                             </div>
                         </div>
                     </td>
                     <td>
-  {{description}} 
+                        {{description}}
+                        
                     </td>
                     <td>
-                       {{#if is_listed}}
-                         <span class="status listed">{{is_listed}}</span>
-                         {{else}}
-<span style="background-color: rgb(165, 20, 88);" class="status ">{{is_listed}}</span>
-{{/if}}
+                        {{#if is_listed}}
+                        <span class="status listed">{{is_listed}}</span>
+                        {{else}}
+                        <span style="background-color: rgb(165, 20, 88);" class="status ">{{is_listed}}</span>
+                        {{/if}}
                     </td>
                     <td>
-                        <button class="btn action unlist" onclick="showModal()">Unlist</button>
-                       <a href="/admin/editcategory/?id={{this._id}}"> <button class="btn action edit">Edit</button></a>
+                        <button class="btn action unlist" onclick="showModal('{{_id}}')">Unlist</button>
+                        <a href="/admin/editcategory/?id={{_id}}"> <button class="btn action edit">Edit</button></a>
                     </td>
                 </tr>
-            
-            
-            </tbody>
-             {{/each}} 
-        
-             </div>
-                
-        </table>
-    </div>
 
-    <!-- Modal -->
-    {{#each category}}
-    <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p>Are you sure?</p>
-            <p>Please confirm to block this product!</p>
-<a href="/admin/unlist/?id={{this._id}}"><button class="btn confirm" onclick="confirmAction()">Yes, delete it!</button></a>
-            <button class="btn cancel" onclick="closeModal()">Cancel</button>
+
+            </tbody>
+            {{/each}}
+
         </div>
+
+    </table>
+</div>
+
+<!-- Modal -->
+
+
+{{#each category}}
+<div id="confirmationModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p>Are you sure?</p>
+        <p>Please confirm to block this product!</p>
+   
+        <button class="btn confirm" onclick="confirmAction('{{this._id}}')">Yes, delete
+            it!</button></a>
+        <button class="btn cancel" onclick="closeModal()">Cancel</button>
     </div>
+</div>
 {{/each}}

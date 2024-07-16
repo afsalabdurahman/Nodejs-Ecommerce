@@ -1,11 +1,13 @@
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel='stylesheet' type='text/css' media='screen' href='/assets/login.css'> 
-  <section >
- <div class="content">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel='stylesheet' type='text/css' media='screen' href='/assets/login.css'>
+<section style="height: 630px;">
+    <div class="content" style="margin-top: 6em;">
         <form action="#" class="signin-form">
             {{#if user}}
-            <p>User is Exist</p>
+            <p style="text-align: center;color:red; ">User is Exist</p>
             {{else}}
             {{/if}}
             <h2>Sign In</h2>
@@ -22,17 +24,21 @@
 
             <button class="btn-signin" type="submit">Sign In <i class="fa-solid fa-right-to-bracket"></i></button>
 
-            <div class="option-text"><hr><p>or sign in with</p></div>
-
-           
-
-            <p style=""  class="message"><a href="/register">Do you want to Register? click here</a></p>
-        </form>
-         <div class="button-group">
-              <a href="/auth/google">  <button class="btn-google" type="submit">Google <i class="fa-brands fa-google"></i></button></a>
-                <button class="btn-facebook">Facebook <i class="fa-brands fa-facebook"></i></i></button>
+            <div class="option-text">
+                <hr>
+                <p>or sign in with</p>
             </div>
 
-      
+
+
+            <p style="" class="message"><a href="/register">Do you want to Register? click here</a></p>
+        </form>
+        <div class="button-group">
+            <a href="/auth/google"> <button class="btn-google" type="submit">Google <i
+                        class="fa-brands fa-google"></i></button></a>
+            <button class="btn-facebook">Facebook <i class="fa-brands fa-facebook"></i></i></button>
+        </div>
+
+
     </div>
-    </section>
+</section>

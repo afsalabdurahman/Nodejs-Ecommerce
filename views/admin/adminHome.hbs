@@ -1,0 +1,108 @@
+<link rel="stylesheet" href="/assets/admin/dash.css" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<section class="body">
+
+    <div class="dashboard">
+        <h1 style="">Dash board</h1>
+        <div class="stats">
+            <div class="stat">
+                <h2>Total Revenue</h2>
+                <p>$34,152</p>
+                <small>+2.15% since last week</small>
+            </div>
+            <div class="stat">
+                <h2>Orders</h2>
+                <p>5,643</p>
+                <small>-0.28% since last week</small>
+            </div>
+            <div class="stat">
+                <h2>Customers</h2>
+                <p>45,254</p>
+                <small>-6.24% since last week</small>
+            </div>
+            <div class="stat">
+                <h2>Growth</h2>
+                <p>+12.58%</p>
+                <small>+10.15% since last week</small>
+            </div>
+        </div>
+        <div class="sales-analytics">
+            <h3>Sales Analytics</h3>
+            <canvas id="salesChart" class="chart"></canvas>
+        </div>
+        <div class="products">
+            <h3>Top Selling Products</h3>
+            <ul>
+                <li>Men's cloths</li>
+                <li>Women's cloths</li>
+                <li>Kid's cloths</li>
+                <li>Misilanous</li>
+              
+            </ul>
+        </div>
+        <div class="content">
+            <div class="new-members">
+                <h3>Top Users</h3>
+                <ul>
+                    <li>
+                        <p>Glenn Holden</p>
+                        <p>Nevada</p>
+                        <button class="unblock">Unblock</button>
+                    </li>
+                    <li>
+                        <p>Lottie Martin</p>
+                        <p>Ohio</p>
+                        <button class="block">Block</button>
+                    </li>
+                    <li>
+                        <p>Robert Mercer</p>
+                        <p>California</p>
+                        <button class="unblock">Unblock</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <ul>
+                    <li>
+                        <p>Today 12:16 pm</p>
+                        <p>Andrei Coman magna sed porta finibus, risus posted a new article: Designer Alex</p>
+                    </li>
+                    <li>
+                        <p>22 Jul 2020 12:16 pm</p>
+                        <p>Andrei Coman posted a new article: Designer Alex</p>
+                    </li>
+                    <li>
+                        <p>18 Jul 2020 07:45 am</p>
+                        <p>Andrei Coman started a new job: Designer Alex</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [1200, 1900, 3000, 5000, 2300, 4000, 4500],
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+</section>

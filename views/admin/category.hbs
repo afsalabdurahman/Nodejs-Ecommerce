@@ -1,32 +1,33 @@
 <link rel="stylesheet" href="/assets/admin/category.css">
-<script   type="text/javascript" src="/js/addcategory.js"></script>
+<script type="text/javascript" src="/js/addcategory.js"></script>
 
 <section>
     <div class="container">
         <h1>Add New Category</h1>
+       
+        <h4 style="color: red;"> {{msg}} </h4>
+     
         <div class="form-container">
             <div class="basic-section">
                 <h2>Basic</h2>
-                <form action="/admin/addcategory" method="post"  enctype="multipart/form-data" >
-                    <label for="category-name" >Category name</label>
+                <form action="/admin/addcategory" method="post" enctype="multipart/form-data">
+                    <label for="category-name">Category name</label>
                     <input type="text" id="category-name" name="name" placeholder="Category name">
                     <label for="full-description">Full description</label>
                     <textarea id="full-description" name="description" placeholder="Full description"></textarea>
-                    
-                    
-               
+
+
+
             </div>
             <div class="picture-section">
                 <h2>Picture</h2>
-                <img  id="preview-image">
-                <input type="file" name="image" id="choose-file" accept="image/*" multiple="multiple"  >
+                <img id="preview-image">
+                <input type="file" name="image" id="choose-file" accept="image/*" multiple="multiple">
                 <label for="choose-file" class="file-label">Choose file</label>
                 <span id="file-chosen">No file chosen</span>
             </div>
         </div>
         <button type="submit" class="submit-button">Submit</button>
-         </form>
+        </form>
     </div>
-   </section> 
-
-
+</section>

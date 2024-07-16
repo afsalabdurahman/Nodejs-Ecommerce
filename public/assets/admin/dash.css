@@ -1,0 +1,185 @@
+.body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #eef2f7;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #3498db;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+header h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+header nav ul li {
+    margin: 0 10px;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.stat {
+    flex: 1;
+    padding: 20px;
+    background-color: #2ecc71;
+    color: white;
+    border-radius: 8px;
+    margin: 0 10px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.stat:hover {
+    transform: scale(1.05);
+}
+
+.stat h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+}
+
+.stat p {
+    margin: 0 0 10px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.stat small {
+    color: #ecf0f1;
+}
+
+.sales-analytics, .products {
+    margin-bottom: 20px;
+}
+
+.sales-analytics h3, .products h3 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    color: #3498db;
+}
+
+.chart {
+    height: 200px;
+    background-color: #bdc3c7;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 200px;
+    margin-bottom: 20px;
+}
+
+.products ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.products ul li {
+    background-color: #9b59b6;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.products ul li:hover {
+    background-color: #8e44ad;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.new-members, .recent-activity {
+    flex: 1;
+    padding: 20px;
+    background-color: #f39c12;
+    border-radius: 8px;
+    margin: 0 10px;
+}
+
+.new-members h3, .recent-activity h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: white;
+}
+
+.new-members ul, .recent-activity ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.new-members ul li, .recent-activity ul li {
+    margin-bottom: 10px;
+    color: white;
+}
+
+.new-members ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.new-members ul li p {
+    margin: 0;
+}
+
+.new-members ul li button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.new-members ul li button.block {
+    background-color: #e74c3c;
+}
+
+.new-members ul li button:hover {
+    background-color: #2ecc71;
+}
+
+.new-members ul li button.block:hover {
+    background-color: #c0392b;
+}

@@ -1,0 +1,64 @@
+<link rel="stylesheet" href="/assets/admin/listuser.css">
+<link rel="stylesheet" href="/assets/admin/listcate.css">
+<div class="container">
+    <h1>Name List</h1>
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+
+                <th>Email</th>
+
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each userData}}
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><span>{{name}}</span></td>
+
+                <td><span class="status active">Active</span>
+                    <p>{{email}}</p>
+                </td>
+                {{#if is_blocked}}
+                <td> <button onclick="showModals('{{_id}}')" class="delete">Block</button></td>
+                {{else}}
+                <td> <button onclick="showModals('{{_id}}')" class=" delete">un Block</button></td>
+                {{/if}}
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+<section>
+    <div id="confirmationModals" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p>Are you sure?</p>
+            <p>Please confirm to block this product!</p>
+            <button class="btn confirm" onclick="confirmActions()">Yes, Continue with new Changes
+                !</button>
+            <button class="btn cancel" onclick="closeModals()">Cancel</button>
+        </div>
+    </div>
+</section>
+<script>
+    let id = ""
+    function showModals(model) {
+        id = model
+        console.log(model, "model")
+        document.getElementById('confirmationModals').style.display = "block";
+    }
+
+    function closeModals() {
+        document.getElementById('confirmationModals').style.display = 'none';
+    }
+    function confirmActions() {
+        // Add your action here, e.g., delete the product
+
+        window.location.href = `/admin/block?id=${id}`;
+        closeModal();
+    }
+</script>

@@ -1,35 +1,37 @@
 <link rel="stylesheet" href="/assets/admin/category.css">
-<script   type="text/javascript" src="/js/addcategory.js"></script>
+<script type="text/javascript" src="/js/addcategory.js"></script>
 
 <section>
     <div class="container">
         <h1>Edit Category</h1>
-       
+        <h3 style="color: red;">{{msg}}</h3>
+
         <div class="form-container">
             <div class="basic-section">
 
-                <form action="/admin/editcategory" method="post"  enctype="multipart/form-data" >
-                    <label for="category-name" >Category name</label>
-                    <input type="text" id="category-name" name="name" placeholder="Category name" value="{{categoryData.name}}">
+                <form action="/admin/editcategory" method="post" enctype="multipart/form-data">
+                    <label for="category-name">Category name</label>
+                    <input type="text" id="category-name" name="name" placeholder="Category name"
+                        value="{{categoryData.name}}">
                     <label for="full-description">Full description</label>
-                    <textarea id="full-description" name="description" placeholder="Full description">{{categoryData.description}}</textarea>
-                    
-                    
-               
+                    <textarea id="full-description" name="description"
+                        placeholder="Full description">{{categoryData.description}}</textarea>
+
+
+
             </div>
             <div class="picture-section">
                 <h2>Picture</h2>
-              <input type="hidden" name="category_id" value={{categoryData._id}}>
-                <img  id="preview-image" src="/upload/{{categoryData.image}}" >
-                <input type="file" name="image" id="choose-file" accept="image/*" multiple="multiple"  >
+                <input type="hidden" name="category_id" value={{categoryData._id}}>
+                <img id="preview-image" src="/upload/{{categoryData.image}}">
+                <input type="file" name="image" id="choose-file" accept="image/*" multiple="multiple">
                 <label for="choose-file" class="file-label">Choose file</label>
                 <span id="file-chosen">No file chosen</span>
             </div>
         </div>
-        
-        <button type="submit" class="submit-button">Submit</button>
-         </form>
-    </div>
-   </section> 
 
+        <button type="submit" class="submit-button">Submit</button>
+        </form>
+    </div>
+</section>
 
