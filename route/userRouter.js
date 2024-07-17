@@ -11,6 +11,7 @@ const config = require("../middleware/googleAuth");
 UserRouter.get("/", userController.loadHome);
 
 // UserRouter.post('/',userController.userData)
+UserRouter.post('/login',userController.loginUser)
 
 UserRouter.get("/login", userController.login);
 

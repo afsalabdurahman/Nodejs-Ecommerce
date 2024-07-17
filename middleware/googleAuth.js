@@ -37,7 +37,7 @@ const GOOGLE_CLIENT_SECRET = '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';
                        ExistUser = await User_schema.findOne({email:profile._json.email}) 
                       
                     if(ExistUser){
-                      return done("userExist")
+                      return done()
                       user=true
                     }else{
                       const Userschema= new User_schema({
@@ -52,7 +52,7 @@ const GOOGLE_CLIENT_SECRET = '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';
                       const dbUserdata= await Userschema.save();
                     
                       console.log(profile._json,"11")
-      return done(null,userProfile);
+      return done(null,);
                     }                                                                        
       
   }

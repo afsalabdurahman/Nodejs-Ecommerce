@@ -24,6 +24,35 @@ userData = (req, res) => {
 login = (req, res) => {
   res.render("user/login.hbs", { log: true });
 };
+let loginUser= async (req,res)=>{
+try {
+  
+email=req.body.email;
+const password=req.body.password
+console.log(password,"pass")
+existMail=await User_schema.findOne({email:email})
+if(existMail){
+  const passwordMatch = await bcrypt.compare(password, existMail.password);
+  if(passwordMatch){
+    res.render("user/index.hbs", { user: userData })
+  }else{
+    res.render("user/login.hbs",{msg:"Password is not match"})
+  }
+}
+else{
+  res.render('user/login.hbs',{msg:"user not fount kindly register now"})
+}
+
+
+
+} catch (error) {
+  console.log(error)
+  
+}
+
+
+
+}
 register = (req, res) => {
   console.log(res.body);
   res.render("user/register.hbs", { reg: true });
@@ -136,6 +165,7 @@ module.exports = {
   userData,
   getOtp,
   resentOtp,
+  loginUser
 };
 
 function generateOtp() {
