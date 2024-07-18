@@ -26,7 +26,7 @@ const uploaded = async (req, res) => {
         fullpath = path.join(imagepath, imagename);
         console.log(fullpath, "fullapath");
         cropImage = await sharp(file.path)
-          .resize(200, 200, { fit: "cover" })
+          .resize(700, 750, { fit: "cover" })
           .toFile(imagepath + "/" + imgFileName);
         console.log(cropImage, "croped");
         if (cropImage) {
@@ -39,12 +39,13 @@ const uploaded = async (req, res) => {
 
       console.log("data[0]", imageData, "dataimage[0]");
       //   const { name, brand, stock, price,discount_price, description,image } = req.body;
-
+listCategory= await Category.findOne({name:req.body.category}).lean()
+console.log(listCategory,"lisr")
       const addProducts = new Product({
         name: req.body.name,
         description: req.body.description,
         brand: req.body.Brand,
-        category: req.body.categories,
+        category: listCategory._id,
         price: req.body.price,
         stock: req.body.stock,
 
@@ -133,7 +134,7 @@ const newlistedProduct = async (req, res) => {
           fullpath = path.join(imagepath, imagename);
           console.log(fullpath, "fullapath");
           cropImage = await sharp(file.path)
-            .resize(200, 200, { fit: "cover" })
+            .resize(700, 750, { fit: "cover" })
             .toFile(imagepath + "/" + imgFileName);
           console.log(cropImage, "croped");
           if (cropImage) {
@@ -141,14 +142,14 @@ const newlistedProduct = async (req, res) => {
           }
         }
         //end
-
+       const listCategory= await Category.findOne({name:req.body.category}).lean()
         const updateProductData = await Product.findByIdAndUpdate(
           { _id: id },
           {
             $set: {
               name: name,
               brand: Brand,
-              category: category,
+              category: listCategory._id,
               stock: stock,
               price: price,
               discount_price: discount_price,
@@ -222,6 +223,8 @@ const productVisible = async (req, res) => {
 
   res.redirect("/admin/listproducts");
 };
+
+
 
 module.exports = {
   uploaded,

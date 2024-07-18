@@ -13,42 +13,55 @@ const securePassword = async (password) => {
 };
 
 loadHome = (req, res) => {
-  res.render("user/index.hbs");
-};
-userData = (req, res) => {
-  if (req.session.userData) {
-    res.redirect("/home");
+  if (req.session.user_id) {
+    user = req.session.user_id
+    res.render("user/index.hbs", { user: user });
   }
-  res.redirect("/");
+  else {
+    res.render("user/index.hbs")
+  }
 };
+// userData = (req, res) => {
+//   if (req.session.user_id) {
+//     userData=User_schema({_id:req.session.user_id})
+//     res.redirect("/home");
+//   }
+//   res.redirect("/");
+// };
 login = (req, res) => {
-  res.render("user/login.hbs", { log: true });
-};
-let loginUser= async (req,res)=>{
-try {
-  
-email=req.body.email;
-const password=req.body.password
-console.log(password,"pass")
-existMail=await User_schema.findOne({email:email})
-if(existMail){
-  const passwordMatch = await bcrypt.compare(password, existMail.password);
-  if(passwordMatch){
-    res.render("user/index.hbs", { user: userData })
-  }else{
-    res.render("user/login.hbs",{msg:"Password is not match"})
+  if (req.session.user_id) {
+    res.redirect('/')
+  } else {
+    res.render("user/login.hbs", { log: true });
   }
-}
-else{
-  res.render('user/login.hbs',{msg:"user not fount kindly register now"})
-}
+};
+let loginUser = async (req, res) => {
+  try {
+
+
+    email = req.body.email;
+    const password = req.body.password
+    console.log(password, "pass")
+    existMail = await User_schema.findOne({ email: email })
+    if (existMail) {
+      const passwordMatch = await bcrypt.compare(password, existMail.password);
+      req.session.user_id = existMail._id
+      if (passwordMatch) {
+        res.redirect('/')
+      } else {
+        res.render("user/login.hbs", { msg: "Password is not match" })
+      }
+    }
+    else {
+      res.render('user/login.hbs', { msg: "user not fount kindly register now" })
+    }
 
 
 
-} catch (error) {
-  console.log(error)
-  
-}
+  } catch (error) {
+    console.log(error)
+
+  }
 
 
 
@@ -100,8 +113,8 @@ checkotp = async (req, res) => {
     });
     const dbUserdata = await Userschema.save();
     req.session.user_id = dbUserdata._id;
-    console.log(dbUserdata);
-    res.render("user/index.hbs", { user: userData });
+    console.log(req.session.user_id, "seion userid")
+    res.rendirect("/");
   } else if ((req.session.opt = undefined)) {
     res.send("Session expaired");
   } else if (req.session.otp != fullOtp) {
@@ -128,14 +141,39 @@ cart = (req, res) => {
   res.render("user/cart.hbs");
 };
 
-products = (req, res) => {
-  res.render("user/products.hbs");
+products = async (req, res) => {
+  const products = await Product.find({ is_listed: true }).lean()
+  console.log(products, "products")
+
+  if (req.session.user_id) {
+    user = req.session.user_id
+    res.render("user/products.hbs", { user, products });
+  }
+  else {
+    res.render("user/products.hbs", { products })
+  }
 };
-const Womens = (req, res) => {
-  res.render("user/Products/women.hbs");
+const Womens = async (req, res) => {
+  if (req.session.user_id) {
+    user = req.session.user_id
+    // const product_value = await Product.find({ category :})
+
+    res.render("user/Products/women.hbs", { user });
+  }
+  else {
+    res.render("user/Products/women.hbs");
+  }
 };
 const Kids = (req, res) => {
-  res.render("user/Products/kid.hbs");
+  if (req.session.user_id) {
+    user = req.session.user_id
+
+
+    res.render("user/Products/kid.hbs", { user });
+  }
+  else {
+    res.render("user/Products/kid.hbs")
+  }
 };
 wishlist = (req, res) => {
   res.render("user/wishlist.hbs");
@@ -143,10 +181,45 @@ wishlist = (req, res) => {
 checkout = (req, res) => {
   res.render("user/wishlist.hbs");
 };
-details = (req, res) => {
-  res.render("user/details.hbs");
-};
+details = async (req, res) => {
+  const id = req.query.id
+  const Similar_product = await Product.find({ category: '6699057c3cefcb99d7d7fe63' }).lean()
+  console.log(Similar_product, "prdoct simlatr")
+  const productvalue = await Product.findById(id).lean();
 
+
+  res.render("user/details.hbs", { productvalue, Similar_product });
+};
+const GoogleLogin = async (req, res) => {
+  if (req.user._json) {
+    userData = {
+      name: req.user._json.name,
+      email: req.user._json.email
+    }
+    res.render("user/index.hbs", { user: userData });
+  }
+
+  // const Userschema = new User_schema({
+  //   name: req.user._json.name,
+  //   email: req.user._json.email,
+  //   mobile: 100000,
+  //   password: 123456,
+  //   image: "",
+  //   isAdmin: 0,
+  //   is_blocked: 1,
+  // });
+
+
+  // const dbUserdata = await Userschema.save();
+  else {
+    res.send(not)
+  }
+
+}
+const Logout = (req, res) => {
+  req.session.destroy();
+  res.redirect('/')
+}
 module.exports = {
   loadHome,
   login,
@@ -154,6 +227,8 @@ module.exports = {
   details,
   Kids,
   Womens,
+  GoogleLogin,
+  Logout,
   // google,
   // registerOtp,
   checkotp,
@@ -162,7 +237,7 @@ module.exports = {
   products,
   wishlist,
   checkout,
-  userData,
+  // userData,
   getOtp,
   resentOtp,
   loginUser

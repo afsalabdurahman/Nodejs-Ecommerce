@@ -28,7 +28,7 @@ dbConnection()
 
 app.use(session({ secret: "mysecret",resave: false,
   saveUninitialized: true,
-   cookie: { maxAge: 600000 } }))
+   cookie: { maxAge: 60000 } }))
 
 app.use(cors())
 
