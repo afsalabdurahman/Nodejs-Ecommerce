@@ -26,9 +26,11 @@ require('./middleware/googleAuth')
 let port = process.env.port;
 dbConnection()
 
-app.use(session({ secret: "mysecret",resave: false,
+app.use(session({
+  secret: process.env.sessionSecret, resave: false,
   saveUninitialized: true,
-   cookie: { maxAge: 60000 } }))
+  cookie: { maxAge: 300000 }
+}))
 
 app.use(cors())
 

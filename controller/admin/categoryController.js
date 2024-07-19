@@ -1,24 +1,22 @@
 const Category = require("../../model/categoryMode");
 const Product = require("../../model/productModel");
-
 const { products } = require("../user/userController");
 
+
+// Showing Category Fillup Form................................
 const categoryForm = (req, res) => {
   res.render("admin/category.hbs", { admin: true });
 };
+// Posting Category Form........................................
 const postcategoryForm = async (req, res) => {
   try {
     let { name, description } = req.body;
-    console.log(req.body, "bodyyyyyyyyyyyy");
-    console.log(req.files[0].filename, "filessssssss");
-
     let image = req.files[0].filename;
 
-    console.log(image, "imassssssssssssssge");
     const existingCategory = await Category.findOne({
       name: { $regex: new RegExp(`^${name}$`, "i") },
     });
-    console.log(existingCategory, "exists");
+
     if (existingCategory) {
       res.render("admin/category.hbs", {
         msg: "Category already Exist",
@@ -31,6 +29,7 @@ const postcategoryForm = async (req, res) => {
         description: req.body.description,
         is_listed: true,
       });
+
       const categoryData = await category.save();
       res.redirect("/admin/listcategory");
     }
@@ -39,16 +38,18 @@ const postcategoryForm = async (req, res) => {
   }
 };
 
+//List of Categories........................................
 const listCategory = async (req, res) => {
   try {
     category = await Category.find().lean();
-
     res.render("admin/listCategory.hbs", { category, admin: true });
   } catch (error) {
     console.log(error.message);
   }
 };
 
+
+// Edit Category form............................................
 const editCategory = async (req, res) => {
   id = req.query.id;
   const categoryData = await Category.findById(id).lean();
@@ -56,6 +57,8 @@ const editCategory = async (req, res) => {
   res.render("admin/EditCategory.hbs", { categoryData, admit: true });
 };
 
+
+// Post Category Form.............................................
 const newEditcategory = async (req, res) => {
   try {
     let fileData = req.files;
@@ -63,19 +66,11 @@ const newEditcategory = async (req, res) => {
     if (fileData.length != 0) {
       img = fileData[0].filename;
     }
-    console.log(fileData, "failedate");
-    console.log(req.body.name, "bodiessss");
     let id = req.body.category_id;
-
-    //console.log(req.body)
-
     db = await Category.findOne();
-
-    console.log(db, "dbbbbbb");
     const existingCategory = await Category.findOne({
       name: { $regex: new RegExp(`^${req.body.name}$`, "i") },
     });
-
     if (existingCategory && fileData.length == 0) {
       res.render("admin/Editcategory.hbs", { msg: "Category already exist" });
     } else {
@@ -96,13 +91,12 @@ const newEditcategory = async (req, res) => {
   }
 };
 
-const unlistCategory = async (req, res) => {
-  console.log(req.query.id, "parammssss");
 
+// Unlisting Category...........................
+const unlistCategory = async (req, res) => {
   try {
     const id = req.query.id;
     const categoryvalue = await Category.findById(id);
-
     if (categoryvalue.is_listed) {
       const categoryData = await Category.updateOne(
         { _id: id },

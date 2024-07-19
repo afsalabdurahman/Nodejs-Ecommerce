@@ -13,8 +13,11 @@ adminRoute.get("/", adminAuth.isLogout, adminController.loadAdminLogin);
 adminRoute.post("/", adminController.verifyadminLogin);
 adminRoute.get("/logout", adminController.adminLogout);
 
+//home
 adminRoute.get("/home", adminAuth.isLogin, adminController.loadHome);
 
+
+// Product Management
 adminRoute.get(
   "/addproducts",
   adminAuth.isLogin,
@@ -25,23 +28,25 @@ adminRoute.post(
   upload.array("uploadimg", 4),
   productController.uploaded
 );
-adminRoute.get("/listproducts", productController.Listproducts);
-adminRoute.get("/editproduct", productController.Editproduct);
+adminRoute.get("/listproducts", adminAuth.isLogin, productController.Listproducts);
+adminRoute.get("/editproduct", adminAuth.isLogin, productController.Editproduct);
 adminRoute.post(
   "/newlistproduct",
   upload.array("uploadimg", 4),
   productController.newlistedProduct
 );
-adminRoute.get("/delete", productController.productDelete);
-adminRoute.get("/visible", productController.productVisible);
+adminRoute.get("/delete", adminAuth.isLogin, productController.productDelete);
+adminRoute.get("/visible", adminAuth.isLogin, productController.productVisible);
 
+
+//Add Category
 adminRoute.get("/category", adminAuth.isLogin, categoryController.categoryForm);
 adminRoute.post(
   "/addcategory",
   upload.array("image", 1),
   categoryController.postcategoryForm
 );
-adminRoute.get("/listcategory", categoryController.listCategory);
+adminRoute.get("/listcategory", adminAuth.isLogin, categoryController.listCategory);
 adminRoute.get(
   "/editcategory",
   adminAuth.isLogin,
@@ -52,9 +57,10 @@ adminRoute.post(
   upload.array("image", 1),
   categoryController.newEditcategory
 );
-adminRoute.get("/unlist", categoryController.unlistCategory);
+adminRoute.get("/unlist", adminAuth.isLogin, categoryController.unlistCategory);
 
-adminRoute.get("/listuser", adminController.listUser);
-adminRoute.get("/block", adminController.blockUser);
+//User Management
+adminRoute.get("/listuser", adminAuth.isLogin, adminController.listUser);
+adminRoute.get("/block", adminAuth.isLogin, adminController.blockUser);
 
 module.exports = adminRoute;

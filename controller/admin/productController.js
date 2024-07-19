@@ -4,17 +4,18 @@ const Product = require("../../model/productModel");
 const Category = require("../../model/categoryMode");
 const { trusted } = require("mongoose");
 
+
+// Add New product Page.......................................
 const addProducts = async (req, res) => {
   let categories = await Category.find({ is_listed: true }).lean();
-
-  console.log(categories);
   res.render("admin/Addproducts.hbs", { categories, admin: true });
 };
 
+// Post New products..........................................
 const uploaded = async (req, res) => {
   try {
     if (req.files && req.body.name) {
-      console.log(req.body, "bodzzzzzzz");
+
       const imageData = [];
       const imageFiles = req.files;
       for (file of imageFiles) {
@@ -24,23 +25,16 @@ const uploaded = async (req, res) => {
         const randomInteger = Math.floor(Math.random() * 20000001);
         const imgFileName = "cropped" + randomInteger + ".jpg";
         fullpath = path.join(imagepath, imagename);
-        console.log(fullpath, "fullapath");
+
         cropImage = await sharp(file.path)
           .resize(700, 750, { fit: "cover" })
           .toFile(imagepath + "/" + imgFileName);
-        console.log(cropImage, "croped");
+
         if (cropImage) {
           imageData.push(imgFileName);
         }
       }
-
-      // console.log(req.body,"body")
-      // console.log(req.files,"file")
-
-      console.log("data[0]", imageData, "dataimage[0]");
-      //   const { name, brand, stock, price,discount_price, description,image } = req.body;
-listCategory= await Category.findOne({name:req.body.category}).lean()
-console.log(listCategory,"lisr")
+      const listCategory = await Category.findOne({ name: req.body.category }).lean();
       const addProducts = new Product({
         name: req.body.name,
         description: req.body.description,
@@ -48,13 +42,11 @@ console.log(listCategory,"lisr")
         category: listCategory._id,
         price: req.body.price,
         stock: req.body.stock,
-
         discount_price: req.body.discount_price,
         image: imageData,
       });
 
       await addProducts.save();
-
       res.redirect("/admin/listproducts");
     } else {
       let categories = await Category.find({ is_listed: true }).lean();
@@ -68,46 +60,43 @@ console.log(listCategory,"lisr")
   }
 };
 
+// List Products.................................
 const Listproducts = async (req, res) => {
   try {
     const listproduct = await Product.find().lean();
-    console.log(listproduct, "listtttt");
-
     res.render("admin/Listproducts.hbs", { listproduct, admin: true });
   } catch (error) {
     console.log(error);
   }
 };
 
+// Edit Product Page....................................
 const Editproduct = async (req, res) => {
   try {
-    // console.log(req.body,"bodysss")
     id = req.query.id;
 
     const productData = await Product.findById(id).lean();
     console.log(productData, "dataproduct");
     let categories = await Category.find().lean();
-
-    res.render("admin/Editproducts.hbs", { productData, categories,admin:true });
+    res.render("admin/Editproducts.hbs", {
+      productData,
+      categories,
+      admin: true,
+    });
   } catch (error) {
     console.log(error);
   }
 };
+
+//Post Edited Products................................
 const newlistedProduct = async (req, res) => {
   try {
     const image = [];
-    console.log(req.body, "body");
     id = req.body.product_id;
     let fileData = req.files.length;
-    console.log(req.files.length, "filess");
     let product = await Product.findById(id).lean();
-
-    console.log(product, "product");
-    console.log(req.body, "body");
-
     const { name, description, Brand, category, price, stock, discount_price } =
       req.body;
-
     if (product) {
       const isEqual =
         product.name == name &&
@@ -117,12 +106,13 @@ const newlistedProduct = async (req, res) => {
         product.stock == stock &&
         product.discount_price == discount_price &&
         fileData == 0;
-
-      console.log(isEqual, "eqial");
       if (isEqual) {
-        res.render("admin/Editproducts.hbs", { msg: "Product already exisit" ,admin:true });
+        res.render("admin/Editproducts.hbs", {
+          msg: "Product already exisit",
+          admin: true,
+        });
       } else {
-        // imgecrop
+        // imgecrop.....................
         const imageData = [];
         const imageFiles = req.files;
         for (file of imageFiles) {
@@ -141,8 +131,10 @@ const newlistedProduct = async (req, res) => {
             imageData.push(imgFileName);
           }
         }
-        //end
-       const listCategory= await Category.findOne({name:req.body.category}).lean()
+        //..Stroing in db
+        const listCategory = await Category.findOne({
+          name: req.body.category,
+        }).lean();
         const updateProductData = await Product.findByIdAndUpdate(
           { _id: id },
           {
@@ -170,10 +162,10 @@ const newlistedProduct = async (req, res) => {
   }
 };
 
+// Product Delete from list.........................
 const productDelete = async (req, res) => {
   let id = req.query.id;
   const productvalue = await Product.findById(id);
-  console.log(productvalue, "db value");
   if (productvalue.is_listed) {
     const productData = await Product.updateOne(
       { _id: id },
@@ -197,10 +189,10 @@ const productDelete = async (req, res) => {
   res.redirect("/admin/listproducts");
 };
 
+// Product Visibility in list.......................
 const productVisible = async (req, res) => {
   let id = req.query.id;
   const productvalue = await Product.findById(id);
-  console.log(productvalue, "db value");
   if (productvalue.isVisible) {
     const productData = await Product.updateOne(
       { _id: id },
@@ -223,8 +215,6 @@ const productVisible = async (req, res) => {
 
   res.redirect("/admin/listproducts");
 };
-
-
 
 module.exports = {
   uploaded,
