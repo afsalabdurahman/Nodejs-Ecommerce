@@ -141,8 +141,13 @@ cart = (req, res) => {
   res.render("user/cart.hbs");
 };
 
-products = async (req, res) => {
-  const products = await Product.find({ is_listed: true }).lean()
+const products = async (req, res) => {
+  const products = await Product.find({
+    $and: [
+      { category: "6699057c3cefcb99d7d7fe63" },
+      { is_listed: true }
+    ]
+  }).lean()
   console.log(products, "products")
 
   if (req.session.user_id) {
@@ -154,25 +159,39 @@ products = async (req, res) => {
   }
 };
 const Womens = async (req, res) => {
+  const products = await Product.find({
+    $and: [
+      { category: "669951b01934f70cb7148e6e" },
+      { is_listed: true }
+    ]
+  }).lean()
+
+
   if (req.session.user_id) {
     user = req.session.user_id
     // const product_value = await Product.find({ category :})
 
-    res.render("user/Products/women.hbs", { user });
+    res.render("user/Products/women.hbs", { user, products });
   }
   else {
-    res.render("user/Products/women.hbs");
+    res.render("user/Products/women.hbs", { products });
   }
 };
-const Kids = (req, res) => {
+const Kids = async (req, res) => {
+  const products = await Product.find({
+    $and: [
+      { category: "669a10c1dfed884d9985a01c" },
+      { is_listed: true }
+    ]
+  }).lean()
   if (req.session.user_id) {
     user = req.session.user_id
 
 
-    res.render("user/Products/kid.hbs", { user });
+    res.render("user/Products/kid.hbs", { user, products, });
   }
   else {
-    res.render("user/Products/kid.hbs")
+    res.render("user/Products/kid.hbs", { products })
   }
 };
 wishlist = (req, res) => {
@@ -182,35 +201,61 @@ checkout = (req, res) => {
   res.render("user/wishlist.hbs");
 };
 details = async (req, res) => {
-  const id = req.query.id
-  const Similar_product = await Product.find({ category: '6699057c3cefcb99d7d7fe63' }).lean()
-  console.log(Similar_product, "prdoct simlatr")
-  const productvalue = await Product.findById(id).lean();
+  try {
+
+    const id = req.query.id
+    const productvalue = await Product.findById(id).lean();
+    let Data = "";
+    console.log(productvalue, "valueeeeeee")
+    if (productvalue.category == "6699057c3cefcb99d7d7fe63") {
+      Data = "6699057c3cefcb99d7d7fe63";
+    } else if (productvalue.category == "669951b01934f70cb7148e6e") {
+      Data = "669951b01934f70cb7148e6e"
+    } else {
+      Data = "669a10c1dfed884d9985a01c"
+    }
 
 
-  res.render("user/details.hbs", { productvalue, Similar_product });
+
+
+
+    const Similar_product = await Product.find({ category: Data }).lean()
+    let link = ""
+    if (productvalue.category == "6699057c3cefcb99d7d7fe63") {
+      link = "/products"
+    } else if (productvalue.category == "669951b01934f70cb7148e6e") {
+      link = '/women'
+    } else {
+      link = '/kid'
+    }
+
+    res.render("user/details.hbs", { productvalue, Similar_product, link });
+
+
+
+
+
+
+  } catch (error) {
+    console.log(error, "this is errrrr")
+  }
+
+
 };
+
 const GoogleLogin = async (req, res) => {
+  req.session.user_id = req.user._json
+  console.log(req.session.user)
   if (req.user._json) {
     userData = {
+
       name: req.user._json.name,
       email: req.user._json.email
     }
-    res.render("user/index.hbs", { user: userData });
+    res.redirect("/");
   }
 
-  // const Userschema = new User_schema({
-  //   name: req.user._json.name,
-  //   email: req.user._json.email,
-  //   mobile: 100000,
-  //   password: 123456,
-  //   image: "",
-  //   isAdmin: 0,
-  //   is_blocked: 1,
-  // });
 
-
-  // const dbUserdata = await Userschema.save();
   else {
     res.send(not)
   }
