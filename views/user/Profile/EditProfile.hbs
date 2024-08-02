@@ -1,0 +1,191 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+    <style>
+        .body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .sidebar nav ul li a i {
+            margin-right: 10px;
+            color: #88B04B;
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #f9f9f9;
+            color: #88B04B;
+        }
+
+        .profile-container {
+            flex-grow: 1;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .profile-container h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-form label {
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .profile-form input,
+        .profile-form textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .profile-form .confirm-button {
+            background-color: #88B04B;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .profile-form .confirm-button:hover {
+            background-color: #76a040;
+        }
+
+        .image-upload {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .image-upload img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 20px;
+            object-fit: cover;
+        }
+
+        .image-upload input {
+            display: none;
+        }
+    </style>
+</head>
+<div class="body">
+    <div class="container">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Details</a></li>
+                    <li><a href="/profile/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                    <li><a href="/profile/cart"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
+                    <li><a href="/profile/allorders"><i class="fa fa-file-text"></i>All Orders</a></li>
+                    <li><a href="/profile/editprofile"><i class="fas fa-edit"></i> Edit User Details</a></li>
+                    <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
+                    <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+                    <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="profile-container">
+            <h2>Edit Profile Details</h2>
+            <form action="/profile/posteditprofile" class="profile-form" method="post"
+                enctype="application/x-www-form-urlencoded">
+                <div class="image-upload">
+                    <label for="profile-image-upload">
+                        <img src="/pictures/men/user.webp" alt="Profile Image" class="profile-image"
+                            id="profile-image-preview">
+                    </label>
+                    <input type="file" id="profile-image-upload" name="profile-image" accept="image/*"
+                        onchange="previewImage(event)">
+                </div>
+
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" name="fullname" value="{{user.name}}" required>
+
+                <label for="email">Email ID</label>
+                <input type="email" id="email" name="email" value="{{user.email}}" required>
+
+                <label for="mobile">Mobile</label>
+                <input type="text" id="mobile" name="mobile" value="{{user.mobile}}" required>
+
+                <label for="gender">Gender</label>
+                <input type="text" id="gender" name="gender" value="-not added-">
+
+                <label for="dob">Date of Birth</label>
+                <input type="text" id="dob" name="dob" value="-not added-">
+
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" value="-not added-">
+
+                <label for="address">Address</label>
+                <textarea id="address" name="address" rows="4"></textarea>
+
+                <button type="submit" class="confirm-button">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('profile-image-preview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</div>

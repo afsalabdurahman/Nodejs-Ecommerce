@@ -7,6 +7,7 @@ UserRouter.use(bodyParser.urlencoded({ extended: false }));
 UserRouter.use(bodyParser.json());
 const passport = require("passport");
 const config = require("../middleware/googleAuth");
+const Paymentstatus = require('../middleware/payment')
 
 
 //user Home
@@ -26,16 +27,33 @@ UserRouter.get("/resentotp", userController.resentOtp);
 UserRouter.get("/login/resetpwd", userController.resetpwd);
 UserRouter.get('/logout', userController.Logout)
 
-UserRouter.get("/cart", userController.cart);
+// UserRouter.get("/cart", userController.cart);
 //Products
 UserRouter.get("/products", userController.products);
 UserRouter.get("/women", userController.Womens);
 UserRouter.get("/kid", userController.Kids);
-UserRouter.get("/wishlist", userController.wishlist);
-UserRouter.get("/cart/checkout", userController.checkout);
+// UserRouter.get("/cart/checkout", userController.checkout);
 UserRouter.get('/success', userController.GoogleLogin)
 
+//profile
+UserRouter.get('/profile', userController.Profile)
+UserRouter.get('/profile/editprofile', userController.EditProfile)
+UserRouter.post('/profile/posteditprofile', userController.Posteditprofile)
+UserRouter.get('/profile/wishlist', userController.WishList)
+UserRouter.get('/profile/cart', userController.Cart)
+UserRouter.get('/profile/address', userController.Address)
+UserRouter.get('/profile/changepsw', userController.changePsw)
+UserRouter.get('/profile/checkout', userController.Checkout)
+UserRouter.get('/profile/allorders',Paymentstatus.Checkstatus, userController.AllOrders)
+UserRouter.get('/profile/deletecart', userController.DeleteCart)
 
+// UserRouter.get('/profiles', (req, res) => {
+//   console.log(req.body)
+//   console.log(req.query)
+//   res.send("data")
+// })
+//Product mangement cart,wishlist
+UserRouter.get('/product/user-wish-list', userController.ProductUserWishlist)
 // Google auth
 UserRouter.get(
   "/auth/google",

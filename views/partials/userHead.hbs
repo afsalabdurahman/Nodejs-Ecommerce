@@ -1,0 +1,126 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .body {
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar .searchbar {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .navbar .searchbar input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .navbar .searchbar button {
+            background-color: #88B04B;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .navbar .searchbar button:hover {
+            background-color: #76a040;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #88B04B;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar ul li {
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .navbar ul li a:hover {
+            color: #88B04B;
+        }
+
+        .navbar .icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .icons a {
+            margin-left: 20px;
+            color: #000;
+            font-size: 20px;
+        }
+
+        .navbar .icons a:hover {
+            color: #88B04B;
+        }
+
+        .search {
+            background-color: #c8542d;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<div class="body">
+    <div class="navbar">
+        <div class="logo">LUX-OUS</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Men</a></li>
+            <li><a href="/women">Women</a></li>
+            <li><a href="/kid">Kid</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="searchbar">
+            <input type="text" placeholder="Search...">
+            <button type="button">Search</button>
+        </div>
+
+        <div class="icons">
+            {{#if user}}
+
+            <a href="/profile"><i class="fas fa-user"></i></a>
+            <a href="/profile/wishlist"><i class="fas fa-heart"></i></a>
+            <a href="/profile/cart"><i class="fas fa-shopping-cart"></i></a>
+            <a href="/logout"><button class="search">Logout</button></a>
+            {{else}}
+            <a href="/login"><button class="search">Login</button></a>
+            {{/if}}
+        </div>
+    </div>
+</div>

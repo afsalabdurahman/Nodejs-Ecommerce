@@ -1,0 +1,111 @@
+<link rel="stylesheet" href="/assets/UserProfile/Cart.css">
+
+<div class="body">
+    <div class="container">
+        <h2>MY CART</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each Datas }}
+                <tr>
+
+                    <td>
+                        <p><a href="/profile/deletecart?id={{ProductId._id}}">X</p></a> <img
+                            src="/upload/{{ProductId.image.[0]}}" alt=" Product 1" class="product-image">
+                    </td>
+                    <td>
+                        Mens fation <br>{{ProductId.description}}<br>
+                        <span class="size">{{size}}</span>
+                    </td>
+                    <td>${{ProductId.price}}</td>
+                    <td>
+                        <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                        <input type="text" value="{{quandity}}" class="quantity-input" readonly>
+                        <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                    </td>
+                    <td class="item-total">${{ProductId.price}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <div class="summary">
+            <div class="coupon">
+                <input type="text" placeholder="Enter coupon code" id="coupon-code">
+                <button class="apply-btn" onclick="applyDiscount()">Apply</button>
+            </div>
+            <p>Subtotal: <span id="subtotal">${{totalPrice}}</span></p>
+            <p>Discount: <span id="discount">$0.00</span></p>
+            <p>Total: <span id="total">{{totalPrice}}</span></p>
+            <button class="proceed-btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+
+    </div>
+
+
+</div>
+
+<script>
+
+
+
+
+    function updateQuantity(button, change) {
+        const quantityInput = button.parentElement.querySelector('.quantity-input');
+        let quantity = parseInt(quantityInput.value);
+        quantity += change;
+        if (quantity < 1) quantity = 1;
+        quantityInput.value = quantity;
+        updateItemTotal(button);
+        console.log("hiii")
+    }
+
+    function updateItemTotal(button) {
+        const row = button.closest('tr');
+        const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace('$', ''));
+        const quantity = parseInt(row.querySelector('.quantity-input').value);
+        const itemTotal = price * quantity;
+        row.querySelector('.item-total').textContent = `${itemTotal.toFixed(2)}`;
+        updateSummary();
+    }
+
+    function applyDiscount() {
+        const couponCode = document.getElementById('coupon-code').value;
+        let discount = 0;
+        if (couponCode === 'DISCOUNT10') {
+            discount = 0.1; // 10% discount
+        }
+        updateSummary(discount);
+    }
+
+    function updateSummary(discount = 0) {
+        const rows = document.querySelectorAll('tbody tr');
+        let subtotal = 0;
+        rows.forEach(row => {
+            const itemTotal = parseFloat(row.querySelector('.item-total').textContent.replace('$', ''));
+            subtotal += itemTotal;
+        });
+        const discountAmount = subtotal * discount;
+        const total = subtotal - discountAmount;
+
+        document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)}`;
+        document.getElementById('discount').textContent = `${discountAmount.toFixed(2)}`;
+        document.getElementById('total').textContent = `${total.toFixed(2)}`;
+    }
+
+
+    function checkout() {
+
+        let Total = document.getElementById('total').textContent
+        console.log(Total, "total")
+        window.location.href = `/profile/checkout?id=${Total}`;
+
+    }
+</script>

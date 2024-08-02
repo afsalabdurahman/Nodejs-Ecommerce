@@ -13,6 +13,8 @@ const postcategoryForm = async (req, res) => {
     let { name, description } = req.body;
     let image = req.files[0].filename;
 
+
+    
     const existingCategory = await Category.findOne({
       name: { $regex: new RegExp(`^${name}$`, "i") },
     });
@@ -38,7 +40,7 @@ const postcategoryForm = async (req, res) => {
   }
 };
 
-//List of Categories........................................
+//List of Categories............-.................
 const listCategory = async (req, res) => {
   try {
     category = await Category.find().lean();

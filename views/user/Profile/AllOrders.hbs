@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="/assets/UserProfile/AllOrders.css">
+
+<div class="body">
+    <div class="container">
+        <header>
+            <nav>
+                <a href="#">HOME</a>
+                <span> / </span>
+                <a href="#">ORDERS</a>
+            </nav>
+            <h1>ORDERS</h1>
+        </header>
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Address</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {{#each Data}}
+
+                <tr>
+                    <td>
+                        <img src="/upload/{{ProductId.image.[0]}}" alt="Product 2">
+                        <div class="product-details">
+                            <h2>{{ProductId.name}}</h2>
+                            <p>{{ProductId.description}}</p>
+                        </div>
+                    </td>
+                    <td>${{ProductId.price}}</td>
+                    <td>{{this.address}}</td>
+                    <td>{{quandity}}</td>
+                    <td>${{ProductId.price}}</td>
+                    <td>
+                        <p class="status shipped">{{this.Date}}</p>
+                        <button class="track-order-button">Track Order</button>
+                        <button class="cancel-order-button">Cancel Order</button>
+                    </td>
+                </tr>
+                {{/each}}
+
+
+            </tbody>
+        </table>
+    </div>
+</div>

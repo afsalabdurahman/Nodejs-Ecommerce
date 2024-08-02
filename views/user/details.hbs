@@ -6,11 +6,7 @@
     <div class="container">
       <div class="row gy-3">
         <!-- Left elements -->
-        <div class="col-lg-2 col-sm-4 col-4">
-          <a href="https://mdbootstrap.com/" target="_blank" class="float-start">
-            <img src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="35" />
-          </a>
-        </div>
+
         <!-- Left elements -->
 
         <!-- Center elements -->
@@ -96,7 +92,7 @@
                 4.5
               </span>
             </div>
-            <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+            <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>{{productvalue.stock}}</span>
             <span class="text-success ms-2">In stock</span>
           </div>
 
@@ -106,7 +102,13 @@
           </div>
 
           <p>
-            Modern look and quality demo item is a streetwear-inspired collection that continues to break away from the
+            {{productvalue.description}}. Modern look and quality demo item is a streetwear-inspired collection that
+            continues
+            to
+            break
+            away
+            from
+            the
             conventions of mainstream fashion. Made in Italy, these black and brown clothing low-top shirts for
             men.
           </p>
@@ -130,7 +132,7 @@
           <div class="row mb-4">
             <div class="col-md-4 col-6">
               <label class="mb-2">Size</label>
-              <select class="form-select border border-secondary" style="height: 35px;">
+              <select id="size" class="form-select border border-secondary" style="height: 35px;">
                 <option>Small</option>
                 <option>Medium</option>
                 <option>Large</option>
@@ -140,20 +142,20 @@
             <div class="col-md-4 col-6 mb-3">
               <label class="mb-2 d-block">Quantity</label>
               <div class="input-group mb-3" style="width: 170px;">
-                <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1"
-                  data-mdb-ripple-color="dark">
+                <button onclick="decreaseQuantity()" class="btn btn-white border border-secondary px-3" type="button"
+                  id="button-addon1" data-mdb-ripple-color="dark">
                   <i class="fas fa-minus"></i>
                 </button>
-                <input type="text" class="form-control text-center border border-secondary" placeholder="14"
-                  aria-label="Example text with button addon" aria-describedby="button-addon1" />
-                <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2"
-                  data-mdb-ripple-color="dark">
+                <input type="text" id="quantity-input" class="form-control text-center border border-secondary"
+                  value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
+                <button onclick="increaseQuantity()" class="btn btn-white border border-secondary px-3" type="button"
+                  id="button-addon2" data-mdb-ripple-color="dark">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
             </div>
           </div>
-          <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+          <a onclick="buy('{{productvalue._id}}')" class="btn btn-warning shadow-0"> Buy now </a>
           <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
           <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i
               class="me-1 fa fa-heart fa-lg"></i> Save </a>
@@ -314,8 +316,8 @@
                 </div>
               </div>
 
-             
-                 
+
+
             </div>
           </div>
         </div>
@@ -326,3 +328,31 @@
 <!-- Footer -->
 
 <!-- Footer -->
+
+
+
+<script>
+  function increaseQuantity() {
+    let quantityInput = document.getElementById('quantity-input');
+    let currentValue = parseInt(quantityInput.value);
+    quantityInput.value = currentValue + 1;
+
+  }
+  function decreaseQuantity() {
+    let quantityInput = document.getElementById('quantity-input');
+    let currentValue = parseInt(quantityInput.value);
+    if (currentValue > 1) {
+      quantityInput.value = currentValue - 1;
+    }
+  }
+
+  function buy(id) {
+    let quandity = document.getElementById('quantity-input')
+    console.log(quandity.value)
+    let size = document.getElementById('size')
+    console.log(size.value)
+    window.location.href = `/profile/cart?id=${id}&quandity=${quandity.value}&size=${size.value}`;
+  }
+
+
+</script>

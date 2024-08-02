@@ -1,0 +1,121 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Address Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="/assets/UserProfile/add.css">
+
+<div class="body">
+    <div class="container">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Details</a></li>
+                    <li><a href="/profile/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                    <li><a href="/profile/cart"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
+                    <li><a href="/profile/allorders"><i class="fa fa-file-text"></i>All Orders</a></li>
+                    <li><a href="/profile/editprofile"><i class="fas fa-edit"></i> Edit User Details</a></li>
+                    <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
+                    <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+                    <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="address-container">
+            <h2>Address</h2>
+            <div class="address-card" id="address1">
+                <p><strong>MARK MAGNUS</strong></p>
+                <p>Kolivery Village, Kalina, Santacruz East<br>Mumbai<br>Maharashtra 400098</p>
+                <p>Phone : +91 1234567890<br>Email : markmagnum@gmail.com</p>
+                <button class="select-btn" onclick="selectAddress('address1')">Select</button>
+                <button class="edit-btn" onclick="showEditForm('address1')"><i class="fas fa-edit"></i> Edit</button>
+            </div>
+            <div class="address-card" id="address2">
+                <p><strong>MAGNUS MARK</strong></p>
+                <p>Krishna Manon Lane Area<br>New Delhi<br>Delhi 110011</p>
+                <p>Phone : +91 9876543210<br>Email : magnusmark@gmail.com</p>
+                <button class="select-btn" onclick="selectAddress('address2')">Select</button>
+                <button class="edit-btn" onclick="showEditForm('address2')"><i class="fas fa-edit"></i> Edit</button>
+            </div>
+            <div class="edit-address" id="edit-form" style="display: none;">
+                <h3>Edit Address</h3>
+                <form id="editAddressForm">
+                    <input type="hidden" id="editAddressId">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state">
+                    <label for="zip">Zip Code:</label>
+                    <input type="text" id="zip" name="zip">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                    <button type="button" onclick="saveAddress()">Save</button>
+                </form>
+            </div>
+            <button class="add-address" onclick="showAddForm()">Add Address</button>
+        </div>
+    </div>
+
+</div>
+<script>
+    function selectAddress(id) {
+        const addressCards = document.querySelectorAll('.address-card');
+        addressCards.forEach(card => {
+            card.classList.remove('selected-address');
+        });
+        document.getElementById(id).classList.add('selected-address');
+    }
+
+    function showEditForm(id) {
+        const form = document.getElementById('edit-form');
+        const addressCard = document.getElementById(id);
+        const name = addressCard.querySelector('strong').textContent;
+        const address = addressCard.querySelectorAll('p')[1].textContent.split('\n')[0];
+        const city = addressCard.querySelectorAll('p')[1].textContent.split('\n')[1];
+        const stateZip = addressCard.querySelectorAll('p')[1].textContent.split('\n')[2];
+        const phone = addressCard.querySelectorAll('p')[2].textContent.split('\n')[0].split(' : ')[1];
+        const email = addressCard.querySelectorAll('p')[2].textContent.split('\n')[1].split(' : ')[1];
+
+        form.style.display = 'block';
+        document.getElementById('editAddressId').value = id;
+        document.getElementById('name').value = name;
+        document.getElementById('address').value = address;
+        document.getElementById('city').value = city;
+        document.getElementById('state').value = stateZip.split(' ')[0];
+        document.getElementById('zip').value = stateZip.split(' ')[1];
+        document.getElementById('phone').value = phone;
+        document.getElementById('email').value = email;
+    }
+
+    function showAddForm() {
+        const form = document.getElementById('edit-form');
+        form.style.display = 'block';
+        form.reset();
+    }
+
+    function saveAddress() {
+        const id = document.getElementById('editAddressId').value;
+        const name = document.getElementById('name').value;
+        const address = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const zip = document.getElementById('zip').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+
+        const addressCard = document.getElementById(id);
+        addressCard.querySelector('strong').textContent = name;
+        addressCard.querySelectorAll('p')[1].innerHTML = `${address}<br>${city}<br>${state} ${zip}`;
+        addressCard.querySelectorAll('p')[2].innerHTML = `Phone : ${phone}<br>Email : ${email}`;
+
+        document.getElementById('edit-form').style.display = 'none';
+    }
+
+</script>

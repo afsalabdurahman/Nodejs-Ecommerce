@@ -1,0 +1,141 @@
+.body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+header nav {
+    font-size: 14px;
+    color: #555;
+}
+
+header nav a {
+    text-decoration: none;
+    color: #555;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+header h1 {
+    margin: 10px 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.order-table thead {
+    background-color: #f3e6e6;
+}
+
+.order-table thead th {
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    text-align: left;
+}
+
+.order-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-table tbody td img {
+    width: 100px;
+    height: auto;
+    display: block;
+    margin-right: 10px;
+}
+
+.product-details {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 300px;
+}
+
+.product-details h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.product-details p {
+    margin: 5px 0 0;
+    color: #777;
+}
+
+.status {
+    margin: 5px 0;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.delivered {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.shipped {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+button {
+    display: block;
+    margin: 5px 0;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.download-button {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.return-button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.track-order-button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.cancel-order-button {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+button:hover {
+    opacity: 0.9;
+}

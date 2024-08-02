@@ -12,14 +12,11 @@ const session = require('express-session')
 const dbConnection = require('./config/dbConnect')
 var adminRouter = require('./route/adminRouter')
 require('./middleware/googleAuth')
-//const mail=require('./config/mailer');
+// var mailer = require('./config/mailer/mailer')
 
-//  mail().then  ((s)=>{
-//    console.log("Send seucce")
-//  }).catch((e)=>{
-//    console.log(e)
-//  })
-
+// mailer().then((r) => {
+//   console.log(r)
+// })
 //Google auth
 
 

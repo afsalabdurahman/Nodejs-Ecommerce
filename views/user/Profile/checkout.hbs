@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="/assets/UserProfile/checkout.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+<div class="body">
+    <div class="container">
+        <div class="checkout-header">
+            <h1>CHECKOUT</h1>
+        </div>
+        <div class="checkout-content">
+            <div class="address-section">
+                <h2>Select Address</h2>
+
+                <div class="address">
+                    <input type="radio" id="address2" name="address" value="address2">
+
+                    <label for="address2">
+                        <strong>{{userData.name}}</strong><br>
+                        {{userData.address}},{{userData.loction}}<br>
+                        Phone: +91 {{userData.mobile}}<br>
+                        Email: {{userData.email}}
+                    </label>
+                </div>
+
+                <div class="address">
+                    <input type="radio" id="address2" name="address" value="address2">
+                    <label for="address2">
+                        <strong>Manohar</strong><br>
+                        Kalipli Village, Kalina, Santacruz East, Mumbai, Maharashtra 400098<br>
+                        Phone: +91 1234567890<br>
+                        Email: mohog@gmail.com
+                    </label>
+                </div>
+                <div class="discount">
+                    <label for="discount-code">Discount Coupon</label>
+                    <input type="text" id="discount-code" name="discount-code">
+                    <button type="button">Apply</button>
+                </div>
+                <div class="total-price">
+                    <p>Total Price: ${{totalPrice}}</p>
+                    <p>Tax: $100.00</p>
+                    <p>Discount: $5.00</p>
+                    <p><strong>Grand Total: ${{totalPriceTax}}</strong></p>
+                </div>
+            </div>
+            <div class="payment-section" style="">
+                <h2>Payment Method</h2>
+                <div class="payment-method">
+                    <input type="radio" id="cod" name="payment" value="cod">
+                    <label for="cod">Cash on Delivery</label>
+                </div>
+                <div class="payment-method">
+                    <input type="radio" id="upi" name="payment" value="upi">
+                    <label for="upi">UPI</label>
+                </div>
+                <div class="payment-method">
+                    <input type="radio" id="internet-banking" name="payment" value="internet-banking">
+                    <label for="internet-banking">Internet Banking</label>
+                </div>
+                <div class="payment-method">
+                    <input type="radio" id="paypal" name="payment" value="paypal">
+                    <label for="paypal">Paypal</label>
+                </div>
+                <div class="terms">
+                    <input type="checkbox" id="terms" name="terms">
+                    <label for="terms">I accept the Terms and Conditions</label>
+                </div>
+                <button type="button" id="paymentButton" class="place-order">Place an Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{!-- popup--}}
+<div id="loadingPopup" class="loading-popup">
+    <div class="loading-content">
+        <p>Loading...</p>
+    </div>
+</div>
+{{!-- complted payment --}}
+<div id="completionPopup" class="completion-popup" style="background-color: greenyellow;">
+    <div class="completion-content">
+        <p>Payment is completed</p>
+        <a href="/profile/allorders">
+            <p style="font-size: medium;"> Show orders</p>
+        </a>
+        <a href="/"> <button id="closeButton" class="close-button">Close</button> </a>
+    </div>
+</div>
+<script>
+    document.getElementById('paymentButton').addEventListener('click', function () {
+        const loadingPopup = document.getElementById('loadingPopup');
+        const completionPopup = document.getElementById('completionPopup');
+
+        // Show loading popup
+        loadingPopup.classList.add('active');
+
+        setTimeout(function () {
+            // Hide loading popup
+            loadingPopup.classList.remove('active');
+
+            // Show completion popup
+            completionPopup.classList.add('active');
+
+            setTimeout(function () {
+                // Hide completion popup
+                completionPopup.classList.remove('active');
+            }, 20000); // 20 seconds
+        }, 2000); // Simulate loading for 2 seconds
+    });
+
+    document.getElementById('closeButton').addEventListener('click', function () {
+        const completionPopup = document.getElementById('completionPopup');
+        completionPopup.classList.remove('active');
+    });
+</script>
