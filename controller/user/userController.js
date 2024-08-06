@@ -157,27 +157,142 @@ const cart = (req, res) => {
 };
 
 // Men Product Page.................................
+
+//const products = async (req, res) => {
+
+// if (req.session.user_id) {
+//   if (req.query) {
+//     if (req.query.id == "lowprice") {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ Price: 1 }).lean()
+//       res.render("user/products.hbs", { products, user });
+//     } else if (req.query.id == "highprice") {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ price: -1 }).lean();
+//       res.render("user/products.hbs", { products, user });
+//     } else if (req.query.id == "Az") {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ name: 1 }).lean();
+//       res.render("user/products.hbs", { products, user });
+//     } else {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ _id: -1 }).lean();
+//       res.render("user/products.hbs", { products });
+//     }
+//   }
+// } else {
+//   if (req.query) {
+//     if (req.query.id == "lowprice") {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ Price: 1 }).lean()
+//       res.render("user/products.hbs", { products });
+//     } else if (req.query.id == "highprice") {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ price: -1 }).lean();
+//       res.render("user/products.hbs", { products });
+//     } else if (req.query.id == "Az") {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ name: 1 }).lean();
+//       res.render("user/products.hbs", { products });
+//     } else {
+//       const products = await Product.find({
+//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//       }).sort({ _id: -1 }).lean();
+//       res.render("user/products.hbs", { products });
+//     }
+//   }
+// }
+
+
+
+// try {
+//   console.log(req.query.id)
+//   if (req.query.id == "lowprice") {
+
+
+//     const products = await Product.find({
+//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//     }).sort({ price: 1 }).lean();
+//     res.render("user/products.hbs", { products });
+//   }
+//   else if (req.query.id == "highprice") {
+//     const products = await Product.find({
+//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//     }).sort({ price: -1 }).lean();
+//     res.render("user/products.hbs", { products });
+
+//   }
+//   else if (req.query.id == "Az") {
+//     const products = await Product.find({
+//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//     }).sort({ name: 1 }).lean();
+//     res.render("user/products.hbs", { products });
+
+//   }
+
+//   else {
+
+//     const products = await Product.find({
+//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+//     }).sort({ _id: -1 }).lean();
+//     res.render("user/products.hbs", { products });
+//   }
+
+
+//   if (req.session.user_id) {
+//     user = req.session.user_id;
+//     let GotoCart = await UserCart.find({ UserId: user }).populate("ProductId").lean()
+
+
+
+//     res.render("user/products.hbs", { user, products, GotoCart });
+
+//   } else {
+//     res.render("user/products.hbs", { products });
+//   }
+
+// } catch (error) {
+//   console.log(error)
+// }
+
+//};
+const getSortedProducts = async (sortCriteria) => {
+  const sortOptions = {
+    lowprice: { price: 1 },
+    highprice: { price: -1 },
+    Az: { name: 1 },
+  };
+  const sortOption = sortOptions[sortCriteria] || { _id: -1 };
+
+  return await Product.find({
+    $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
+  }).sort(sortOption).lean();
+};
+
 const products = async (req, res) => {
-  try {
-    const products = await Product.find({
-      $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-    }).lean();
+  if (req.query) {
+    const products = await getSortedProducts(req.query.id);
+    const renderOptions = { products };
+    renderOptions.value = req.query.id
+
+    console.log(renderOptions, "products")
     if (req.session.user_id) {
-      user = req.session.user_id;
-      let GotoCart = await UserCart.find({ UserId: user }).populate("ProductId").lean()
-
-
-
-      res.render("user/products.hbs", { user, products, GotoCart });
-    } else {
-      res.render("user/products.hbs", { products });
+      renderOptions.user = user;
+      renderOptions.value = req.query.id
+      console.log(renderOptions, "from user")
     }
 
-  } catch (error) {
-    console.log(error)
+    res.render("user/products.hbs", renderOptions);
   }
-
 };
+
 
 // Womens Product Page...................................
 const Womens = async (req, res) => {
@@ -322,16 +437,17 @@ const EditProfile = async (req, res) => {
 }
 const Posteditprofile = async (req, res) => {
 
-  console.log(req.body, "body", req.files, "files")
+  console.log(req.body.fullname, "body", req.files, "files")
   const usernew = await User_schema.findByIdAndUpdate({ _id: req.session.user_id }, {
     $set: {
-      name: req.body.name,
-      email: req.body.emial,
+      name: req.body.fullname,
+      email: req.body.email,
       mobile: req.body.mobile,
       gender: req.body.dob,
       location: req.body.location,
       address: req.body.address,
       dob: req.body.dob
+
 
     },
 
@@ -349,12 +465,14 @@ const WishList = (req, res) => {
 }
 const Cart = async (req, res) => {
   try {
-    console.log(req.query.id)
-    console.log(req.query.size, "size")
+    console.log(req.query.id, "iddddddd")
+    console.log(req.query.price, "pricezzz")
+    let Amount = req.query.price * req.query.quandity
+    console.log(Amount, "amtttt")
     user = req.session.user_id
     if (req.session.user_id && req.query.id) {
       console.log(true, "trueeee")
-      let Product_in_Cart = await UserCart.findOne({ $and: [{ ProductId: req.query.id }, { UserId: req.session.user_id }] })
+      let Product_in_Cart = await UserCart.findOne({ $and: [{ ProductId: req.query.id }, { UserId: req.session.user_id }, { orderStatus: "Pending" }] })
       console.log(Product_in_Cart, "incart")
       if (Product_in_Cart == null) {
 
@@ -363,17 +481,18 @@ const Cart = async (req, res) => {
           UserId: req.session.user_id,
           size: req.query.size,
           quandity: req.query.quandity,
+          TotalAmount: Amount,
         })
         const insertedData = await Insert_into_Cart.save();
-        let Datas = await UserCart.find({ UserId: req.session.user_id })
+        let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
           .populate('ProductId')
           .lean()
-        const totalPrice = Datas.reduce((sum, product) => sum + product.ProductId.price, 0);
+        const totalPrice = Datas.reduce((sum, product) => sum + product.TotalAmount, 0);
         req.session.totalPrice = totalPrice
         console.log("Total Price:", totalPrice);
         res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice })
       } else {
-        let Datas = await UserCart.find({ UserId: req.session.user_id })
+        let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
           .populate('ProductId')
           .lean()
         console.log(Datas, "BbbbDtassa")
@@ -385,7 +504,7 @@ const Cart = async (req, res) => {
       }
 
     } else if (req.session.user_id) {
-      let Datas = await UserCart.find({ UserId: req.session.user_id })
+      let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
         .populate('ProductId')
         .lean()
       console.log(Datas, "BbbbDtassa")
@@ -407,8 +526,53 @@ const Cart = async (req, res) => {
 
 
 }
-const Address = (req, res) => {
-  res.render('user/Profile/add.hbs', { user: true })
+const Address = async (req, res) => {
+  try {
+    if (req.session.user_id) {
+      user = req.session.user_id
+      let add = await User_schema.findById({ _id: req.session.user_id }).lean()
+      console.log(add, "adddddd")
+
+      res.render('user/Profile/add.hbs', { user, add })
+    } else {
+      res.send("user not found")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+const NewAddress = async (req, res) => {
+  try {
+    const usernew = await User_schema.findByIdAndUpdate(
+      req.session.user_id,  // Directly use the user ID
+      {
+        $set: {
+          'address2': {  // Set the entire address2 object
+            name: req.body.name,
+            state: req.body.state,
+            phone: req.body.phone,
+            city: req.body.city,
+            zip: req.body.zip,
+            address: req.body.address,
+            email: req.body.email
+          }
+        }
+      },
+      { new: true, upsert: true }  // Return the updated document and upsert if it doesn't exist
+    ).lean();
+
+    console.log(usernew);
+
+
+    console.log(usernew, "update addd")
+
+    res.redirect("/profile/address")
+
+
+  } catch (error) {
+    console.log(error)
+  }
 }
 const changePsw = (req, res) => {
   res.render('user/Profile/changePsw.hbs', { user: true })
@@ -432,6 +596,7 @@ const Checkout = async (req, res) => {
 }
 const AllOrders = async (req, res) => {
   try {
+    console.log(req.query, "alllorders query")
     user = req.session.user_id
     if (user) {
       Data = await UserCart.find({ $and: [{ UserId: user }, { orderStatus: "Processing" }] }).populate("ProductId").lean()
@@ -506,11 +671,85 @@ const ProductUserWishlist = async (req, res) => {
 }
 
 
+const ForgetPsw = (req, res) => {
+  res.render('user/Profile/forgetpsw.hbs')
+}
+const postforgetPsw = async (req, res) => {
+  try {
+    email = req.body.email
+    existMail = await User_schema.findOne({ email: email });
+    if (existMail) {
+      req.session.email = email
+      otp = await generateOtp();
+      req.session.otp = otp;
+      console.log(otp);
+
+      res.render("user/restOtp.hbs");
+    } else {
+      res.send("Kindly register ")
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+
+  console.log(req.body)
+}
+const Newpassword = async (req, res) => {
+  try {
+    fullOtp = req.body.one + req.body.two + req.body.three + req.body.four;
+    console.log(fullOtp, "OTP")
+    console.log(req.session.email, "emsilssssssss")
+    if (req.session.otp == fullOtp) {
+      res.render('user/Profile/forgetpsw1.hbs')
+    } else {
+      "wrong otp"
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const Updatepsw = async (req, res) => {
+  try {
+    const password = req.body.password;
+    existMail = await User_schema.findOne({ email: email });
+    console.log(password, "passwordssss", existMail)
+    if (existMail) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      const updateNewPassword = await User_schema.updateOne(
+        { email: email },
+        {
+          $set: { password: passwordHash }
+        }
+      );
+      console.log(updateNewPassword)
+      res.redirect("/login")
+    } else {
+      res.send("no user")
+    }
 
 
+  } catch (error) {
+    console.log(error)
+
+  }
+}
 
 
+const DeleteProfile = async (req, res) => {
+  user = req.session.user_id
+  const userData = await User_schema.updateMany({ _id: user }, { $unset: { address2: 1 } })
+  console.log("eorking")
+  res.redirect("/profile/address")
+}
 module.exports = {
+  DeleteProfile,
+  ForgetPsw,
+  NewAddress,
+  Updatepsw,
+  Newpassword,
+  postforgetPsw,
   loadHome,
   login,
   register,

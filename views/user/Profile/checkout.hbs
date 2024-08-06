@@ -12,7 +12,7 @@
                 <h2>Select Address</h2>
 
                 <div class="address">
-                    <input type="radio" id="address2" name="address" value="address2">
+                    <input type="radio" id="address1" onclick="check(this.id)" name="address" value="address2">
 
                     <label for="address2">
                         <strong>{{userData.name}}</strong><br>
@@ -23,12 +23,12 @@
                 </div>
 
                 <div class="address">
-                    <input type="radio" id="address2" name="address" value="address2">
+                    <input type="radio" id="address2" onclick="check(this.id)" name="address" value="address2">
                     <label for="address2">
-                        <strong>Manohar</strong><br>
-                        Kalipli Village, Kalina, Santacruz East, Mumbai, Maharashtra 400098<br>
-                        Phone: +91 1234567890<br>
-                        Email: mohog@gmail.com
+                        <strong>{{userData.address2.name}}</strong><br>
+                        {{userData.address2.address}},{{userData.address2.state}},{{userData.address2.city}},{{userData.address2.zop}}<br>
+                        Phone: +91 {{userData.address2.phone}}<br>
+                        Email: {{userData.address2.email}}
                     </label>
                 </div>
                 <div class="discount">
@@ -79,14 +79,14 @@
 {{!-- complted payment --}}
 <div id="completionPopup" class="completion-popup" style="background-color: greenyellow;">
     <div class="completion-content">
-        <p>Payment is completed</p>
-        <a href="/profile/allorders">
-            <p style="font-size: medium;"> Show orders</p>
+        <p>Sucess! Order is placed</p>
+        <p style="font-size: medium;" onclick="showOrder()"> Show orders</p>
         </a>
         <a href="/"> <button id="closeButton" class="close-button">Close</button> </a>
     </div>
 </div>
 <script>
+    var Data = "";
     document.getElementById('paymentButton').addEventListener('click', function () {
         const loadingPopup = document.getElementById('loadingPopup');
         const completionPopup = document.getElementById('completionPopup');
@@ -112,4 +112,13 @@
         const completionPopup = document.getElementById('completionPopup');
         completionPopup.classList.remove('active');
     });
+
+    function check(data1) {
+        Data = data1;
+        console.log(data1, "vallllll from radioo")
+    }
+    function showOrder() {
+        console.log(Data, "from show order")
+        window.location.href = `/profile/allorders?id=${Data}`;
+    }
 </script>

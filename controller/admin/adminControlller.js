@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../../model/userModel");
 const Product = require("../../model/productModel");
 const { products } = require("../user/userController");
-
+const UserCart = require("../../model/cartModel");
 //Admin Login Page.......................
 const loadAdminLogin = async (req, res) => {
   try {
@@ -77,7 +77,7 @@ const blockUser = async (req, res) => {
           },
         }
       );
-      
+
     } else {
       const userData = await User.updateOne(
         { _id: id },
@@ -95,7 +95,22 @@ const blockUser = async (req, res) => {
   }
 };
 
+const Orders = async (req, res) => {
+  try {
+
+    Data = await UserCart.find({ orderStatus: "Processing" }).populate("ProductId").lean()
+    console.log(Data, "dats")
+    res.render("admin/Orders.hbs", { Data })
+
+  } catch (error) {
+    console.log(error)
+  }
+
+
+}
+
 module.exports = {
+  Orders,
   loadAdminLogin,
   blockUser,
   verifyadminLogin,

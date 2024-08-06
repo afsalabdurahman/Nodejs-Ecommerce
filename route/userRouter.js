@@ -42,10 +42,21 @@ UserRouter.post('/profile/posteditprofile', userController.Posteditprofile)
 UserRouter.get('/profile/wishlist', userController.WishList)
 UserRouter.get('/profile/cart', userController.Cart)
 UserRouter.get('/profile/address', userController.Address)
+
+UserRouter.post('/profile/newadd', userController.NewAddress)
+
 UserRouter.get('/profile/changepsw', userController.changePsw)
 UserRouter.get('/profile/checkout', userController.Checkout)
-UserRouter.get('/profile/allorders',Paymentstatus.Checkstatus, userController.AllOrders)
+UserRouter.get('/profile/allorders', Paymentstatus.Checkstatus, userController.AllOrders)
 UserRouter.get('/profile/deletecart', userController.DeleteCart)
+UserRouter.get('/forgetpsw', userController.ForgetPsw)
+UserRouter.post('/postforgetpsw', userController.postforgetPsw)
+UserRouter.post('/postnewpsw', userController.Newpassword)
+UserRouter.post('/updatepsw', userController.Updatepsw)
+UserRouter.get('/profile/delete', userController.DeleteProfile)
+//sorting.....
+UserRouter.get("/new-arrival", userController.products);
+
 
 // UserRouter.get('/profiles', (req, res) => {
 //   console.log(req.body)

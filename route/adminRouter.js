@@ -62,5 +62,9 @@ adminRoute.get("/unlist", adminAuth.isLogin, categoryController.unlistCategory);
 //User Management
 adminRoute.get("/listuser", adminAuth.isLogin, adminController.listUser);
 adminRoute.get("/block", adminAuth.isLogin, adminController.blockUser);
+adminRoute.get("/orders",adminAuth.isLogin, adminController.Orders)
+
+
+
 
 module.exports = adminRoute;

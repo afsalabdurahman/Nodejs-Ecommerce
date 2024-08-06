@@ -141,8 +141,9 @@
 
         <div class="profile-container">
             <h2>Edit Profile Details</h2>
+
             <form action="/profile/posteditprofile" class="profile-form" method="post"
-                enctype="application/x-www-form-urlencoded">
+                enctype="application/x-www-form-urlencoded" onsubmit="return validateForm()">
                 <div class="image-upload">
                     <label for="profile-image-upload">
                         <img src="/pictures/men/user.webp" alt="Profile Image" class="profile-image"
@@ -153,9 +154,9 @@
                 </div>
 
                 <label for="full-name">Full Name</label>
-                <input type="text" id="full-name" name="fullname" value="{{user.name}}" required>
-
-                <label for="email">Email ID</label>
+                <input type="text" id="full-name" name="fullname" value="{{user.name}}" onblur="checkname()" required>
+                <p id="change" style="color: red;"></p>
+                <label for=" email">Email ID</label>
                 <input type="email" id="email" name="email" value="{{user.email}}" required>
 
                 <label for="mobile">Mobile</label>
@@ -186,6 +187,30 @@
                 output.src = reader.result;
             }
             reader.readAsDataURL(event.target.files[0]);
+        }
+        function checkname() {
+            let name = document.getElementById("full-name")
+            console.log(name.value, "value")
+            if (name.value.trim() === "") {
+                document.getElementById("change").innerHTML = "Enter your name"
+                name.innerHTML = "plaese enter"
+            } else {
+                document.getElementById("change").innerHTML = ""
+
+
+            }
+            if (document.getElementById("change").innerHTML == "") {
+                return true
+            } else {
+                return false
+            }
+
+        }
+
+        function validateForm() {
+            return checkname()
+
+
         }
     </script>
 </div>

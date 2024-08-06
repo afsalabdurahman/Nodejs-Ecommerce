@@ -25,22 +25,32 @@
         <div class="address-container">
             <h2>Address</h2>
             <div class="address-card" id="address1">
-                <p><strong>MARK MAGNUS</strong></p>
-                <p>Kolivery Village, Kalina, Santacruz East<br>Mumbai<br>Maharashtra 400098</p>
-                <p>Phone : +91 1234567890<br>Email : markmagnum@gmail.com</p>
-                <button class="select-btn" onclick="selectAddress('address1')">Select</button>
-                <button class="edit-btn" onclick="showEditForm('address1')"><i class="fas fa-edit"></i> Edit</button>
+                <p style="background-color: red;">This is Permanant Address</p>
+                <p><strong>{{add.name}}</strong></p>
+                <p>{{add.adress}}<br>{{add.location}}<br>karuvanthoor 400098</p>
+                <p>Phone : +91 {{add.mobile}}<br>Email : {{add.email}}</p>
+
+                <button class="edit-btn" onclick="showAddForm1()"><i class="fas fa-edit"></i> Edit</button>
             </div>
-            <div class="address-card" id="address2">
-                <p><strong>MAGNUS MARK</strong></p>
-                <p>Krishna Manon Lane Area<br>New Delhi<br>Delhi 110011</p>
-                <p>Phone : +91 9876543210<br>Email : magnusmark@gmail.com</p>
-                <button class="select-btn" onclick="selectAddress('address2')">Select</button>
-                <button class="edit-btn" onclick="showEditForm('address2')"><i class="fas fa-edit"></i> Edit</button>
+            <br>
+            {{#if add.address2 }}
+            <div class="address-card" id="address1">
+                <p><strong>{{add.address2.name}}</strong></p>
+                <p>{{add.adress2.address}}<br>{{add.address2.city}}<br>karuvanthoor 400098</p>
+                <p>Phone : +91 {{add.address2.phone}}<br>Email : {{add.address2.email}}</p>
+                <button class="select-btn" onclick="Deleteadd()">Delete</button>
+                <button class="edit-btn" onclick="showAddForm()"><i class="fas fa-edit"></i> Edit</button>
             </div>
+            {{else}}
+            <button class="" onclick="showAddForm()"><i class="fas fa-edit"></i> Add Address</button>
+            {{/if}}
             <div class="edit-address" id="edit-form" style="display: none;">
+                {{#if add.address2 }}
                 <h3>Edit Address</h3>
-                <form id="editAddressForm">
+                {{else}}
+                <h3>Add new Address</h3>
+                {{/if}}
+                <form action="/profile/newadd" method="post" enctype="application/x-www-form-urlencoded">
                     <input type="hidden" id="editAddressId">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name">
@@ -56,66 +66,27 @@
                     <input type="text" id="phone" name="phone">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email">
-                    <button type="button" onclick="saveAddress()">Save</button>
+                    <button type="submit">Save</button>
                 </form>
             </div>
-            <button class="add-address" onclick="showAddForm()">Add Address</button>
+
         </div>
     </div>
 
 </div>
 <script>
-    function selectAddress(id) {
-        const addressCards = document.querySelectorAll('.address-card');
-        addressCards.forEach(card => {
-            card.classList.remove('selected-address');
-        });
-        document.getElementById(id).classList.add('selected-address');
-    }
 
-    function showEditForm(id) {
-        const form = document.getElementById('edit-form');
-        const addressCard = document.getElementById(id);
-        const name = addressCard.querySelector('strong').textContent;
-        const address = addressCard.querySelectorAll('p')[1].textContent.split('\n')[0];
-        const city = addressCard.querySelectorAll('p')[1].textContent.split('\n')[1];
-        const stateZip = addressCard.querySelectorAll('p')[1].textContent.split('\n')[2];
-        const phone = addressCard.querySelectorAll('p')[2].textContent.split('\n')[0].split(' : ')[1];
-        const email = addressCard.querySelectorAll('p')[2].textContent.split('\n')[1].split(' : ')[1];
 
-        form.style.display = 'block';
-        document.getElementById('editAddressId').value = id;
-        document.getElementById('name').value = name;
-        document.getElementById('address').value = address;
-        document.getElementById('city').value = city;
-        document.getElementById('state').value = stateZip.split(' ')[0];
-        document.getElementById('zip').value = stateZip.split(' ')[1];
-        document.getElementById('phone').value = phone;
-        document.getElementById('email').value = email;
-    }
+
 
     function showAddForm() {
         const form = document.getElementById('edit-form');
         form.style.display = 'block';
-        form.reset();
+
+    }
+    function Deleteadd() {
+        window.location.href = "/profile/delete";
     }
 
-    function saveAddress() {
-        const id = document.getElementById('editAddressId').value;
-        const name = document.getElementById('name').value;
-        const address = document.getElementById('address').value;
-        const city = document.getElementById('city').value;
-        const state = document.getElementById('state').value;
-        const zip = document.getElementById('zip').value;
-        const phone = document.getElementById('phone').value;
-        const email = document.getElementById('email').value;
-
-        const addressCard = document.getElementById(id);
-        addressCard.querySelector('strong').textContent = name;
-        addressCard.querySelectorAll('p')[1].innerHTML = `${address}<br>${city}<br>${state} ${zip}`;
-        addressCard.querySelectorAll('p')[2].innerHTML = `Phone : ${phone}<br>Email : ${email}`;
-
-        document.getElementById('edit-form').style.display = 'none';
-    }
 
 </script>

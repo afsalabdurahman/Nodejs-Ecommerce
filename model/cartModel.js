@@ -29,10 +29,12 @@ const Cart = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    address:{
-        type:String
+    address: {
+        type: String
+    },
+    TotalAmount: {
+        type: Number,
     }
-
 
 })
 module.exports = mongoose.model("Cart", Cart)

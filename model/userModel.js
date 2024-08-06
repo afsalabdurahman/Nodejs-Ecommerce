@@ -47,6 +47,12 @@ const User_schema = mongoose.Schema({
     },
     dob: {
         type: String
+    },
+    address2: {
+        type: Object,
+
+
+
     }
 })
 module.exports = mongoose.model("User", User_schema)

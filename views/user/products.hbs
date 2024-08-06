@@ -7,13 +7,19 @@
   <div class="container my-5">
     <header class="mb-4">
       <h3>Men's Collections</h3>
+
+
     </header>
     {{!-- filter.............................. --}}
     <div class="filter">
       <div class="dropdown-container">
         <label for="sort-options">Sort By:</label>
         <select id="sort-options" class="dropdown">
+          {{#if value}}
+          <option value="new">{{value}}</option>
+          {{else}}
           <option value="new-arrival">New Arrival</option>
+          {{/if}}
           <option value="low-price">Low Price</option>
           <option value="high-price">High Price</option>
           <option value="a-z">A-Z</option>
@@ -26,8 +32,6 @@
       {{!-- dynamic Data--}}
       {{#if products}}
       {{#each products}}
-
-
 
       <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card px-4 border shadow-0">
@@ -92,24 +96,46 @@
 
 
 
+  document.getElementById('sort-options').addEventListener('change', function () {
+    const selectedValue = this.value;
+
+    if (selectedValue === 'new-arrival') {
+      // Scroll to the New Arrival section and redirect
+      window.scrollTo(0, 500); // Adjust the value to the position of your section
+      window.location.href = `products?id${"newarrival"}`; // Replace with your URL
+    } else if (selectedValue === 'low-price') {
+      // Scroll to the Low Price section and redirect
+      window.scrollTo(0, 1000); // Adjust the value to the position of your section
+      window.location.href = `products?id=${"lowprice"}`; // Replace with your URL
+    } else if (selectedValue === 'high-price') {
+      // Scroll to the High Price section and redirect
+      window.scrollTo(0, 1500); // Adjust the value to the position of your section
+      window.location.href = `products?id=${"highprice"}`; // Replace with your URL
+    } else if (selectedValue === 'a-z') {
+      // Scroll to the A-Z section and redirect
+      window.scrollTo(0, 2000); // Adjust the value to the position of your section
+      window.location.href = `products?id=${"Az"}`; // Replace with your URL
+    }
+  });
 
 
 
 
 
 
-  //  $(document).ready(function () {
-  //    $('#{{ _id }}').click(function () {
+
+  // $(document).ready(function () {
+  // $('#{{ _id }}').click(function () {
   //
-  //      $.post("/profiles",
-  //        {
-  //          name: "",
-  //          designation: "Professional gamer"
-  //        },
-  //        function (data, status) {
-  //          console.log(data);
-  //        });
-  //    });
-  //  });
+  // $.post("/profiles",
+  // {
+  // name: "",
+  // designation: "Professional gamer"
+  // },
+  // function (data, status) {
+  // console.log(data);
+  // });
+  // });
+  // });
   //
 //</script>

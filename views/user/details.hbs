@@ -97,7 +97,7 @@
           </div>
 
           <div class="mb-3">
-            <span class="h5">${{productvalue.price}}.00</span>
+            <span class="h5" id="price">${{productvalue.price}}.00</span>
             <span class="text-muted">/per box</span>
           </div>
 
@@ -332,6 +332,8 @@
 
 
 <script>
+
+
   function increaseQuantity() {
     let quantityInput = document.getElementById('quantity-input');
     let currentValue = parseInt(quantityInput.value);
@@ -350,8 +352,14 @@
     let quandity = document.getElementById('quantity-input')
     console.log(quandity.value)
     let size = document.getElementById('size')
-    console.log(size.value)
-    window.location.href = `/profile/cart?id=${id}&quandity=${quandity.value}&size=${size.value}`;
+
+    let price = document.getElementById('price')
+    price = price.innerHTML.split("")
+    price.splice(0, 1)
+    price = Number(price.join(''))
+
+
+    window.location.href = `/profile/cart?id=${id}&quandity=${quandity.value}&size=${size.value}&price=${price}`;
   }
 
 
