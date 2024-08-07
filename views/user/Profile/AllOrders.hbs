@@ -33,14 +33,16 @@
                             <p>{{ProductId.description}}</p>
                         </div>
                     </td>
-                    <td>${{ProductId.price}}</td>
+                    <td>Rs{{ProductId.price}}</td>
                     <td>{{this.address}}</td>
                     <td>{{quandity}}</td>
-                    <td>${{ProductId.price}}</td>
+                    <td>Rs{{ProductId.price}}</td>
                     <td>
                         <p class="status shipped">{{this.Date}}</p>
+                        
                         <button class="track-order-button">Track Order</button>
-                        <button class="cancel-order-button">Cancel Order</button>
+                        <a href='/cart/cancelorder?id={{this._id}}'><button class="cancel-order-button">Cancel
+                                Order</button></a>
                     </td>
                 </tr>
                 {{/each}}

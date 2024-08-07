@@ -57,6 +57,9 @@ UserRouter.get('/profile/delete', userController.DeleteProfile)
 //sorting.....
 UserRouter.get("/new-arrival", userController.products);
 
+//Cart............
+UserRouter.get("/cart/cancelorder", userController.CancelOrder)
+
 
 // UserRouter.get('/profiles', (req, res) => {
 //   console.log(req.body)

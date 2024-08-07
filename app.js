@@ -37,13 +37,17 @@ app.use(express.urlencoded({ extended: true }));
 // view engine set up...............................
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+/// custom hbs
 
-app.engine('hbs', hbs.engine({
-  extname: 'hbs',
-  defaultLayout: 'layout',
-  layoutsDir: path.join(__dirname + '/views/layout/'),
-  partialsDir: __dirname + '/views/partials'
-}))
+
+
+
+  app.engine('hbs', hbs.engine({
+    extname: 'hbs',
+    defaultLayout: 'layout',
+    layoutsDir: path.join(__dirname + '/views/layout/'),
+    partialsDir: __dirname + '/views/partials'
+  }))
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());

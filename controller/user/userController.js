@@ -263,24 +263,39 @@ const cart = (req, res) => {
 // }
 
 //};
-const getSortedProducts = async (sortCriteria) => {
+const getSortedProducts = async (sortCriteria, pageno) => {
   const sortOptions = {
     lowprice: { price: 1 },
     highprice: { price: -1 },
     Az: { name: 1 },
   };
+  const perPage = 8
+  const pages = pageno || 1
   const sortOption = sortOptions[sortCriteria] || { _id: -1 };
-
+  console.log(pageno, perPage, "page no ,perpage")
   return await Product.find({
     $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-  }).sort(sortOption).lean();
+  }).skip((pages - 1) * perPage).limit(perPage).sort(sortOption).lean();
 };
 
 const products = async (req, res) => {
   if (req.query) {
-    const products = await getSortedProducts(req.query.id);
+    console.log(req.query.pageNo, "qury")
+    let pageNumber = Number(req.query.pageNo)
+    console.log(pageNumber, "page number")
+
+
+    const docCount = await Product.countDocuments({
+      $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }]
+    });
+
+
+
+
+    const products = await getSortedProducts(req.query.id, pageNumber);
     const renderOptions = { products };
     renderOptions.value = req.query.id
+    renderOptions.count=docCount
 
     console.log(renderOptions, "products")
     if (req.session.user_id) {
@@ -599,7 +614,12 @@ const AllOrders = async (req, res) => {
     console.log(req.query, "alllorders query")
     user = req.session.user_id
     if (user) {
-      Data = await UserCart.find({ $and: [{ UserId: user }, { orderStatus: "Processing" }] }).populate("ProductId").lean()
+      const Data = await UserCart.find({
+        $and: [
+          { UserId: user },
+          { orderStatus: { $in: ["Processing", "Cancelled"] } }
+        ]
+      }).populate("ProductId").lean();
       console.log(Data, "datass from checkout")
       Data1 = await User_schema.findById({ _id: user }).lean()
       console.log(Data1, "data")
@@ -743,7 +763,28 @@ const DeleteProfile = async (req, res) => {
   console.log("eorking")
   res.redirect("/profile/address")
 }
+
+const CancelOrder = async (req, res) => {
+
+  try {
+    console.log(req.query.id, "qury id from cart")
+    const Data = await UserCart.updateOne({ _id: req.query.id }, {
+      $set: {
+        orderStatus: 'Cancelled',
+        Date: new Date(),
+      }
+    }, { upsert: true })
+
+    res.redirect('/profile/allorders')
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
 module.exports = {
+  CancelOrder,
   DeleteProfile,
   ForgetPsw,
   NewAddress,
