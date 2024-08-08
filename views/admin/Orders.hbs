@@ -94,50 +94,23 @@
                 </tr>
             </thead>
             <tbody>
+                {{#each Data}}
                 <tr>
                     <td>OrderID#1006</td>
-                    <td>revathi</td>
-                    <td>revathi@gmail.com</td>
-                    <td>men's shirt</td>
-                    <td>₹2400.00</td>
+                    <td>{{user.name}}</td>
+                    <td>{{this.email}}</td>
+                    <td>{{ProductId.name}}</td>
+                    <td>₹{{ProductId.price}}</td>
+                    {{#ifEquals orderStatus "Cancelled"}}
+                    <td><span style="color: red;" class="status ">Order Cancelled</span></td>
+                    {{else}}
                     <td><span class="status placed">Order Placed</span></td>
-                    <td><span class="status paid">Paid</span></td>
-                    <td>Aug 2, 2024, 11:26:06 PM</td>
-                    <td><button class="detail-btn">Detail</button></td>
+                    {{/ifEquals}}
+                    <td><span class="status paid">COD</span></td>
+                    <td>{{Date}}</td>
+                    <td><a href="/admin/orderdetails?id={{_id}}"><button class="detail-btn">Detail</button></td></a>
                 </tr>
-                <tr>
-                    <td>OrderID#1006</td>
-                    <td>revathi</td>
-                    <td>revathi@gmail.com</td>
-                    <td>men's pants</td>
-                    <td>₹2000.00</td>
-                    <td><span class="status placed">Order Placed</span></td>
-                    <td><span class="status paid">Paid</span></td>
-                    <td>Aug 2, 2024, 11:26:04 PM</td>
-                    <td><button class="detail-btn">Detail</button></td>
-                </tr>
-                <tr>
-                    <td>OrderID#1005</td>
-                    <td>revathi</td>
-                    <td>revathi@gmail.com</td>
-                    <td>men's shirt</td>
-                    <td>₹2400.00</td>
-                    <td><span class="status placed">Order Placed</span></td>
-                    <td><span class="status paid">Paid</span></td>
-                    <td>Aug 2, 2024, 11:23:38 PM</td>
-                    <td><button class="detail-btn">Detail</button></td>
-                </tr>
-                <tr>
-                    <td>OrderID#1004</td>
-                    <td>rajith</td>
-                    <td>rajith@gmail.com</td>
-                    <td>men's pants</td>
-                    <td>₹2000.00</td>
-                    <td><span class="status placed">Order Placed</span></td>
-                    <td><span class="status paid">Paid</span></td>
-                    <td>Aug 2, 2024, 04:12:54 PM</td>
-                    <td><button class="detail-btn">Detail</button></td>
-                </tr>
+                {{/each}}
             </tbody>
         </table>
     </div>

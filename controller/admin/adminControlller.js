@@ -1,8 +1,12 @@
 const bcrypt = require("bcrypt");
 const User = require("../../model/userModel");
+const User_schema = require("../../model/userModel");
 const Product = require("../../model/productModel");
 const { products } = require("../user/userController");
 const UserCart = require("../../model/cartModel");
+const { ObjectId } = require('mongoose').Types;
+const mongo = require('mongoose')
+mongo.set('strictPopulate', false);
 //Admin Login Page.......................
 const loadAdminLogin = async (req, res) => {
   try {
@@ -21,6 +25,7 @@ const verifyadminLogin = async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, adminData.password);
       if (passwordMatch && adminData.isAdmin === 1) {
         req.session.admin_id = adminData._id;
+        console.log(req.session.admin_id, "admin")
         res.redirect("admin/home");
       } else {
         res.render("admin/login.hbs", {
@@ -46,7 +51,7 @@ const adminLogout = async (req, res) => {
 const loadHome = async (req, res) => {
   try {
     const adminData = await User.findById(req.session.admin_id);
-    console.log(req.session, "kkkk");
+    console.log(req.session.admin_id, "loadHome");
     if (adminData) {
       res.render("admin/adminHome.hbs", { admin: adminData });
     } else {
@@ -97,10 +102,14 @@ const blockUser = async (req, res) => {
 
 const Orders = async (req, res) => {
   try {
+    console.log(req.session.admin_id, "Orders admin")
 
-    Data = await UserCart.find({ orderStatus: "Processing" }).populate("ProductId").lean()
-    console.log(Data, "dats")
-    res.render("admin/Orders.hbs", { Data })
+
+    let Data = await UserCart.find({ orderStatus: { $in: ["Processing", "Cancelled"] } }).populate("ProductId").lean()
+    // let userData = await User.findById(new ObjectId('66977111bb6bfb89608e910a')).lean();
+    // Data.user = userData;
+    console.log(":data:Data", Data)
+    res.render("admin/Orders.hbs", { Data, admin: true })
 
   } catch (error) {
     console.log(error)
@@ -109,7 +118,16 @@ const Orders = async (req, res) => {
 
 }
 
+const OrderDetails = async (req, res) => {
+  console.log(req.query.id, "isss")
+  const usercart = await UserCart.findById(req.query.id).lean()
+  console.group(usercart)
+  res.render('admin/OrderDetails.hbs', { admin: true, })
+}
+
+
 module.exports = {
+  OrderDetails,
   Orders,
   loadAdminLogin,
   blockUser,

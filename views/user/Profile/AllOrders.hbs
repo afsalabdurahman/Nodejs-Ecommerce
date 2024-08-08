@@ -36,13 +36,18 @@
                     <td>Rs{{ProductId.price}}</td>
                     <td>{{this.address}}</td>
                     <td>{{quandity}}</td>
-                    <td>Rs{{ProductId.price}}</td>
+                    <td>Rs{{TotalAmount}}</td>
                     <td>
                         <p class="status shipped">{{this.Date}}</p>
-                        
+                        {{#ifEquals orderStatus "Cancelled"}}
+                        <p>cancelled</p>
+                        {{else}}
+
+
                         <button class="track-order-button">Track Order</button>
                         <a href='/cart/cancelorder?id={{this._id}}'><button class="cancel-order-button">Cancel
                                 Order</button></a>
+                        {{/ifEquals}}
                     </td>
                 </tr>
                 {{/each}}

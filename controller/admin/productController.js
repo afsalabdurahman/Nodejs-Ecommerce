@@ -7,6 +7,8 @@ const { trusted } = require("mongoose");
 
 // Add New product Page.......................................
 const addProducts = async (req, res) => {
+  console.log(req.session.admin_id, "add products")
+
   let categories = await Category.find({ is_listed: true }).lean();
   res.render("admin/Addproducts.hbs", { categories, admin: true });
 };

@@ -263,19 +263,19 @@ const cart = (req, res) => {
 // }
 
 //};
-const getSortedProducts = async (sortCriteria, pageno) => {
+const getSortedProducts = async (sortCriteria, pageno, count) => {
   const sortOptions = {
     lowprice: { price: 1 },
     highprice: { price: -1 },
     Az: { name: 1 },
   };
-  const perPage = 8
+  const perPage = Math.round(count / 8)
   const pages = pageno || 1
   const sortOption = sortOptions[sortCriteria] || { _id: -1 };
   console.log(pageno, perPage, "page no ,perpage")
   return await Product.find({
     $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-  }).skip((pages - 1) * perPage).limit(perPage).sort(sortOption).lean();
+  }).skip((pages - 1) * perPage).limit(8).sort(sortOption).lean();
 };
 
 const products = async (req, res) => {
@@ -290,13 +290,14 @@ const products = async (req, res) => {
     });
 
 
+    console.log(docCount, "count from doc")
 
-
-    const products = await getSortedProducts(req.query.id, pageNumber);
+    const products = await getSortedProducts(req.query.id, pageNumber, docCount);
     const renderOptions = { products };
     renderOptions.value = req.query.id
-    renderOptions.count=docCount
 
+    let val = docCount / 8
+    renderOptions.count = Math.ceil(val)
     console.log(renderOptions, "products")
     if (req.session.user_id) {
       renderOptions.user = user;
@@ -347,7 +348,12 @@ checkout = (req, res) => {
 // Each products Details(Dynamically arrange)...................
 details = async (req, res) => {
   try {
-
+    let msg = {}
+    let count = await UserCart.countDocuments({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
+    if (count >= 5) {
+      msg.message = "Cart is Full "
+    }
+    console.log(count, msg, "count from detaoils")
     const id = req.query.id;
     const productvalue = await Product.findById(id).lean();
     let Data = "";
@@ -372,7 +378,7 @@ details = async (req, res) => {
 
 
       user = req.session.user_id;
-      res.render("user/details.hbs", { user, productvalue, Similar_product, link });
+      res.render("user/details.hbs", { user, productvalue, Similar_product, link, msg });
     } else {
       res.render("user/details.hbs", { productvalue, Similar_product, link })
     }
@@ -497,29 +503,32 @@ const Cart = async (req, res) => {
           size: req.query.size,
           quandity: req.query.quandity,
           TotalAmount: Amount,
+          orderStatus: "Pending"
         })
         const insertedData = await Insert_into_Cart.save();
-        let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
+      }
+
+
+      let count = await UserCart.countDocuments({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
+      console.log(count, "count")
+      if (count < 5) {
+
+        let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] }).limit(5)
           .populate('ProductId')
           .lean()
         const totalPrice = Datas.reduce((sum, product) => sum + product.TotalAmount, 0);
         req.session.totalPrice = totalPrice
         console.log("Total Price:", totalPrice);
         res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice })
+
+
       } else {
-        let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
-          .populate('ProductId')
-          .lean()
-        console.log(Datas, "BbbbDtassa")
-
-        const totalPrice = Datas.reduce((sum, product) => sum + product.ProductId.price, 0);
-        req.session.totalPrice = totalPrice
-        console.log("Total Price:", totalPrice);
-        res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice })
+        res.redirect(`/details?id=${req.query.id}`)
       }
+    }
+    if (req.session.user_id) {
 
-    } else if (req.session.user_id) {
-      let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
+      let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] }).limit(5)
         .populate('ProductId')
         .lean()
       console.log(Datas, "BbbbDtassa")
@@ -543,6 +552,7 @@ const Cart = async (req, res) => {
 }
 const Address = async (req, res) => {
   try {
+    console.log(req.session.user_id)
     if (req.session.user_id) {
       user = req.session.user_id
       let add = await User_schema.findById({ _id: req.session.user_id }).lean()
@@ -621,9 +631,9 @@ const AllOrders = async (req, res) => {
         ]
       }).populate("ProductId").lean();
       console.log(Data, "datass from checkout")
-      Data1 = await User_schema.findById({ _id: user }).lean()
-      console.log(Data1, "data")
-      res.render('user/Profile/AllOrders.hbs', { user, Data, Data1 })
+      // Data1 = await User_schema.findById({ _id: user }).lean()
+
+      res.render('user/Profile/AllOrders.hbs', { user, Data, })
 
     }
 

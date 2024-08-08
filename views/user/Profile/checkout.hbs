@@ -65,7 +65,9 @@
                     <input type="checkbox" id="terms" name="terms">
                     <label for="terms">I accept the Terms and Conditions</label>
                 </div>
-                <button type="button" id="paymentButton" class="place-order">Place an Order</button>
+                <p id="result"></p>
+                <button type="button" id="paymentButton" onclick="placeOrder()" class="place-order">Place an
+                    Order</button>
             </div>
         </div>
     </div>
@@ -86,27 +88,53 @@
     </div>
 </div>
 <script>
+    function placeOrder() {
+
+        let radios = document.getElementsByName('payment')
+        let selectedValue = null;
+        for (const radio of radios) {
+            if (radio.checked) {
+                selectedValue = radio.value;
+                break;
+            }
+        }
+
+        document.getElementById('result').innerText = selectedValue ? `Selected value is: ${selectedValue}` : 'No option selected';
+
+
+
+
+    }
+
+
     var Data = "";
     document.getElementById('paymentButton').addEventListener('click', function () {
-        const loadingPopup = document.getElementById('loadingPopup');
-        const completionPopup = document.getElementById('completionPopup');
+        if ('No option selected' == document.getElementById('result').innerText) {
+            document.getElementById('result').style.color = "red"
+        } else {
 
-        // Show loading popup
-        loadingPopup.classList.add('active');
 
-        setTimeout(function () {
-            // Hide loading popup
-            loadingPopup.classList.remove('active');
+            const loadingPopup = document.getElementById('loadingPopup');
+            const completionPopup = document.getElementById('completionPopup');
 
-            // Show completion popup
-            completionPopup.classList.add('active');
+            // Show loading popup
+            loadingPopup.classList.add('active');
 
             setTimeout(function () {
-                // Hide completion popup
-                completionPopup.classList.remove('active');
-            }, 20000); // 20 seconds
-        }, 2000); // Simulate loading for 2 seconds
+                // Hide loading popup
+                loadingPopup.classList.remove('active');
+
+                // Show completion popup
+                completionPopup.classList.add('active');
+
+                setTimeout(function () {
+                    // Hide completion popup
+                    completionPopup.classList.remove('active');
+                }, 20000); // 20 seconds
+            }, 2000); // Simulate loading for 2 seconds}
+        }
     });
+
 
     document.getElementById('closeButton').addEventListener('click', function () {
         const completionPopup = document.getElementById('completionPopup');

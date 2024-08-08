@@ -26,7 +26,7 @@ dbConnection()
 app.use(session({
   secret: process.env.sessionSecret, resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: 900000 }
+  cookie: { maxAge: 60000 }
 }))
 
 app.use(cors())
@@ -37,17 +37,36 @@ app.use(express.urlencoded({ extended: true }));
 // view engine set up...............................
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-/// custom hbs
+// custom hbs for looping
+const exhbs = hbs.create({})
+exhbs.handlebars.registerHelper('repeat', function (n, block) {
+  let accum = '';
+  for (let i = 1; i <= n; ++i) {
+    accum += block.fn(i);
+  }
+  return accum;
+});
 
 
+//custom hbs for if else........
+
+exhbs.handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
+  if (arg1 == arg2) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
 
 
-  app.engine('hbs', hbs.engine({
-    extname: 'hbs',
-    defaultLayout: 'layout',
-    layoutsDir: path.join(__dirname + '/views/layout/'),
-    partialsDir: __dirname + '/views/partials'
-  }))
+/////////
+exhbs.handlebars.registerHelper()
+app.engine('hbs', hbs.engine({
+  extname: 'hbs',
+  defaultLayout: 'layout',
+  layoutsDir: path.join(__dirname + '/views/layout/'),
+  partialsDir: __dirname + '/views/partials'
+}))
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());

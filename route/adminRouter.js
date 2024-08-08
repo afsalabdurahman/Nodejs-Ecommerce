@@ -11,18 +11,14 @@ var upload = multer({ storage: storage });
 // LOGIN
 adminRoute.get("/", adminAuth.isLogout, adminController.loadAdminLogin);
 adminRoute.post("/", adminController.verifyadminLogin);
-adminRoute.get("/logout", adminController.adminLogout);
+adminRoute.get("/logout", adminAuth.isLogin, adminController.adminLogout);
 
 //home
 adminRoute.get("/home", adminAuth.isLogin, adminController.loadHome);
 
 
 // Product Management
-adminRoute.get(
-  "/addproducts",
-  adminAuth.isLogin,
-  productController.addProducts
-);
+adminRoute.get("/addproducts", adminAuth.isLogin, productController.addProducts);
 adminRoute.post(
   "/uploaded",
   upload.array("uploadimg", 4),
@@ -62,9 +58,9 @@ adminRoute.get("/unlist", adminAuth.isLogin, categoryController.unlistCategory);
 //User Management
 adminRoute.get("/listuser", adminAuth.isLogin, adminController.listUser);
 adminRoute.get("/block", adminAuth.isLogin, adminController.blockUser);
-adminRoute.get("/orders",adminAuth.isLogin, adminController.Orders)
+adminRoute.get("/orders", adminAuth.isLogin, adminController.Orders)
 
-
+adminRoute.get('/orderdetails', adminAuth.isLogin, adminController.OrderDetails)
 
 
 module.exports = adminRoute;

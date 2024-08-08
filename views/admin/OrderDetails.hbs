@@ -1,0 +1,229 @@
+<style>
+   .body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.order-details-container {
+    background-color: #fff;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Order Header Section */
+.order-header {
+    background-color: #e3f2fd;
+    border-bottom: 2px solid #90caf9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.order-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #1e88e5;
+}
+
+.order-header p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.order-date {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.order-date i {
+    margin-right: 8px;
+}
+
+/* Order Info Section */
+.order-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.order-info .info-block {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 15px;
+    background-color: #f1f8e9;
+    border-radius: 8px;
+}
+
+.order-info .info-block i {
+    font-size: 24px;
+    color: #66bb6a;
+}
+
+.order-info .info-block p {
+    margin: 2px 0;
+    color: #666;
+}
+
+.order-info .info-block p strong {
+    color: #333;
+}
+
+/* Order Table Section */
+.order-table {
+    background-color: #fff3e0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ffcc80;
+}
+
+.order-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.order-table th, .order-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.order-table th {
+    background-color: #ffe0b2;
+}
+
+.order-table img {
+    width: 50px;
+    border-radius: 5px;
+}
+
+.order-placed {
+    color: #ff7043;
+    font-weight: bold;
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #ffe0b2;
+    border-radius: 4px;
+}
+
+.approve-btn {
+    background-color: #ff7043;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.approve-btn:hover {
+    background-color: #e64a19;
+}
+
+/* Payment Info Section */
+.payment-info {
+    background-color: #fce4ec;
+    padding: 15px;
+    border-radius: 8px;
+    border-top: 2px solid #f8bbd0;
+    padding-top: 20px;
+}
+
+.payment-info i {
+    margin-right: 8px;
+    color: #ec407a;
+}
+
+.payment-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.payment-info p strong {
+    color: #333;
+}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<div class="body">
+    <div class="order-details-container">
+        <div class="order-header">
+            <h2>Order details</h2>
+            <p>Details for Order ID: <strong>OrderID#1008</strong></p>
+            <div class="order-date"><i class="fas fa-calendar-alt"></i><span>08 03 2024 10:43:40</span></div>
+        </div>
+        <div class="order-info">
+            <div class="customer-info"><i class="fas fa-user-circle"></i>
+                <div>
+                    <p><strong>Customer</strong></p>
+                    <p>geetha.n</p>
+                    <p>geetha@gmail.com</p>
+                    <p>7676565434</p>
+                </div>
+            </div>
+            <div class="order-info-details"><i class="fas fa-info-circle"></i>
+                <div>
+                    <p><strong>Order info</strong></p>
+                    <p>Shipping: <strong>COD</strong></p>
+                    <p>Pay method: <strong>COD</strong></p>
+                </div>
+            </div>
+            <div class="delivery-info"><i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <p><strong>Deliver to</strong></p>
+                    <p>Full Name: Geetha N</p>
+                    <p>Address Line: orkkattery</p>
+                    <p>City: KOZHIKODE</p>
+                    <p>State: Kerala</p>
+                    <p>Pincode: 673501</p>
+                </div>
+            </div>
+        </div>
+        <div class="order-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Return Reason</th>
+                        <th>Return status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img src="https://via.placeholder.com/50" alt="Product Image"></td>
+                        <td>₹100</td>
+                        <td>1</td>
+                        <td><span class="order-placed">Order Placed</span></td>
+                        <td>₹100.00</td>
+                        <td>–</td>
+                        <td><button class="approve-btn">Approve</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="payment-info">
+            <p><strong>Payment info</strong></p>
+            <p><i class="fas fa-money-bill-alt"></i>COD</p>
+            <p>geetha.n</p>
+            <p>7676565434</p>
+        </div>
+    </div>
+</div>
