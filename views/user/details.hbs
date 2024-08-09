@@ -148,13 +148,15 @@
                 </button>
                 <input type="text" id="quantity-input" class="form-control text-center border border-secondary"
                   value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
-                <button onclick="increaseQuantity()" class="btn btn-white border border-secondary px-3" type="button"
-                  id="button-addon2" data-mdb-ripple-color="dark">
+                <button onclick="increaseQuantity({{productvalue.stock}})"
+                  class="btn btn-white border border-secondary px-3" type="button" id="button-addon2"
+                  data-mdb-ripple-color="dark">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
             </div>
           </div>
+
           {{#if msg.message}}
 
           <p style="color: red;">mesage {{msg.message}}</p>
@@ -340,10 +342,15 @@
 <script>
 
 
-  function increaseQuantity() {
+  function increaseQuantity(val) {
+
     let quantityInput = document.getElementById('quantity-input');
-    let currentValue = parseInt(quantityInput.value);
-    quantityInput.value = currentValue + 1;
+    if (val > quantityInput.value) {
+      let currentValue = parseInt(quantityInput.value);
+      quantityInput.value = currentValue + 1;
+    } else {
+      quantityInput.value = val
+    }
 
   }
   function decreaseQuantity() {

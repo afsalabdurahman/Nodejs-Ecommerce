@@ -18,7 +18,7 @@
                 <tr>
 
                     <td>
-                        <p><a href="/profile/deletecart?id={{ProductId._id}}">X</p></a> <img
+                        <p><a href="/profile/deletecart?id={{ProductId._id}}&quandity={{quandity}}">X</p></a> <img
                             src="/upload/{{ProductId.image.[0]}}" alt=" Product 1" class="product-image">
                     </td>
                     <td>
@@ -28,7 +28,7 @@
                     <td>${{ProductId.price}}</td>
                     <td>
                         <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
-                        <input type="text" value="{{quandity}}" class="quantity-input" readonly>
+                        <input type="text" id="qunadity" value="{{quandity}}" class="quantity-input" readonly>
                         <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
                     </td>
                     <td class="item-total">${{TotalAmount}}</td>

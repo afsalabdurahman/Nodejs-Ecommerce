@@ -41,5 +41,8 @@ const Cart = new mongoose.Schema({
   email: {
     type: String,
   },
+  orderId: {
+    type: String,
+  },
 });
 module.exports = mongoose.model("Cart", Cart);

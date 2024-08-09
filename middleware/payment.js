@@ -5,6 +5,18 @@ const UserCart = require("../model/cartModel");
 const Checkstatus = async (req, res, next) => {
 
     try {
+///
+
+function generateOrderID() {
+    const randomNumber = Math.floor(Math.random() * 9000) + 1000; // Generates a random number between 1000 and 9999
+    const orderID = `OrderID#${randomNumber}`;
+    return orderID;
+}
+
+
+
+
+////
         console.log(req, "working")
         console.log(req.query, "alllorders query")
         let add = ""
@@ -27,7 +39,7 @@ const Checkstatus = async (req, res, next) => {
             console.log(exist, "existtttt")
             if (exist.length != 0) {
 
-
+                 newOrderID = generateOrderID();
                 const Data = await UserCart.updateMany({ UserId: req.session.user_id, orderStatus: "Pending" }, {
                     $set: {
                         orderStatus: 'Processing',
@@ -35,7 +47,7 @@ const Checkstatus = async (req, res, next) => {
                         address: add,
                         Username: userdata.name,
                         email: userdata.email,
-
+                        orderId:newOrderID 
 
                     }
                 }, { upsert: true })

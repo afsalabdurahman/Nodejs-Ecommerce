@@ -120,9 +120,9 @@ const Orders = async (req, res) => {
 
 const OrderDetails = async (req, res) => {
   console.log(req.query.id, "isss")
-  const usercart = await UserCart.findById(req.query.id).lean()
+  const usercart = await UserCart.findById(req.query.id).populate("ProductId").lean()
   console.group(usercart)
-  res.render('admin/OrderDetails.hbs', { admin: true, })
+  res.render('admin/OrderDetails.hbs', { admin: true, usercart })
 }
 
 

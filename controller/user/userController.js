@@ -348,15 +348,38 @@ checkout = (req, res) => {
 // Each products Details(Dynamically arrange)...................
 details = async (req, res) => {
   try {
+
+    // let msg1 = {}
+    // if (req.query.stock) {
+    //   msg1.message1 = "check the avilable stock "
+    // }
+
+
     let msg = {}
     let count = await UserCart.countDocuments({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
     if (count >= 5) {
       msg.message = "Cart is Full "
     }
+
+
     console.log(count, msg, "count from detaoils")
     const id = req.query.id;
     const productvalue = await Product.findById(id).lean();
     let Data = "";
+    if (productvalue.stock == 0) {
+      const updateVisibility = await Product.updateOne(
+        { _id: id },
+        { $set: { isVisible: false } }
+      );
+
+    } else {
+      const updateVisibility = await Product.updateOne(
+        { _id: id },
+        { $set: { isVisible: true } }
+      );
+    }
+
+
     if (productvalue.category == "6699057c3cefcb99d7d7fe63") {
       Data = "6699057c3cefcb99d7d7fe63";
     } else if (productvalue.category == "669951b01934f70cb7148e6e") {
@@ -378,10 +401,11 @@ details = async (req, res) => {
 
 
       user = req.session.user_id;
-      res.render("user/details.hbs", { user, productvalue, Similar_product, link, msg });
+      res.render("user/details.hbs", { user, productvalue, Similar_product, link, msg, });
     } else {
       res.render("user/details.hbs", { productvalue, Similar_product, link })
     }
+
   } catch (error) {
     console.log(error, "this is errrrr");
   }
@@ -486,15 +510,23 @@ const WishList = (req, res) => {
 }
 const Cart = async (req, res) => {
   try {
-    console.log(req.query.id, "iddddddd")
-    console.log(req.query.price, "pricezzz")
+    // console.log(req.query.id, "iddddddd")
+    console.log(req.query.quandity, "user added quandity")
     let Amount = req.query.price * req.query.quandity
-    console.log(Amount, "amtttt")
+    // console.log(Amount, "amtttt")
     user = req.session.user_id
     if (req.session.user_id && req.query.id) {
-      console.log(true, "trueeee")
+      // console.log(true, "trueeee")
+      // New out qunadity checking........................................
+      // const Outqunadity = await Product.findById(req.query.id)
+      // if (Outqunadity.stock < req.query.quandity) {
+      //   res.redirect(`/details?id=${req.query.id}&stock=overcount`)
+      // }
+
+      //.............................................................................
+
       let Product_in_Cart = await UserCart.findOne({ $and: [{ ProductId: req.query.id }, { UserId: req.session.user_id }, { orderStatus: "Pending" }] })
-      console.log(Product_in_Cart, "incart")
+      //  console.log(Product_in_Cart, "incart")
       if (Product_in_Cart == null) {
 
         const Insert_into_Cart = new UserCart({
@@ -505,6 +537,12 @@ const Cart = async (req, res) => {
           TotalAmount: Amount,
           orderStatus: "Pending"
         })
+
+        const quantity = await Product.updateOne(
+          { _id: req.query.id },
+          { $inc: { stock: -req.query.quandity } }
+        );
+        //  console.log(quantity, "qundity")
         const insertedData = await Insert_into_Cart.save();
       }
 
@@ -531,11 +569,11 @@ const Cart = async (req, res) => {
       let Datas = await UserCart.find({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] }).limit(5)
         .populate('ProductId')
         .lean()
-      console.log(Datas, "BbbbDtassa")
+      // console.log(Datas, "BbbbDtassa")
 
       const totalPrice = Datas.reduce((sum, product) => sum + product.ProductId.price, 0);
       req.session.totalPrice = totalPrice
-      console.log("Total Price:", totalPrice);
+      // console.log("Total Price:", totalPrice);
       res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice })
     } else {
       res.send("user not found")
@@ -644,10 +682,17 @@ const AllOrders = async (req, res) => {
 
 }
 const DeleteCart = async (req, res) => {
-  console.log(req.query.id, "deklete")
+  console.log(req.query, "deklete")
+  console.log(req.query.quandity, "qundity")
+
 
   const deletedCartItem = await UserCart.findOneAndDelete({ ProductId: req.query.id });
   console.log(deletedCartItem)
+  const quantity = await Product.updateOne(
+    { _id: req.query.id },
+    { $inc: { stock: req.query.quandity } }
+  );
+
   res.redirect('/profile/cart')
 }
 
