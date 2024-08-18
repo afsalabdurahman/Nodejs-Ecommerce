@@ -107,8 +107,8 @@
             <li><a href="#">Contact</a></li>
         </ul>
         <div class="searchbar">
-            <input type="text" placeholder="Search...">
-            <button type="button">Search</button>
+            <input id="input" type="text " placeholder="Search...">
+            <button type="button" onclick="search()">Search</button>
         </div>
 
         <div class="icons">
@@ -124,3 +124,9 @@
         </div>
     </div>
 </div>
+<script>
+    function search() {
+        val = document.getElementById('input').value
+        window.location.href = `search?name=${val}`
+    }
+</script>

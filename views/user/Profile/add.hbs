@@ -3,6 +3,21 @@
 <title>Address Management</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link rel="stylesheet" href="/assets/UserProfile/add.css">
+<style>
+    .no-spinner::-webkit-inner-spin-button,
+    .no-spinner::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .no-spinner {
+        -moz-appearance: textfield;
+    }
+
+    .no-spinner::-ms-expand {
+        display: none;
+    }
+</style>
 
 <div class="body">
     <div class="container">
@@ -17,7 +32,7 @@
                     <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
                     <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
                     <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
-                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><i class="fas fa-sign-out-alt" onclick="sweet()"></i> Logout</li>
                 </ul>
             </nav>
         </aside>
@@ -30,7 +45,7 @@
                 <p>{{add.adress}}<br>{{add.location}}<br>karuvanthoor 400098</p>
                 <p>Phone : +91 {{add.mobile}}<br>Email : {{add.email}}</p>
 
-                <button class="edit-btn" onclick="showAddForm1()"><i class="fas fa-edit"></i> Edit</button>
+
             </div>
             <br>
             {{#if add.address2 }}
@@ -50,22 +65,26 @@
                 {{else}}
                 <h3>Add new Address</h3>
                 {{/if}}
-                <form action="/profile/newadd" method="post" enctype="application/x-www-form-urlencoded">
+                <form id="form">
                     <input type="hidden" id="editAddressId">
                     <label for="name">Name:</label>
-                    <input type="text" id="name" name="name">
+
+                    <input type="text" id="name" name="name" value="{{add.address2.name}} " required>
+                    <p id="change" style="color: red;"></p>
                     <label for="address">Address:</label>
-                    <input type="text" id="address" name="address">
+                    <input type="text" id="address" name="address" value="{{add.address2.address}}" required>
                     <label for="city">City:</label>
-                    <input type="text" id="city" name="city">
+                    <input type="text" id="city" name="city" value="{{add.address2.city}}" required>
                     <label for="state">State:</label>
-                    <input type="text" id="state" name="state">
+                    <input type="text" id="state" name="state" value="{{add.address2.state}}" required>
                     <label for="zip">Zip Code:</label>
-                    <input type="text" id="zip" name="zip">
+                    <input type="text" id="zip" name="zip" value="{{add.address2.zip}}" required>
                     <label for="phone">Phone:</label>
-                    <input type="text" id="phone" name="phone">
+                    <input type="Number" class="no-spinner" id="phone" name="phone" value="{{add.address2.phone}}"
+                        required>
+                    <p id="change1" style="color: red;"></p>
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email">
+                    <input type="email" id="email" name="email" value="{{add.address2.email}}" required>
                     <button type="submit">Save</button>
                 </form>
             </div>
@@ -77,15 +96,159 @@
 <script>
 
 
+    document.getElementById('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+
+        let name = document.getElementById("name").value;
+        let email = document.getElementById("email").value;
+        let mobile = document.getElementById("phone").value;
+        let address = document.getElementById("address").value;
+        let state = document.getElementById("state").value;
+        let zip = document.getElementById("zip").value;
+        let city = document.getElementById("city").value;
+        let change = document.getElementById('change');
+        let change1 = document.getElementById('change1');
+
+
+        console.log(typeof mobile)
+        const regex = /[0-9]|[!@#$%^&*]/;
+        let valid = true;
+
+        if (regex.test(name.trim())) {
+            console.log("regsz")
+            document.getElementById("change").innerHTML = "Special charector and Number are not allowed";
+
+            return;
+        }
+        else {
+            document.getElementById("change").innerHTML = "";
+        }
+        if (name.trim() === "") {
+            change.innerHTML = "Enter your name";
+            valid = false;
+        } else {
+            change.innerHTML = "";
+        }
+
+        if (mobile.length !== 10) {
+            change1.innerHTML = "Not a valid mobile number";
+            valid = false;
+        } else {
+            change1.innerHTML = "";
+        }
+
+        console.log({
+            name,
+            email,
+            mobile,
+            address,
+            state,
+            zip,
+            city
+        });
+
+        if (valid) {
+            Swal.fire({
+                title: "Do you want to save?",
+                showCancelButton: true,
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send POST request
+                    fetch('/profile/newadd', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}&address=${encodeURIComponent(address)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&city=${encodeURIComponent(city)}`
+                    }).then(response => response.json())
+                        .then(data => {
+                            // Handle success
+                            Swal.fire('Saved!', 'Your data has been saved.', 'success').then((e) => {
+                                console.log(e)
+                                if (e.isConfirmed) {
+                                    window.location.href = '/profile/address'
+                                }
+                            })
+
+                        }).catch(error => {
+                            // Handle error
+                            Swal.fire('Error!', 'There was an issue saving your data.', 'error');
+                            console.error('Error:', error);
+                        });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire("Action canceled", "", "info");
+                }
+            });
+        }
+    });
+
+    function sweetalert1(formData) {
+        Swal.fire({
+            title: "Do you want to save?",
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send POST request
+                fetch('/profile/newadd', {
+                    method: 'POST',
+                    body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}&address=${encodeURIComponent(address)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}&city=${encodeURIComponent(city)}`
+                }).then(response => response.json())
+                    .then(data => {
+                        // Handle success
+                        Swal.fire('Saved!', 'Your data has been saved.', 'success');
+                        console.log(data);
+                    }).catch(error => {
+                        // Handle error
+                        Swal.fire('Error!', 'There was an issue saving your data.', 'error');
+                        console.error('Error:', error);
+                    });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Action canceled", "", "info");
+            }
+        });
+    }
+
+
+
+    function sweetalert(id) {
+        console.log(id, "iddd")
+        Swal.fire({
+            title: `Do you want to ${id} this Address?`,
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (id == "edit") {
+                    const form = document.getElementById('edit-form');
+                    form.style.display = 'block';
+                }
+                else if (id == "delete") {
+                    window.location.href = "/profile/delete";
+                }
+
+                // Replace ' / edit - page' with your target URL
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Action canceled", "", "info");
+            }
+        });
+
+    }
+
 
 
     function showAddForm() {
-        const form = document.getElementById('edit-form');
-        form.style.display = 'block';
+        sweetalert("edit")
+
 
     }
     function Deleteadd() {
-        window.location.href = "/profile/delete";
+        sweetalert("delete")
     }
 
 

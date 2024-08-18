@@ -5,6 +5,7 @@ const Product = require("../../model/productModel");
 const Wishlist = require("../../model/wishlistModel");
 const UserCart = require("../../model/cartModel");
 const Orders = require("../../model/orderModels");
+const { request } = require("../../route/adminRouter");
 
 
 
@@ -64,7 +65,7 @@ let loginUser = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    res.redirect('/error');
   }
 };
 // User Register Page      ....................................................
@@ -99,7 +100,7 @@ getOtp = async (req, res) => {
         res.render("user/newOtp.hbs");
       }
     } catch (error) {
-      console.log(error);
+      res.redirect("/error")
     }
   }
 };
@@ -127,7 +128,7 @@ checkotp = async (req, res) => {
   } else if (req.session.otp != fullOtp) {
     res.render("user/newOtp.hbs", { msg: "Please Enter Correct OTP or Wait 30 minits after regenerate new OTP" });
   } else {
-    res.send("404 ");
+    res.redirect('/error')
   }
 };
 
@@ -156,113 +157,7 @@ const cart = (req, res) => {
   res.render("user/cart.hbs");
 };
 
-// Men Product Page.................................
-
-//const products = async (req, res) => {
-
-// if (req.session.user_id) {
-//   if (req.query) {
-//     if (req.query.id == "lowprice") {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ Price: 1 }).lean()
-//       res.render("user/products.hbs", { products, user });
-//     } else if (req.query.id == "highprice") {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ price: -1 }).lean();
-//       res.render("user/products.hbs", { products, user });
-//     } else if (req.query.id == "Az") {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ name: 1 }).lean();
-//       res.render("user/products.hbs", { products, user });
-//     } else {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ _id: -1 }).lean();
-//       res.render("user/products.hbs", { products });
-//     }
-//   }
-// } else {
-//   if (req.query) {
-//     if (req.query.id == "lowprice") {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ Price: 1 }).lean()
-//       res.render("user/products.hbs", { products });
-//     } else if (req.query.id == "highprice") {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ price: -1 }).lean();
-//       res.render("user/products.hbs", { products });
-//     } else if (req.query.id == "Az") {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ name: 1 }).lean();
-//       res.render("user/products.hbs", { products });
-//     } else {
-//       const products = await Product.find({
-//         $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//       }).sort({ _id: -1 }).lean();
-//       res.render("user/products.hbs", { products });
-//     }
-//   }
-// }
-
-
-
-// try {
-//   console.log(req.query.id)
-//   if (req.query.id == "lowprice") {
-
-
-//     const products = await Product.find({
-//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//     }).sort({ price: 1 }).lean();
-//     res.render("user/products.hbs", { products });
-//   }
-//   else if (req.query.id == "highprice") {
-//     const products = await Product.find({
-//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//     }).sort({ price: -1 }).lean();
-//     res.render("user/products.hbs", { products });
-
-//   }
-//   else if (req.query.id == "Az") {
-//     const products = await Product.find({
-//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//     }).sort({ name: 1 }).lean();
-//     res.render("user/products.hbs", { products });
-
-//   }
-
-//   else {
-
-//     const products = await Product.find({
-//       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-//     }).sort({ _id: -1 }).lean();
-//     res.render("user/products.hbs", { products });
-//   }
-
-
-//   if (req.session.user_id) {
-//     user = req.session.user_id;
-//     let GotoCart = await UserCart.find({ UserId: user }).populate("ProductId").lean()
-
-
-
-//     res.render("user/products.hbs", { user, products, GotoCart });
-
-//   } else {
-//     res.render("user/products.hbs", { products });
-//   }
-
-// } catch (error) {
-//   console.log(error)
-// }
-
-//};
+// men product sort
 const getSortedProducts = async (sortCriteria, pageno, count) => {
   const sortOptions = {
     lowprice: { price: 1 },
@@ -275,9 +170,11 @@ const getSortedProducts = async (sortCriteria, pageno, count) => {
   console.log(pageno, perPage, "page no ,perpage")
   return await Product.find({
     $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }],
-  }).skip((pages - 1) * perPage).limit(8).sort(sortOption).lean();
+  }).skip((pages - 1) * 8).limit(8).sort(sortOption).lean();
 };
 
+
+//men Products................
 const products = async (req, res) => {
   if (req.query) {
     console.log(req.query.pageNo, "qury")
@@ -311,18 +208,69 @@ const products = async (req, res) => {
 
 
 // Womens Product Page...................................
-const Womens = async (req, res) => {
-  const products = await Product.find({
+///sort
+const womenSortedProducts = async (sortCriteria, pageno, count) => {
+  const sortOptions = {
+    lowprice: { price: 1 },
+    highprice: { price: -1 },
+    Az: { name: 1 },
+  };
+  const perPage = Math.round(count / 8)
+  const pages = pageno || 1
+  const sortOption = sortOptions[sortCriteria] || { _id: -1 };
+  console.log(pageno, perPage, "page no ,perpage")
+  return await Product.find({
     $and: [{ category: "669951b01934f70cb7148e6e" }, { is_listed: true }],
-  }).lean();
+  }).skip((pages - 1) * perPage).limit(8).sort(sortOption).lean();
+};
+///
+const Womens = async (req, res) => {
+  console.log("working")
+  if (req.query) {
+    console.log(req.query.pageNo, "qury")
+    let pageNumber = Number(req.query.pageNo)
+    console.log(pageNumber, "page number")
 
-  if (req.session.user_id) {
-    user = req.session.user_id;
-    res.render("user/Products/women.hbs", { user, products });
-  } else {
-    res.render("user/Products/women.hbs", { products });
+
+    const docCount = await Product.countDocuments({
+      $and: [{ category: "669951b01934f70cb7148e6e" }, { is_listed: true }]
+    });
+
+
+    console.log(docCount, "count from doc")
+
+    const products = await womenSortedProducts(req.query.id, pageNumber, docCount);
+    const renderOptions = { products };
+    renderOptions.value = req.query.id
+
+    let val = docCount / 8
+    renderOptions.count = Math.ceil(val)
+    console.log(renderOptions, "products")
+    if (req.session.user_id) {
+      renderOptions.user = user;
+      renderOptions.value = req.query.id
+      console.log(renderOptions, "from user")
+    }
+
+    res.render("user/Products/women.hbs", renderOptions);
   }
 };
+
+
+
+
+// const Womens = async (req, res) => {
+//   const products = await Product.find({
+//     $and: [{ category: "669951b01934f70cb7148e6e" }, { is_listed: true }],
+//   }).lean();
+
+//   if (req.session.user_id) {
+//     user = req.session.user_id;
+//     res.render("user/Products/women.hbs", { user, products });
+//   } else {
+//     res.render("user/Products/women.hbs", { products });
+//   }
+// };
 
 // Kids Product Page..........................................
 const Kids = async (req, res) => {
@@ -337,6 +285,41 @@ const Kids = async (req, res) => {
   }
 };
 
+//Serach Product
+
+const Search = async (req, res) => {
+  try {
+    const searchQuery = req.query.name;
+
+    if (!searchQuery) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    console.log(searchQuery, "name");
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { description: { $regex: searchQuery, $options: 'i' } },
+
+      ]
+    }).lean();
+
+    if (req.session.user_id) {
+      user = req.session.user_id;
+      res.render("user/Products/Search.hbs", { user, products });
+    } else {
+      res.render("user/Products/Search.hbs", { products });
+    }
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while searching for products' });
+  }
+};
+
+
 // Whish list.........................................
 
 
@@ -349,11 +332,8 @@ checkout = (req, res) => {
 details = async (req, res) => {
   try {
 
-    // let msg1 = {}
-    // if (req.query.stock) {
-    //   msg1.message1 = "check the avilable stock "
-    // }
 
+    console.log(req.query, "qury msg about quandity")
 
     let msg = {}
     let count = await UserCart.countDocuments({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
@@ -362,11 +342,11 @@ details = async (req, res) => {
     }
 
 
-    console.log(count, msg, "count from detaoils")
     const id = req.query.id;
     const productvalue = await Product.findById(id).lean();
     let Data = "";
-    if (productvalue.stock == 0) {
+    console.log(productvalue.stock, "stock")
+    if (productvalue.stock <= 0) {
       const updateVisibility = await Product.updateOne(
         { _id: id },
         { $set: { isVisible: false } }
@@ -442,7 +422,7 @@ const Profile = async (req, res) => {
     if (req.session.user_id) {
       let user_id = req.session.user_id
       let user = await User_schema.findById(user_id).lean()
-      console.log(user, "user profile")
+
       res.render("user/Profile/profile.hbs", { user })
 
     } else (
@@ -482,13 +462,13 @@ const EditProfile = async (req, res) => {
 }
 const Posteditprofile = async (req, res) => {
 
-  console.log(req.body.fullname, "body", req.files, "files")
+  console.log(req.body, "bodysssssssssssssss", req.files, "files")
   const usernew = await User_schema.findByIdAndUpdate({ _id: req.session.user_id }, {
     $set: {
-      name: req.body.fullname,
+      name: req.body.name,
       email: req.body.email,
       mobile: req.body.mobile,
-      gender: req.body.dob,
+      gender: req.body.gender,
       location: req.body.location,
       address: req.body.address,
       dob: req.body.dob
@@ -500,7 +480,7 @@ const Posteditprofile = async (req, res) => {
   console.log(req.session.user_id, "usersessionid", usernew, "userNew")
 
 
-  res.redirect("/profile")
+  res.json({ name: "working" })
 
 }
 
@@ -510,22 +490,15 @@ const WishList = (req, res) => {
 }
 const Cart = async (req, res) => {
   try {
-    // console.log(req.query.id, "iddddddd")
-    console.log(req.query.quandity, "user added quandity")
+    console.log(req.query, "newqundityyyyyy")
+
     let Amount = req.query.price * req.query.quandity
     // console.log(Amount, "amtttt")
     user = req.session.user_id
     if (req.session.user_id && req.query.id) {
-      // console.log(true, "trueeee")
-      // New out qunadity checking........................................
-      // const Outqunadity = await Product.findById(req.query.id)
-      // if (Outqunadity.stock < req.query.quandity) {
-      //   res.redirect(`/details?id=${req.query.id}&stock=overcount`)
-      // }
 
-      //.............................................................................
 
-      let Product_in_Cart = await UserCart.findOne({ $and: [{ ProductId: req.query.id }, { UserId: req.session.user_id }, { orderStatus: "Pending" }] })
+      let Product_in_Cart = await UserCart.findOne({ $and: [{ ProductId: req.query.id }, { UserId: req.session.user_id }, { orderStatus: "Pending" }, { size: req.query.size }] })
       //  console.log(Product_in_Cart, "incart")
       if (Product_in_Cart == null) {
 
@@ -588,6 +561,11 @@ const Cart = async (req, res) => {
 
 
 }
+const NewCart = (req, res) => {
+  console.log(req.query, "new cart")
+}
+
+
 const Address = async (req, res) => {
   try {
     console.log(req.session.user_id)
@@ -607,6 +585,9 @@ const Address = async (req, res) => {
 }
 const NewAddress = async (req, res) => {
   try {
+    console.log("post is working")
+    console.log(req.query, "bodyyyyyy")
+
     const usernew = await User_schema.findByIdAndUpdate(
       req.session.user_id,  // Directly use the user ID
       {
@@ -614,7 +595,7 @@ const NewAddress = async (req, res) => {
           'address2': {  // Set the entire address2 object
             name: req.body.name,
             state: req.body.state,
-            phone: req.body.phone,
+            phone: req.body.mobile,
             city: req.body.city,
             zip: req.body.zip,
             address: req.body.address,
@@ -625,28 +606,108 @@ const NewAddress = async (req, res) => {
       { new: true, upsert: true }  // Return the updated document and upsert if it doesn't exist
     ).lean();
 
-    console.log(usernew);
+    console.log(usernew, "post request");
+
+    if (req.body.id == "007") {
+      res.redirect(`/profile/checkout?total=${req.body.price}`)
+    } else {
 
 
-    console.log(usernew, "update addd")
-
-    res.redirect("/profile/address")
-
+      res.json({ msg: "success" })
+      res.redirect("/profile/address")
+    }
 
   } catch (error) {
     console.log(error)
   }
 }
-const changePsw = (req, res) => {
-  res.render('user/Profile/changePsw.hbs', { user: true })
+const DeleteAdd = async (req, res) => {
+  try {
+    console.log(req.query)
+    if (req.session.user_id) {
+      const usernew = await User_schema.findByIdAndUpdate(
+        req.session.user_id,  // Directly use the user ID
+        {
+          $set: {
+            'address2': {  // Set the entire address2 object
+              name: null,
+
+            }
+          }
+        },
+        { new: true, upsert: true }  // Return the updated document and upsert if it doesn't exist
+      ).lean();
+    }
+    res.redirect(`/profile/checkout?total=${req.query.price}`)
+  } catch (error) {
+    console.log(error);
+
+  }
 }
+// const ChngeAddInCheckout = (req, res) => {
+//   try {
+
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+
+const changePsw = (req, res) => {
+  let msg = {}
+  if (req.query.msg == "error") {
+    msg.message = "invalid current Password"
+  }
+
+  res.render('user/Profile/changePsw.hbs', { user: true, msg })
+}
+const postNewpass = async (req, res) => {
+  try {
+    console.log(req.query, "quryyy")
+    const password = req.query.newpss;
+    console.log(req.query.currentpass, "cureennt pasw")
+
+    if (req.session.user_id) {
+      Existuser = await User_schema.findById(req.session.user_id);
+      console.log(Existuser.password, "exise pswuser")
+      const passwordMatch = await bcrypt.compare(req.query.currentpass, Existuser.password);
+      console.log(passwordMatch, "matchinf")
+
+      if (passwordMatch) {
+        console.log("if match")
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        console.log(passwordHash, "hashnew pass word")
+        const updateNewPassword = await User_schema.updateOne(
+          { email: Existuser.email },
+          {
+            $set: { password: passwordHash }
+          }
+        );
+        res.json({ msg: "success" })
+        // res.render('user/Profile/paswordChanged.hbs')
+      } else {
+        res.json({ error: "not match" })
+      }
+
+
+    } else {
+      res.redirect('/error')
+    }
+  } catch (error) {
+    res.redirect('/error')
+  }
+
+}
+
 const Checkout = async (req, res) => {
   try {
+    console.log(req.query, "quryyyyyy")
     user = req.session.user_id
     userData = await User_schema.findById({ _id: user }).lean()
     console.log(userData, "data from user")
     console.log(user, "user")
-    let totalPrice = Number(req.query.id)
+    let totalPrice = Number(req.query.total)
     let subtotal = totalPrice + 100;
     let discount = subtotal * 5 / 100
     let totalPriceTax = subtotal - discount
@@ -654,7 +715,7 @@ const Checkout = async (req, res) => {
 
     res.render('user/Profile/checkout.hbs', { user, userData, totalPrice, totalPriceTax })
   } catch (error) {
-    console.log(error)
+    res.redirect('/error')
   }
 }
 const AllOrders = async (req, res) => {
@@ -665,9 +726,9 @@ const AllOrders = async (req, res) => {
       const Data = await UserCart.find({
         $and: [
           { UserId: user },
-          { orderStatus: { $in: ["Processing", "Cancelled"] } }
+          { orderStatus: { $in: ["Processing", "Cancelled", "Shipped"] } }
         ]
-      }).populate("ProductId").lean();
+      }).sort({ _id: -1 }).populate("ProductId").lean();
       console.log(Data, "datass from checkout")
       // Data1 = await User_schema.findById({ _id: user }).lean()
 
@@ -677,7 +738,7 @@ const AllOrders = async (req, res) => {
 
 
   } catch (error) {
-    console.log(error)
+    res.redirect('/error')
   }
 
 }
@@ -726,7 +787,7 @@ const ProductUserWishlist = async (req, res) => {
         }
 
       } else {
-        res.send("not exist")
+        res.redirect('/error')
       }
 
 
@@ -765,7 +826,7 @@ const postforgetPsw = async (req, res) => {
     }
 
   } catch (error) {
-    console.log(error)
+    res.redirect('/error')
   }
 
   console.log(req.body)
@@ -806,7 +867,7 @@ const Updatepsw = async (req, res) => {
 
 
   } catch (error) {
-    console.log(error)
+    res.redirect('/error')
 
   }
 }
@@ -823,23 +884,35 @@ const CancelOrder = async (req, res) => {
 
   try {
     console.log(req.query.id, "qury id from cart")
+    const prettyDate = new Date().toLocaleString('en-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+
+      hour12: true,
+    });
     const Data = await UserCart.updateOne({ _id: req.query.id }, {
+
       $set: {
         orderStatus: 'Cancelled',
-        Date: new Date(),
+        Date: prettyDate,
       }
     }, { upsert: true })
 
     res.redirect('/profile/allorders')
 
   } catch (error) {
-    console.log(error)
+    res.redirect('/error')
   }
 
 }
 
 module.exports = {
   CancelOrder,
+  postNewpass,
   DeleteProfile,
   ForgetPsw,
   NewAddress,
@@ -855,6 +928,7 @@ module.exports = {
   changePsw,
   Checkout,
   DeleteCart,
+  NewCart,
   Address,
   Kids,
   Womens,
@@ -872,7 +946,9 @@ module.exports = {
   EditProfile,
   WishList,
   Cart,
-  ProductUserWishlist
+  ProductUserWishlist,
+  DeleteAdd,
+  Search,
 };
 
 function generateOtp() {

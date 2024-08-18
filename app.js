@@ -1,4 +1,4 @@
-
+const Swal = require('sweetalert2')
 const express = require('express')
 const passport = require('passport');
 require("dotenv").config()
@@ -26,7 +26,7 @@ dbConnection()
 app.use(session({
   secret: process.env.sessionSecret, resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: 60000 }
+  cookie: { maxAge: 600000 }
 }))
 
 app.use(cors())
@@ -60,6 +60,7 @@ exhbs.handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
 
 
 /////////
+
 exhbs.handlebars.registerHelper()
 app.engine('hbs', hbs.engine({
   extname: 'hbs',
@@ -75,6 +76,7 @@ app.use(passport.session());
 // Create a Simple Route....................
 app.use('/', UserRouter);
 app.use("/admin", adminRouter);
+
 
 app.listen(port, () => {
   console.log(`Server Running on ${port}`)

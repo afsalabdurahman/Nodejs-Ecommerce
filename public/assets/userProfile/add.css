@@ -1,119 +1,123 @@
 .body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-    display: flex;
+  display: flex;
+  width: 100%;
 }
 
 .sidebar {
-    width: 200px;
-    background-color: #fff;
-    border-right: 1px solid #ccc;
-    padding: 20px;
-    height: 100vh;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  margin-right: -21px;
+  margin-top: 80px;
+  width: 250px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
 }
 
-.sidebar nav ul {
-    list-style-type: none;
-    padding: 0;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.sidebar nav ul li {
-    margin-bottom: 10px;
+.sidebar ul li {
+  padding: 15px;
 }
 
 .sidebar nav ul li a {
-    text-decoration: none;
-    color: #333;
-    display: flex;
-    align-items: center;
+  text-decoration: none;
+  color: #000;
+  display: block;
 }
 
 .sidebar nav ul li a i {
-    margin-right: 10px;
+  margin-right: 10px;
+}
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  color: #e60000;
 }
 
 .address-container {
-    flex: 1;
-    padding: 20px;
+  flex: 1;
+  padding: 20px;
 }
 
 .address-container h2 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .address-card {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    position: relative;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .select-btn {
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    position: absolute;
-    right: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
 }
 
 .edit-btn {
-    background-color: #ff4081;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    position: absolute;
-    right: 100px;
+  background-color: #ff4081;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  position: absolute;
+  right: 100px;
 }
 
 .edit-address {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 20px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .edit-address form label {
-    display: block;
-    margin: 10px 0 5px;
+  display: block;
+  margin: 10px 0 5px;
 }
 
 .edit-address form input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
 }
 
 .edit-address form button {
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 
 .add-address {
-    background-color: #ff4081;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 20px;
-    display: block;
+  background-color: #ff4081;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  display: block;
 }
 
 .selected-address {
-    background-color: #d4edda;
+  background-color: #d4edda;
 }

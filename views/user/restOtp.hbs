@@ -25,54 +25,58 @@
 <script>
 
 
-    document.addEventListener("DOMContentLoaded", function () {
-        let timerElement = document.getElementById("timer");
-        let timeLeft = 30; // in seconds
+document.addEventListener("DOMContentLoaded", function () {
+    let timerElement = document.getElementById("timer");
+    let timeLeft = 120; // 2 minutes in seconds
 
-        let timer = setInterval(function () {
+    let timer = setInterval(function () {
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            timerElement.textContent = "00:00";
+            document.querySelector(".resend-otp").innerHTML = 'Resend OTP in : <a href="/resentotp" id="regenerateOTP">Regenerate OTP</a>';
+            document.getElementById("regenerateOTP").addEventListener("click", function (event) {
+                //event.preventDefault();
+                // Add logic here to regenerate OTP and restart the timer
+                restartTimer();
+            });
+        } else {
+            timeLeft--;
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+    }, 1000);
+
+    document.getElementById("verifyBtn").addEventListener("click", function () {
+        console.log("verify");
+    });
+
+    function restartTimer() {
+        timeLeft = 120;
+        timerElement.textContent = `02:00`;
+        document.querySelector(".resend-otp").innerHTML = `Resend OTP in : <span id="timer">02:00</span>`;
+        timerElement = document.getElementById("timer");
+        timer = setInterval(function () {
             if (timeLeft <= 0) {
                 clearInterval(timer);
                 timerElement.textContent = "00:00";
                 document.querySelector(".resend-otp").innerHTML = 'Resend OTP in : <a href="/resentotp" id="regenerateOTP">Regenerate OTP</a>';
                 document.getElementById("regenerateOTP").addEventListener("click", function (event) {
-                    //event.preventDefault(); --}}
+                    //   event.preventDefault();
                     // Add logic here to regenerate OTP and restart the timer
-
+                    alert("OTP regenerated!");
                     restartTimer();
                 });
             } else {
                 timeLeft--;
-                timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
             }
         }, 1000);
+    }
+});
 
-        document.getElementById("verifyBtn").addEventListener("click", function () {
-            console.log("verify")
-        });
-
-        function restartTimer() {
-            timeLeft = 30;
-            timerElement.textContent = `00:30`;
-            document.querySelector(".resend-otp").innerHTML = `Resend OTP in : <span id="timer">00:30</span>`;
-            timerElement = document.getElementById("timer");
-            timer = setInterval(function () {
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    timerElement.textContent = "00:00";
-                    document.querySelector(".resend-otp").innerHTML = 'Resend OTP in : <a href="/resentotp" id="regenerateOTP">Regenerate OTP</a>';
-                    document.getElementById("regenerateOTP").addEventListener("click", function (event) {
-                        //   event.preventDefault();
-                        // Add logic here to regenerate OTP and restart the timer
-                        alert("OTP regenerated!");
-                        restartTimer();
-                    });
-                } else {
-                    timeLeft--;
-                    timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
-                }
-            }, 1000);
-        }
-    });
 
 
 </script>

@@ -1,69 +1,273 @@
-<link rel="stylesheet" href="/assets/admin/dash.css" type="text/css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<section class="body">
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50c878;
+            --accent-color: #ff6b6b;
+            --background-color: #f0f4f8;
+            --card-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .stat p {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            color: var(--accent-color);
+        }
+
+        .stat small {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .chart-container {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-container h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .products ul {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .products li {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .products li:hover {
+            transform: scale(1.05);
+        }
+
+        .products i {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .new-members,
+        .recent-activity {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .new-members h3,
+        .recent-activity h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .new-members ul,
+        .recent-activity ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .new-members li,
+        .recent-activity li {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .new-members button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .new-members button:hover {
+            background-color: var(--primary-color);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+
+<body>
     <div class="dashboard">
-        <h1 style="">Dash board</h1>
+        <header>
+            <h1> Dashboard</h1>
+        </header>
+
         <div class="stats">
-            <div class="stat">
+            <div class="stat animate-in">
+                <i class="fas fa-chart-line fa-2x"></i>
                 <h2>Total Revenue</h2>
                 <p>$34,152</p>
                 <small>+2.15% since last week</small>
             </div>
-            <div class="stat">
+
+            <div class="stat animate-in">
+
+                <i class="fas fa-shopping-cart fa-2x"></i>
+                <h2> Orders</h2>
                 <a href="/admin/orders">
-                    <h2>Orders</h2>
                     <p>5,643</p>
                 </a>
                 <small>-0.28% since last week</small>
             </div>
-            <div class="stat">
+            <div class="stat animate-in">
+                <i class="fas fa-users fa-2x"></i>
                 <h2>Customers</h2>
                 <p>45,254</p>
                 <small>-6.24% since last week</small>
             </div>
-            <div class="stat">
+            <div class="stat animate-in">
+                <i class="fas fa-arrow-trend-up fa-2x"></i>
                 <h2>Growth</h2>
                 <p>+12.58%</p>
                 <small>+10.15% since last week</small>
             </div>
         </div>
-        <div class="sales-analytics">
+
+        <div class="chart-container animate-in">
             <h3>Sales Analytics</h3>
-            <canvas id="salesChart" class="chart"></canvas>
+            <canvas id="salesChart"></canvas>
         </div>
-        <div class="products">
+
+        <div class="products animate-in">
             <h3>Top Selling Products</h3>
             <ul>
-                <li>Men's cloths</li>
-                <li>Women's cloths</li>
-                <li>Kid's cloths</li>
-                <li>Misilanous</li>
-
+                <li><i class="fas fa-tshirt"></i>Men's Clothes</li>
+                <li><i class="fas fa-dress"></i>Women's Clothes</li>
+                <li><i class="fas fa-baby"></i>Kid's Clothes</li>
+                <li><i class="fas fa-boxes-stacked"></i>Miscellaneous</li>
             </ul>
         </div>
+
         <div class="content">
-            <div class="new-members">
+            <div class="new-members animate-in">
                 <h3>Top Users</h3>
                 <ul>
                     <li>
                         <p>Glenn Holden</p>
                         <p>Nevada</p>
-                        <button class="unblock">Unblock</button>
+                        <button>Unblock</button>
                     </li>
                     <li>
                         <p>Lottie Martin</p>
                         <p>Ohio</p>
-                        <button class="block">Block</button>
+                        <button>Block</button>
                     </li>
                     <li>
                         <p>Robert Mercer</p>
                         <p>California</p>
-                        <button class="unblock">Unblock</button>
+                        <button>Unblock</button>
                     </li>
                 </ul>
             </div>
-            <div class="recent-activity">
+            <div class="recent-activity animate-in">
                 <h3>Recent Activity</h3>
                 <ul>
                     <li>
@@ -82,18 +286,20 @@
             </div>
         </div>
     </div>
+
     <script>
         const ctx = document.getElementById('salesChart').getContext('2d');
-        const salesChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [{
                     label: 'Sales',
                     data: [1200, 1900, 3000, 5000, 2300, 4000, 4500],
-                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                    borderColor: 'rgba(52, 152, 219, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    borderWidth: 2,
+                    tension: 0.4
                 }]
             },
             options: {
@@ -102,9 +308,33 @@
                     y: {
                         beginAtZero: true
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
         });
-    </script>
 
-</section>
+        // GSAP animations
+        gsap.from(".stat", {
+            duration: 0.8,
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+
+        gsap.from(".chart-container, .products, .new-members, .recent-activity", {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            stagger: 0.3,
+            ease: "power3.out",
+            delay: 0.5
+        });
+    </script>
+</body>
+
+</html>

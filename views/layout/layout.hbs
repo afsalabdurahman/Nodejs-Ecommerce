@@ -6,6 +6,7 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>e-commerce</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{!--
     <link rel='stylesheet' type='text/css' media='screen' href='/assets/nav.css'> --}}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -21,7 +22,9 @@
 <body>
 
 
-
+    {{#if error}}
+    {{{body}}}
+    {{else}}
 
 
 
@@ -32,12 +35,11 @@
 
     {{>userHead}}
 
-    {{{body}}}
 
-    {{>user-footer}}
+    {{{body}}} {{>user-footer}}
     {{/if}}
 
-
+    {{/if}}
 
 </body>
 

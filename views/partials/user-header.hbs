@@ -35,17 +35,16 @@
         <a class="nav-link" href="#">Contact</a>
       </li>
       <li style="margin-top: 0.5em;">
-        <input type="text" placeholder="Search...">
+
         {{#if reg}}
       <li style="margin-left: 2.1em;"></li>
       {{else}}
       <li style="margin-top: -1.3em;"></li>
       {{/if}}
+      <input type="text" id="searach" placeholder="Search...">
+      <button type="button" style="margin-top: 0em;" onclick="fun()" class="btn btn-dark"></button>
 
-      <button type="button" style="margin-top: 0em;" class="btn btn-dark">Search</button>
       </li>
-
-
       </li>
 
 
@@ -76,3 +75,13 @@
 
   </ul>
 </nav>
+
+<script>
+
+  function fun() {
+    console.log("working")
+    val = document.getElementById("searach")
+    console.log(val, "search2222")
+  }
+
+</script>

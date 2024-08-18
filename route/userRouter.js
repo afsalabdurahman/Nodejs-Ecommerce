@@ -10,8 +10,15 @@ const config = require("../middleware/googleAuth");
 const Paymentstatus = require('../middleware/payment')
 
 
+
+
 //user Home
 UserRouter.get("/", userController.loadHome);
+
+//error
+UserRouter.get("/error", (req, res) => {
+  res.render('user/Error.hbs', { error: "err" })
+});
 
 //Login
 UserRouter.post('/login', userController.loginUser)
@@ -41,11 +48,15 @@ UserRouter.get('/profile/editprofile', userController.EditProfile)
 UserRouter.post('/profile/posteditprofile', userController.Posteditprofile)
 UserRouter.get('/profile/wishlist', userController.WishList)
 UserRouter.get('/profile/cart', userController.Cart)
+UserRouter.get('/profile/newcart', userController.NewCart)
+
 UserRouter.get('/profile/address', userController.Address)
 
 UserRouter.post('/profile/newadd', userController.NewAddress)
+UserRouter.get('/profile/newadd', userController.DeleteAdd)
 
 UserRouter.get('/profile/changepsw', userController.changePsw)
+UserRouter.get('/postchangepsw', userController.postNewpass)
 UserRouter.get('/profile/checkout', userController.Checkout)
 UserRouter.get('/profile/allorders', Paymentstatus.Checkstatus, userController.AllOrders)
 UserRouter.get('/profile/deletecart', userController.DeleteCart)
@@ -56,17 +67,11 @@ UserRouter.post('/updatepsw', userController.Updatepsw)
 UserRouter.get('/profile/delete', userController.DeleteProfile)
 //sorting.....
 UserRouter.get("/new-arrival", userController.products);
-
+UserRouter.get('/search', userController.Search)
 //Cart............
 UserRouter.get("/cart/cancelorder", userController.CancelOrder)
 
 
-// UserRouter.get('/profiles', (req, res) => {
-//   console.log(req.body)
-//   console.log(req.query)
-//   res.send("data")
-// })
-//Product mangement cart,wishlist
 UserRouter.get('/product/user-wish-list', userController.ProductUserWishlist)
 // Google auth
 UserRouter.get(

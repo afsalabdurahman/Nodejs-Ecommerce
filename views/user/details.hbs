@@ -78,7 +78,7 @@
       {{#if productvalue.isVisible}}
       <main class="col-lg-6">
         <div class="ps-lg-3">
-          <h4 class="title text-dark">
+          <h4 class="title text-dark" id="productName">
             {{productvalue.name}}
           </h4>
           <div class="d-flex flex-row my-3">
@@ -146,7 +146,7 @@
                   id="button-addon1" data-mdb-ripple-color="dark">
                   <i class="fas fa-minus"></i>
                 </button>
-                <input type="text" id="quantity-input" class="form-control text-center border border-secondary"
+                <input  style="pointer-events: none;" type="text" id="quantity-input" class="form-control text-center border border-secondary"
                   value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
                 <button onclick="increaseQuantity({{productvalue.stock}})"
                   class="btn btn-white border border-secondary px-3" type="button" id="button-addon2"
@@ -156,10 +156,10 @@
               </div>
             </div>
           </div>
-
+          <p id="change" style="color: red;"></p>
           {{#if msg.message}}
 
-          <p style="color: red;">mesage {{msg.message}}</p>
+          <p style="color: red;"> {{msg.message}}</p>
           <a href="/profile/cart" class="btn btn-success shadow-0"> Go to Cart </a>
           {{else}}
           <a onclick="buy('{{productvalue._id}}')" class="btn btn-warning shadow-0"> Buy now </a>
@@ -345,12 +345,15 @@
   function increaseQuantity(val) {
 
     let quantityInput = document.getElementById('quantity-input');
-    if (val > quantityInput.value) {
-      let currentValue = parseInt(quantityInput.value);
-      quantityInput.value = currentValue + 1;
-    } else {
-      quantityInput.value = val
-    }
+    if (5 > quantityInput.value || quantityInput.value > {{ productvalue.stock }}
+  ) {
+    let currentValue = parseInt(quantityInput.value);
+    quantityInput.value = currentValue + 1;
+    document.getElementById("change").innerHTML = ""
+  } else {
+    document.getElementById("change").innerHTML = "Maximum 5 quantities are allowed"
+
+  }
 
   }
   function decreaseQuantity() {
@@ -358,6 +361,7 @@
     let currentValue = parseInt(quantityInput.value);
     if (currentValue > 1) {
       quantityInput.value = currentValue - 1;
+      document.getElementById("change").innerHTML = ""
     }
   }
 
@@ -365,14 +369,14 @@
     let quandity = document.getElementById('quantity-input')
     console.log(quandity.value)
     let size = document.getElementById('size')
-
+    let name = document.getElementById("productName").innerHTML
     let price = document.getElementById('price')
     price = price.innerHTML.split("")
     price.splice(0, 1)
     price = Number(price.join(''))
 
 
-    window.location.href = `/profile/cart?id=${id}&quandity=${quandity.value}&size=${size.value}&price=${price}`;
+    window.location.href = `/profile/cart?id=${id}&quandity=${quandity.value}&size=${size.value}&price=${price}&name=${name}`;
   }
 
 

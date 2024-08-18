@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../../model/userModel");
 const User_schema = require("../../model/userModel");
 const Product = require("../../model/productModel");
-const { products } = require("../user/userController");
+const { products, Cart } = require("../user/userController");
 const UserCart = require("../../model/cartModel");
 const { ObjectId } = require('mongoose').Types;
 const mongo = require('mongoose')
@@ -96,23 +96,31 @@ const blockUser = async (req, res) => {
 
     res.redirect("/admin/listuser");
   } catch (err) {
-    console.log(error);
+    res.redirect('/error');
   }
 };
 
 const Orders = async (req, res) => {
   try {
+
+    console.log(req.query)
     console.log(req.session.admin_id, "Orders admin")
+    num = req.query.pageNo
+    pageno = Number(num)
 
+    const pages = pageno || 1
+    const docCount = await UserCart.countDocuments();
+    console.log(docCount, "count")
 
-    let Data = await UserCart.find({ orderStatus: { $in: ["Processing", "Cancelled"] } }).populate("ProductId").lean()
-    // let userData = await User.findById(new ObjectId('66977111bb6bfb89608e910a')).lean();
-    // Data.user = userData;
-    console.log(":data:Data", Data)
-    res.render("admin/Orders.hbs", { Data, admin: true })
+    let val = docCount / 3
+    count = Math.ceil(val)
+    const perPage = Math.round(count / 3)
+    let Data = await UserCart.find({ orderStatus: { $in: ["Processing", "Cancelled"] } }).skip((pages - 1) * perPage).limit(3).populate("ProductId").lean()
+
+    res.render("admin/Orders.hbs", { Data, admin: true, count })
 
   } catch (error) {
-    console.log(error)
+    res.redirect('/error');
   }
 
 
@@ -120,14 +128,70 @@ const Orders = async (req, res) => {
 
 const OrderDetails = async (req, res) => {
   console.log(req.query.id, "isss")
+  id = req.query.id;
   const usercart = await UserCart.findById(req.query.id).populate("ProductId").lean()
   console.group(usercart)
-  res.render('admin/OrderDetails.hbs', { admin: true, usercart })
+  res.render('admin/OrderDetails.hbs', { admin: true, usercart, id })
 }
 
+const Cancel_Order = async (req, res) => {
+  try {
+    console.log(req.query.id, "qury id from cart")
+    const prettyDate = new Date().toLocaleString('en-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+
+      hour12: true,
+    });
+    const Data = await UserCart.updateOne({ _id: req.query.id }, {
+
+      $set: {
+        orderStatus: 'Cancelled',
+        Date: prettyDate,
+      }
+    }, { upsert: true })
+
+    res.redirect(`/admin/orderdetails?id=${req.query.id}`)
+
+  } catch (error) {
+    res.redirect('/error')
+  }
+}
+const Shipped_Order = async (req, res) => {
+  try {
+    console.log(req.query.id, "qury id from cart")
+    const prettyDate = new Date().toLocaleString('en-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+
+      hour12: true,
+    });
+    const Data = await UserCart.updateOne({ _id: req.query.id }, {
+
+      $set: {
+        orderStatus: 'Shipped',
+        Date: prettyDate,
+      }
+    }, { upsert: true })
+
+    res.redirect(`/admin/orderdetails?id=${req.query.id}`)
+
+  } catch (error) {
+    res.redirect('/error')
+  }
+}
 
 module.exports = {
   OrderDetails,
+  Cancel_Order,
   Orders,
   loadAdminLogin,
   blockUser,
@@ -135,4 +199,5 @@ module.exports = {
   adminLogout,
   listUser,
   loadHome,
+  Shipped_Order,
 };

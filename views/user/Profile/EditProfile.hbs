@@ -142,8 +142,7 @@
         <div class="profile-container">
             <h2>Edit Profile Details</h2>
 
-            <form action="/profile/posteditprofile" class="profile-form" method="post"
-                enctype="application/x-www-form-urlencoded" onsubmit="return validateForm()">
+            <form id="form" class="profile-form">
                 <div class="image-upload">
                     <label for="profile-image-upload">
                         <img src="/pictures/men/user.webp" alt="Profile Image" class="profile-image"
@@ -161,56 +160,165 @@
 
                 <label for="mobile">Mobile</label>
                 <input type="text" id="mobile" name="mobile" value="{{user.mobile}}" required>
-
+                <p id="change1" style="color: red;"></p>
                 <label for="gender">Gender</label>
-                <input type="text" id="gender" name="gender" value="-not added-">
+                <input type="text" id="gender" name="gender" value="{{user.gender}}">
 
                 <label for="dob">Date of Birth</label>
-                <input type="text" id="dob" name="dob" value="-not added-">
+                <input type="text" id="dob" name="dob" value="{{user.dob}}">
 
                 <label for="location">Location</label>
-                <input type="text" id="location" name="location" value="-not added-">
+                <input type="text" id="location" name="location" value="{{user.location}}">
 
                 <label for="address">Address</label>
-                <textarea id="address" name="address" rows="4"></textarea>
+                <textarea id="address" name="address" rows="4">{{user.address}}</textarea>
 
                 <button type="submit" class="confirm-button">Confirm</button>
             </form>
+
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                const output = document.getElementById('profile-image-preview');
-                output.src = reader.result;
+        const regex = /[0-9]|[!@#$%^&*]/;
+        document.getElementById('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let name = document.getElementById("full-name");
+            let email = document.getElementById("email").value; // Assuming you have an input with id="email"
+            let mobile = document.getElementById("mobile").value
+            let address = document.getElementById("address").value
+            let dob = document.getElementById("dob").value
+            let gender = document.getElementById("gender").value
+            let location = document.getElementById("location").value
+            if (name.value.trim() === "") { // Corrected logical condition
+                document.getElementById("change").innerHTML = "Enter your name";
+
+                return;
             }
-            reader.readAsDataURL(event.target.files[0]);
-        }
+
+            else {
+                document.getElementById("change").innerHTML = "";
+            }
+
+            if (regex.test(name.value.trim())) {
+                console.log("regsz")
+                document.getElementById("change").innerHTML = "Special charector and Number are not allowed";
+
+                return;
+            }
+            else {
+                document.getElementById("change").innerHTML = "";
+            }
+
+            let isValidNo = {
+                minLength: 10,
+                maxLength: 12,
+
+                specialAndLetter: /(?=.*[!@#$%^&*])|(?=.*[a-zA-Z])/
+            }
+            console.log(mobile.length, "mobile")
+
+            const lengthValid = mobile.length >= isValidNo.minLength && mobile.length <= isValidNo.maxLength;
+            const containsSpecial = isValidNo.specialAndLetter.test(mobile);
+            console.log(lengthValid, "length", containsSpecial, "special")
+            if (mobile) {
+                if (lengthValid == false) {
+                    document.getElementById("change1").innerHTML = " Not a valid number";
+                    return
+
+                } else if (containsSpecial) {
+                    document.getElementById("change1").innerHTML = "Special charectors  are not allowed";
+                    return
+                }
+                else {
+                    document.getElementById("change1").innerHTML = ""
+                }
+            }
+
+            Swal.fire({
+                title: 'Ready to Continue?',
+                text: "Are you sure you want to proceed?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Continue',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/profile/posteditprofile', {
+                        method: 'POST', // Corrected method
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `name=${encodeURIComponent(name.value)}&email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}&address=${encodeURIComponent(address)}&dob=${encodeURIComponent(dob)}&gender=${encodeURIComponent(gender)}&location=${encodeURIComponent(location)}` // Corrected body encoding
+                    }).then(res => res.json())
+                        .then(data => {
+                            Swal.fire(
+                                'Success!',
+                                'Your form has been submitted.',
+                                'success'
+                            ).then((e) => {
+                                console.log(e)
+                                if (e.isConfirmed) {
+                                    window.location.href = '/profile'
+                                }
+                            })
+                        }).catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire(
+                                'Error!',
+                                'There was an issue submitting the form.',
+                                'error'
+                            );
+                        });
+                }
+            });
+        });
+
+
+
+
         function checkname() {
-            let name = document.getElementById("full-name")
-            console.log(name.value, "value")
+            let name = document.getElementById("full-name");
+            console.log(name.value, "value");
             if (name.value.trim() === "") {
-                document.getElementById("change").innerHTML = "Enter your name"
-                name.innerHTML = "plaese enter"
+                document.getElementById("change").innerHTML = "Enter your name";
+                name.innerHTML = "please enter";
             } else {
-                document.getElementById("change").innerHTML = ""
-
-
-            }
-            if (document.getElementById("change").innerHTML == "") {
-                return true
-            } else {
-                return false
+                document.getElementById("change").innerHTML = "";
             }
 
+            // No need to return any value here, validation logic will be handled in validateForm
         }
 
         function validateForm() {
-            return checkname()
+            checkname();
 
-
+            if (document.getElementById("change").innerHTML === "") {
+                // Show SweetAlert confirmation
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to save the changes?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Save',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If user confirms, submit the form
+                        document.querySelector(".profile-form").submit();
+                    } else {
+                        // If user cancels, do nothing
+                        return false;
+                    }
+                });
+            } else {
+                return false; // Prevent form submission if validation fails
+            }
         }
     </script>
+
 </div>

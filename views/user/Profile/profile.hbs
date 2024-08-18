@@ -1,5 +1,9 @@
 <link rel="stylesheet" href="/assets/profile.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
+    integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>"https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"</script>
 
 <div class="body">
 
@@ -25,8 +29,8 @@
                 <h2>Profile Details</h2>
             </div>
             <div class="profile-info">
-                
-                
+
+
                 <p><strong>Full Name:</strong> {{user.name}}</p>
                 <p><strong>Email ID:</strong> {{user.email}}</p>
                 <p><strong>Mobile:</strong> {{user.mobile}}</p>
@@ -35,10 +39,28 @@
                 <p><strong>location:</strong> {{user.location}}</p>
                 <p><strong>Address:</strong>{{user.address}}</p>
             </div>
-            <a href="/profile/editprofile"><button class="edit-btn" style="left: 328px;"><i class="fas fa-edit"></i>
+            <a><button class="edit-btn" style="left: 328px;" onclick="sweetalert()"><i class="fas fa-edit"></i>
                     Edit
                     Profile</button> </a>
         </main>
     </div>
 
 </div>
+<script>
+    function sweetalert() {
+        Swal.fire({
+            title: "Do you want to edit this item?",
+            showCancelButton: true,
+            confirmButtonText: "Edit",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to another page when "Edit" is clicked
+                window.location.href = '/profile/editprofile';  // Replace '/edit-page' with your target URL
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Action canceled", "", "info");
+            }
+        });
+
+    }
+</script>

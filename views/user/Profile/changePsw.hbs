@@ -4,35 +4,164 @@
 <link rel="stylesheet" href="/assets/UserProfile/changePsw.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<style>
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 0.5em;
+    }
+</style>
+
 <div class="body">
     <div class="container">
         <div class="sidebar">
-             <ul>
-                    <li><a href="/profile"><i class="fas fa-user"></i> My Details</a></li>
-                    <li><a href="/profile/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
-                    <li><a href="/profile/cart"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
-                    <li><a href="/profile/allorders"><i class="fa fa-file-text"></i>All Orders</a></li>
-                    <li><a href="/profile/editprofile"><i class="fas fa-edit"></i> Edit User Details</a></li>
-                    <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
-                    <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
-                    <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
-                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
+            <ul>
+                <li><a href="/profile"><i class="fas fa-user"></i> My Details</a></li>
+                <li><a href="/profile/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                <li><a href="/profile/cart"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
+                <li><a href="/profile/allorders"><i class="fa fa-file-text"></i>All Orders</a></li>
+                <li><a href="/profile/editprofile"><i class="fas fa-edit"></i> Edit User Details</a></li>
+                <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
+                <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+                <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
         </div>
         <div class="content">
             <h2>Password</h2>
-            <form>
+            {{#if msg}}
+            <p style="color: red;">{{msg.message}}</p>
+            {{else}}
+            {{/if}}
+            <form id="passwordForm">
                 <label for="current-password">Current Password</label>
                 <input type="password" id="current-password" name="current-password">
+                <p id="current-password-error" class="error-message"></p>
 
                 <label for="new-password">New Password</label>
                 <input type="password" id="new-password" name="new-password">
+                <p id="new-password-error" class="error-message"></p>
 
                 <label for="confirm-password">Confirm Password</label>
                 <input type="password" id="confirm-password" name="confirm-password">
+                <p id="confirm-password-error" class="error-message"></p>
 
                 <button type="submit">CONFIRM</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('passwordForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        // Clear previous error messages
+        document.getElementById('current-password-error').textContent = '';
+        document.getElementById('new-password-error').textContent = '';
+        document.getElementById('confirm-password-error').textContent = '';
+
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        let isValid = true;
+
+        // Check if the new password is the same as the current password
+        if (currentPassword === newPassword) {
+            document.getElementById('new-password-error').textContent = 'New password cannot be the same as the current password.';
+            isValid = false;
+        }
+        const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{8,}$/;
+
+        if (!regex.test(newPassword)) {
+            document.getElementById('new-password-error').textContent = 'New password should have a Number,CamelCase,Special Charecter and Minimum 8 digists';
+            isValid = false
+        }
+
+        // Check if the new password matches the confirm password
+        if (newPassword !== confirmPassword) {
+            document.getElementById('confirm-password-error').textContent = 'New password and confirm password do not match.';
+            isValid = false;
+        }
+
+        // If all validations pass, you can proceed with form submission or further processing
+        if (isValid) {
+            // This is where you would normally handle a successful form submission.
+            // For example, you might submit the form or send an AJAX request.
+            Swal.fire({
+                title: 'Ready to Continue?',
+                text: "Are you sure you want to proceed?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Continue',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Encode the parameters to ensure they are properly formatted for URLs
+                    const params = new URLSearchParams({
+                        newpss: newPassword,
+                        currentpass: currentPassword
+                    }).toString();
+
+                    fetch(`/postchangepsw/?${params}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then(res => res.json())
+                        .then(data => {
+                            if (data.msg) {
+                                Swal.fire(
+                                    'Success!',
+                                    'Your form has been submitted.',
+                                    'success'
+                                ).then((e)=>{
+                                    if (e.isConfirmed) {
+                                        window.location.href = '/logout';
+                                    }
+                                })
+                            } else (
+                                Swal.fire(
+                                    'Failed!',
+                                    'Your Current Password Does not match',
+                                    'Failed'
+                                )
+                            )
+                                .then((e) => {
+                                    if (e.isConfirmed) {
+                                        window.location.href = '/logout';
+                                    }
+                                });
+                        }).catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire(
+                                'Error!',
+                                'Current password is not matching',
+                                'error'
+                            );
+                        });
+                }
+            });
+
+
+
+
+
+
+
+
+
+            // window.location.href = `/postchangepsw/?newpss=${newPassword}&currentpass=${currentPassword}`;
+            // Uncomment the line below to actually submit the form
+            // this.submit();
+        }
+
+
+
+
+
+
+
+    });
+</script>

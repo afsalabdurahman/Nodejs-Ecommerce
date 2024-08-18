@@ -9,7 +9,7 @@
 
     .order-details-container {
         background-color: #fff;
-        max-width: 800px;
+        max-width: 880px;
         margin: 20px auto;
         padding: 20px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -163,7 +163,7 @@
     <div class="order-details-container">
         <div class="order-header">
             <h2>Order details</h2>
-            <p>Details for Order ID: <strong>OrderID#1008</strong></p>
+            Details for Order ID: <strong>OrderID#1008</strong></p>
             <div class="order-date"><i class="fas fa-calendar-alt"></i><span>08 03 2024 10:43:40</span></div>
         </div>
         <div class="order-info">
@@ -204,6 +204,8 @@
                         <th>Total</th>
                         <th>Return Reason</th>
                         <th>Return status</th>
+                        <th>Order cancel</th>
+                        <th>Order shipped</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -215,6 +217,9 @@
                         <td>₹{{usercart.TotalAmount}}</td>
                         <td>–</td>
                         <td><button class="approve-btn" id="approve" onclick="approve()">Approve</button></td>
+                        <td><button class="approve-btn" id="Cancel" onclick="Cancel('{{id}}')">Cancel</button></td>
+                        <td><button class="approve-btn" id="Shipped" onclick="Shipped('{{id}}')">Shipped</button></td>
+
                     </tr>
                 </tbody>
             </table>
@@ -233,5 +238,50 @@
         console.log(a)
 
         document.getElementById('approve').style.backgroundColor = "green"
+    }
+    function Cancel(b) {
+        Swal.fire({
+            title: "Do you want to Cancel this Order?",
+            showDenyButton: true,
+
+            confirmButtonText: "Yes",
+            denyButtonText: `No`
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Cancelled!",
+                    text: "Order has been cancelled.",
+                    icon: "success"
+                });
+                window.location.href = `/admin/cancel-order?id=${b}`;
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+
+
+    }
+    function Shipped(ship) {
+        Swal.fire({
+            title: "Do you want to Ship this Order?",
+            showDenyButton: true,
+
+            confirmButtonText: "Yes",
+            denyButtonText: `No`
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "shipped!",
+                    text: "Order has been shipped.",
+                    icon: "success"
+                });
+                window.location.href = `/admin/shipped-order?id=${ship}`;
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+
     }
 </script>

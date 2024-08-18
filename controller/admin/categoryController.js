@@ -36,7 +36,7 @@ const postcategoryForm = async (req, res) => {
       res.redirect("/admin/listcategory");
     }
   } catch (error) {
-    console.log(error);
+    res.redirect('/error');
   }
 };
 
@@ -89,7 +89,7 @@ const newEditcategory = async (req, res) => {
     }
     res.redirect("/admin/listcategory");
   } catch (error) {
-    console.log(error);
+    res.redirect('/error');
   }
 };
 

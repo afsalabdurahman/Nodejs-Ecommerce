@@ -1,9 +1,137 @@
+<style>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333333;
+        --card-background: #ffffff;
+        --border-color: #e0e0e0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .container {
+        background-color: var(--card-background);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    header h3 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter {
+        margin-bottom: 2rem;
+    }
+
+    .dropdown-container label {
+        font-weight: 500;
+        margin-right: 0.5rem;
+    }
+
+    .dropdown {
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: var(--card-background);
+        color: var(--text-color);
+    }
+
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        margin-bottom: 2rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .nav-link {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .price-wrap strong {
+        color: var(--secondary-color);
+        font-size: 1.1rem;
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .pagination {
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .page-link {
+        color: var(--primary-color);
+        border-color: var(--border-color);
+    }
+
+    .page-link:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+</style>
+
+
+
+
 <section>
     <div class="container my-5">
         <header class="mb-4">
             <h3>Women's Collections</h3>
         </header>
-
+        {{!-- filter.............................. --}}
+        <div class="filter">
+            <div class="dropdown-container">
+                <label for="sort-options">Sort By:</label>
+                <select id="sort-options" class="dropdown">
+                    {{#if value}}
+                    <option value="new">{{value}}</option>
+                    {{else}}
+                    <option value="new-arrival">New Arrival</option>
+                    {{/if}}
+                    <option value="low-price">Low Price</option>
+                    <option value="high-price">High Price</option>
+                    <option value="a-z">A-Z</option>
+                </select>
+            </div>
+        </div>
+        {{!-- ............................................................. --}}
         <div class="row">
 
             {{!-- dynamic Data--}}
@@ -22,10 +150,18 @@
                     <div class="card-body d-flex flex-column pt-3 border-top">
                         <a href="#" class="nav-link">{{name}} </a>
                         <div class="price-wrap mb-2">
-                            <strong class="">${{price}}</strong>
+                            <strong class="">₹{{price}}</strong>
                         </div>
                         <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                            <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+                            <a href="#" id="{{_id}}" class="btn btn-outline-primary" onclick="buy('{{_id}}')">
+                                <i class="fas fa-cart-plus"></i> Add to cart
+                            </a>
+                            <p>
+
+                            </p><a href="/details/?id={{_id}}" class="btn btn-outline-primary">
+                                <i class="fas fa-shopping-bag"></i> Buy now
+                            </a>
+
                         </div>
                     </div>
                 </div>
@@ -61,3 +197,32 @@
 
         </div>
 </section>
+
+<script>
+    document.getElementById('sort-options').addEventListener('change', function () {
+        const selectedValue = this.value;
+
+        if (selectedValue === 'new-arrival') {
+            // Scroll to the New Arrival section and redirect
+            window.scrollTo(0, 500); // Adjust the value to the position of your section
+            window.location.href = `women?id${"newarrival"}`; // Replace with your URL
+        } else if (selectedValue === 'low-price') {
+            // Scroll to the Low Price section and redirect
+            window.scrollTo(0, 1000); // Adjust the value to the position of your section
+            window.location.href = `women?id=${"lowprice"}`; // Replace with your URL
+        } else if (selectedValue === 'high-price') {
+            // Scroll to the High Price section and redirect
+            window.scrollTo(0, 1500); // Adjust the value to the position of your section
+            window.location.href = `women?id=${"highprice"}`; // Replace with your URL
+        } else if (selectedValue === 'a-z') {
+            // Scroll to the A-Z section and redirect
+            window.scrollTo(0, 2000); // Adjust the value to the position of your section
+            window.location.href = `women?id=${"Az"}`; // Replace with your URL
+        }
+    });
+
+
+
+
+
+</script>

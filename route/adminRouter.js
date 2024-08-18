@@ -61,6 +61,6 @@ adminRoute.get("/block", adminAuth.isLogin, adminController.blockUser);
 adminRoute.get("/orders", adminAuth.isLogin, adminController.Orders)
 
 adminRoute.get('/orderdetails', adminAuth.isLogin, adminController.OrderDetails)
-
-
+adminRoute.get('/cancel-order', adminAuth.isLogin, adminController.Cancel_Order)
+adminRoute.get('/shipped-order', adminAuth.isLogin, adminController.Shipped_Order)
 module.exports = adminRoute;

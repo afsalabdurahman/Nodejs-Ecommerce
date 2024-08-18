@@ -14,25 +14,28 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each Datas }}
+                {{#each Datas}}
                 <tr>
-
                     <td>
-                        <p><a href="/profile/deletecart?id={{ProductId._id}}&quandity={{quandity}}">X</p></a> <img
-                            src="/upload/{{ProductId.image.[0]}}" alt=" Product 1" class="product-image">
+                        <a href="/profile/deletecart?id={{ProductId._id}}&quandity={{quandity}}"
+                            class="remove-btn">X</a>
+                        <img src="/upload/{{ProductId.image.[0]}}" alt="Product Image" class="product-image">
                     </td>
                     <td>
-                        Mens fation <br>{{ProductId.description}}<br>
+                        <p id="productId" style="display: none;">{{ProductId._id}}</p>
+                        {{ProductId.name}}<br>
                         <span class="size">{{size}}</span>
                     </td>
-                    <td>${{ProductId.price}}</td>
+                    <td>₹{{ProductId.price}}</td>
+
                     <td>
                         <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
-                        <input type="text" id="qunadity" value="{{quandity}}" class="quantity-input" readonly>
+                        <input type="text" class="quantity-input" value="{{quandity}}" readonly>
                         <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
                     </td>
-                    <td class="item-total">${{TotalAmount}}</td>
+                    <td class="item-total">₹{{TotalAmount}}</td>
                 </tr>
+
                 {{/each}}
             </tbody>
         </table>
@@ -41,38 +44,57 @@
                 <input type="text" placeholder="Enter coupon code" id="coupon-code">
                 <button class="apply-btn" onclick="applyDiscount()">Apply</button>
             </div>
-            <p>Subtotal: <span id="subtotal">${{totalPrice}}</span></p>
-            <p>Discount: <span id="discount">$0.00</span></p>
-            <p>Total: <span id="total">{{totalPrice}}</span></p>
+            <p>Subtotal: <span id="subtotal">₹{{totalPrice}}</span></p>
+            <p>Discount: <span id="discount">0.00</span></p>
+            <p>Total: <span id="total">₹{{totalPrice}}</span></p>
             <button class="proceed-btn" onclick="checkout()">Proceed to Checkout</button>
         </div>
-
     </div>
-
-
 </div>
 
 <script>
+    function ajx(quandity, id) {
+        console.log(quandity, "qunadity")
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                // Handle the response if needed
+                console.log(this.responseText);
+            }
+        };
+        xhttp.open("GET", `/profile/newcart?id=${id}&newqunadity${quandity}`, true);
+        xhttp.send();
+    }
 
 
 
 
     function updateQuantity(button, change) {
         const quantityInput = button.parentElement.querySelector('.quantity-input');
-        let quantity = parseInt(quantityInput.value);
-        quantity += change;
-        if (quantity < 1) quantity = 1;
-        quantityInput.value = quantity;
-        updateItemTotal(button);
-        console.log("hiii")
+        let quantity = parseInt(quantityInput.value, 10);
+        if (quantity <= 5) {
+
+
+            quantity += change;
+            if (quantity < 1) quantity = 1;
+            quantityInput.value = quantity;
+
+            let productId = document.getElementById("productId").innerHTML
+
+            ajx(quantityInput.value, productId)
+            updateItemTotal(button);
+
+        } else {
+            document.getElementById("change").innerHTML = "Maximum purchse 5 quandity"
+        }
     }
 
     function updateItemTotal(button) {
         const row = button.closest('tr');
-        const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace('$', ''));
-        const quantity = parseInt(row.querySelector('.quantity-input').value);
+        const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace('₹', ''));
+        const quantity = parseInt(row.querySelector('.quantity-input').value, 10);
         const itemTotal = price * quantity;
-        row.querySelector('.item-total').textContent = `${itemTotal.toFixed(2)}`;
+        row.querySelector('.item-total').textContent = `₹${itemTotal.toFixed(2)}`;
         updateSummary();
     }
 
@@ -89,23 +111,20 @@
         const rows = document.querySelectorAll('tbody tr');
         let subtotal = 0;
         rows.forEach(row => {
-            const itemTotal = parseFloat(row.querySelector('.item-total').textContent.replace('$', ''));
+            const itemTotal = parseFloat(row.querySelector('.item-total').textContent.replace('₹', ''));
             subtotal += itemTotal;
         });
         const discountAmount = subtotal * discount;
         const total = subtotal - discountAmount;
 
-        document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)}`;
-        document.getElementById('discount').textContent = `${discountAmount.toFixed(2)}`;
-        document.getElementById('total').textContent = `${total.toFixed(2)}`;
+        document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+        document.getElementById('discount').textContent = `₹${discountAmount.toFixed(2)}`;
+        document.getElementById('total').textContent = `₹${total.toFixed(2)}`;
     }
 
-
     function checkout() {
-
-        let Total = document.getElementById('total').textContent
-        console.log(Total, "total")
-        window.location.href = `/profile/checkout?id=${Total}`;
-
+        const total = document.getElementById('total').textContent.replace('₹', '');
+        console.log(total, "totalssssss")
+        window.location.href = `/profile/checkout?total=${total}`;
     }
 </script>

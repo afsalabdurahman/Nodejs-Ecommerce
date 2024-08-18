@@ -2,6 +2,78 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 
+<style>
+    .popup {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Popup content */
+    .popup-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        border-radius: 8px;
+    }
+
+    /* Close button */
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Form styling */
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        margin-top: 10px;
+    }
+
+    input {
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+
 <div class="body">
     <div class="container">
         <div class="checkout-header">
@@ -12,7 +84,7 @@
                 <h2>Select Address</h2>
 
                 <div class="address">
-                    <input type="radio" id="address1" onclick="check(this.id)" name="address" value="address2" checked >
+                    <input type="radio" id="address1" onclick="check(this.id)" name="address" value="address2" checked>
 
                     <label for="address2">
                         <strong>{{userData.name}}</strong><br>
@@ -23,24 +95,116 @@
                 </div>
 
                 <div class="address">
+                    {{#if userData.address2.name}}
                     <input type="radio" id="address2" onclick="check(this.id)" name="address" value="address2">
+
                     <label for="address2">
                         <strong>{{userData.address2.name}}</strong><br>
-                        {{userData.address2.address}},{{userData.address2.state}},{{userData.address2.city}},{{userData.address2.zop}}<br>
+                        {{userData.address2.address}},{{userData.address2.state}},{{userData.address2.city}},{{userData.address2.zip}}<br>
                         Phone: +91 {{userData.address2.phone}}<br>
                         Email: {{userData.address2.email}}
+
                     </label>
+                    {{else}}
+                    {{/if}}
+
+
+                    <div class="body">
+                        <!-- Edit Button -->
+                        {{#if userData.address2.name}}
+                        <button id="editButton">Edit</button>
+                        <button type="button" style="background-color: red;" onclick="DeleteAdd()">Delete</button>
+                        {{else}}
+                        <button id="editButton">Add</button>
+                        {{/if}}
+
+                        <div id="popup" class="popup">
+                            <div class="popup-content">
+                                <span class="close-button" id="closeButton">&times;</span>
+                                {{#if userData.address2.name}}
+                                <h2>Edit Information</h2>
+                                {{else}}
+                                <h2>Add Information</h2>
+                                {{/if}}
+                                {{#if userData.address2.name}}
+                                <form id="editForm" method="post" action="/profile/newadd"
+                                    enctype="application/x-www-form-urlencoded">
+                                    <input type="text" style="display: none;" id="id" name="id" value="007">
+
+                                    <input type="text" style="display: none;" id="price" name="price"
+                                        value=" {{totalPrice}}">
+                                    <label for="name">Name:</label>
+
+                                    <input type="text" id="name" name="name" value="{{userData.address2.name}}"
+                                        required>
+                                    <p style="color: red;" id="change">
+                                    </p>
+
+                                    <label for="address">Address:</label>
+                                    <input type="text" id="address" name="address"
+                                        value=" {{userData.address2.address}},{{userData.address2.zip}}" required>
+                                    <label for="state">State:</label>
+                                    <input type="text" id="state" name="state" value="{{userData.address2.state}}">
+                                    <label for="city">City:</label>
+                                    <input type="text" name="city" id="city" value="{{userData.address2.city}}">
+                                    <label for="state">Zip:</label>
+                                    <input type="text" id="zip" name="zip" value="{{userData.address2.zip}}">
+
+                                    <label for="phone">Phone Number:</label>
+                                    <input type="number" id="phone" name="mobile" value="{{userData.address2.phone}}"
+                                        required>
+                                    <label for="email">Email:</label>
+                                    <input type="email" id="email" name="email" value="{{userData.address2.email}}"
+                                        required>
+                                    <button type="submit">Save</button>
+
+                                </form>
+                                {{!--Add New Address --}}
+                                {{else}}
+                                <form id="editForm" method="post" action="/profile/newadd"
+                                    enctype="application/x-www-form-urlencoded">
+                                    <input type="text" style="display: none;" id="id" name="id" value="007">
+
+                                    <input type="text" style="display: none;" id="price" name="price"
+                                        value=" {{totalPrice}}">
+                                    <label for="name">Name:</label>
+
+                                    <input type="text" id="name" name="name" required>
+                                    <p id="change" style="color: red;"></p>
+                                    <label for="address">Address:</label>
+                                    <input type="text" id="address" name="address" required>
+                                    <label for="state">State:</label>
+                                    <input type="text" id="state" name="state" required>
+                                    <label for="city">City:</label>
+                                    <input type="text" id="city" name="city" required>
+                                    <label for="state">Zip:</label>
+                                    <input type="text" id="zip" name="zip" required>
+
+                                    <label for=" phone">Phone Number:</label>
+                                    <input type="number" id="phone" name="mobile" required>
+                                    <label for="email">Email:</label>
+                                    <input type="email" id="email" name="email" required>
+                                    <button type="submit">Save</button>
+
+                                </form>
+                                {{/if}}
+                            </div>
+                        </div>
+
+
+                    </div>
                 </div>
+
                 <div class="discount">
                     <label for="discount-code">Discount Coupon</label>
                     <input type="text" id="discount-code" name="discount-code">
                     <button type="button">Apply</button>
                 </div>
                 <div class="total-price">
-                    <p>Total Price: ${{totalPrice}}</p>
-                    <p>Tax: $100.00</p>
-                    <p>Discount: $5.00</p>
-                    <p><strong>Grand Total: ${{totalPriceTax}}</strong></p>
+                    <p>Total Price: ₹{{totalPrice}}</p>
+                    <p>Tax: ₹100.00</p>
+                    <p>Discount: 5%</p>
+                    <p><strong>Grand Total: ₹{{totalPriceTax}}</strong></p>
                 </div>
             </div>
             <div class="payment-section" style="">
@@ -88,8 +252,32 @@
     </div>
 </div>
 <script>
-    function placeOrder() {
 
+    function DeleteAdd() {
+        Swal.fire({
+            title: "Do you want to Delete?",
+            showDenyButton: true,
+
+            confirmButtonText: "Delete",
+
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+
+                let price = document.getElementById('price').value
+
+                window.location.href = `/profile/newadd?id=007&price=${price}`
+            } else if (result.isDenied) {
+                Swal.fire("Cancelled", "", "info");
+            }
+        });
+
+
+    }
+
+
+    function placeOrder(e) {
+        event.preventDefault();
         let radios = document.getElementsByName('payment')
         let selectedValue = null;
         for (const radio of radios) {
@@ -99,7 +287,7 @@
             }
         }
 
-        document.getElementById('result').innerText = selectedValue ? `Selected value is: ${selectedValue}` : 'No option selected';
+        document.getElementById('result').innerText = selectedValue ? `Selected value is: ${selectedValue} ` : 'No option selected';
 
 
 
@@ -149,4 +337,80 @@
         console.log(Data, "from show order")
         window.location.href = `/profile/allorders?id=${Data}`;
     }
+
+
+    ///popup......................................
+    document.addEventListener('DOMContentLoaded', () => {
+        const editButton = document.getElementById('editButton');
+        const popup = document.getElementById('popup');
+        const closeButton = document.getElementById('closeButton');
+
+        // Show popup
+        editButton.addEventListener('click', () => {
+            popup.style.display = 'block';
+        });
+
+        // Hide popup
+        closeButton.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        // Hide popup when clicking outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === popup) {
+                popup.style.display = 'none';
+            }
+        });
+
+        // Form submission handling (optional)
+        document.getElementById('editForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            let name = document.getElementById("name")
+            let email = document.getElementById("email").value // Assuming you have an input with id="email"
+            let mobile = document.getElementById("phone").value
+            let address = document.getElementById("address").value
+            let zip = document.getElementById("zip").value
+            let city = document.getElementById("city").value
+            let state = document.getElementById("state").value
+            console.log(name, city, mobile, state)
+            const regex = /[0-9]|[!@#$%^&*]/;
+
+            if (name.value.trim() === "") { // Corrected logical condition
+                document.getElementById("change").innerHTML = "Enter your name";
+                return
+
+            }
+
+            else {
+                document.getElementById("change").innerHTML = "";
+            }
+
+
+            if (regex.test(name.value.trim())) {
+                console.log("regsz")
+                document.getElementById("change").innerHTML = "Special charector and Number are not allowed";
+
+                return;
+            }
+            else {
+                document.getElementById("change").innerHTML = "";
+            }
+
+
+            event.target.submit()
+
+
+            popup.style.display = 'none';
+            //  });
+
+
+
+
+
+        });
+
+    });
+
+
 </script>
