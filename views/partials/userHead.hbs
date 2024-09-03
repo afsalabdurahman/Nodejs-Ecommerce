@@ -108,7 +108,9 @@
         </ul>
         <div class="searchbar">
             <input id="input" type="text " placeholder="Search...">
+            <p style="color: red; padding-right:1px" id="changey"></p>
             <button type="button" onclick="search()">Search</button>
+
         </div>
 
         <div class="icons">
@@ -127,6 +129,14 @@
 <script>
     function search() {
         val = document.getElementById('input').value
-        window.location.href = `search?name=${val}`
+        console.log(val == "")
+        if (val.trim() === "") {
+            alert("emty")
+            document.getElementById('changey').innerHTML = "Filed is emty"
+        } else {
+            document.getElementById('changey').innerHTML = ""
+            window.location.href = `search?name=${val}`
+        }
+        // 
     }
 </script>

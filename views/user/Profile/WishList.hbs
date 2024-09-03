@@ -1,6 +1,136 @@
 <link rel="stylesheet" href="/assets/UserProfile/WishList.css">
 <link rel="stylesheet" href="/assets/profile.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f0f8ff;
+        color: #333;
+    }
+
+    .main-content {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #4a4af4;
+        font-size: 2.5em;
+        margin-bottom: 30px;
+    }
+
+    .wishlist-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .wishlist-table th,
+    .wishlist-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .wishlist-table th {
+        background-color: #4a4af4;
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .wishlist-table img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        margin-right: 15px;
+        border-radius: 5px;
+    }
+
+    .remove-btn,
+    .quantity-btn {
+        background-color: #ff6b6b;
+        color: #ffffff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .remove-btn:hover,
+    .quantity-btn:hover {
+        background-color: #ff4757;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity-input {
+        width: 40px;
+        text-align: center;
+        margin: 0 5px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+    }
+
+    .add-to-cart-btn,
+    .proceed-btn {
+        background-color: #4a4af4;
+        color: #ffffff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 600;
+    }
+
+    .add-to-cart-btn:hover,
+    .proceed-btn:hover {
+        background-color: #3434b6;
+    }
+
+    .summary {
+        margin-top: 30px;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary p {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    .summary p:last-of-type {
+        font-weight: 600;
+        color: #4a4af4;
+        font-size: 1.3em;
+    }
+
+    .proceed-btn {
+        display: block;
+        width: 100%;
+        margin-top: 20px;
+        font-size: 1.2em;
+    }
+</style>
+
+
 <div class="body">
 
 
@@ -8,7 +138,7 @@
 
         <aside class="sidebar">
             <nav>
-                 <ul>
+                <ul>
                     <li><a href="/profile"><i class="fas fa-user"></i> My Details</a></li>
                     <li><a href="/profile/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
                     <li><a href="/profile/cart"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
@@ -16,7 +146,7 @@
                     <li><a href="/profile/editprofile"><i class="fas fa-edit"></i> Edit User Details</a></li>
                     <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
                     <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
-                    <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+                    <li><a href="/profile/wallet"><i class="fas fa-wallet"></i> Wallet</a></li>
                     <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
@@ -29,125 +159,87 @@
                     <tr>
                         <th></th>
                         <th>Product</th>
+                        <th>Size</th>
                         <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
+
+                     
                         <th></th>
                     </tr>
                 </thead>
                 <tbody id="wishlist-items">
+                    {{#each data}}
                     <tr>
-                        <td><button class="remove-btn">x</button></td>
-                        <td><img src="/pictures/blue2.jpg" alt="Kids Dress"><span>KIDS DRESS<br>Far far away, behind the
-                                word
-                                mountains, far from the countries</span></td>
-                        <td>$4.90</td>
+                        <td><button onclick="remove('{{_id}}')" class="remove-btn">x</button></td>
+                        <td><img src="/upload/{{ProductId.image.[0]}}" alt="Kids Dress"><span
+                                id="name1">{{ProductId.name}}<br>
+                            </span></td>
                         <td>
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                                <input type="text" value="1" class="quantity-input" readonly>
-                                <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                            </div>
+                            <select name="" id="size1">size
+                                <option value="small">small</option>
+                                <option value="medium">medium</option>
+                                <option value="large">large</option>
+                            </select>
                         </td>
-                        <td>$4.90</td>
-                        <td><button class="add-to-cart-btn">Add To Cart</button></td>
-                    </tr>
-                    <!-- Repeat similar rows for other products -->
-                    <tr id="removeId">
-                        <td><button class="remove-btn" onclick="remove(this)">x</button></td>
-                        <td><img src="/pictures/blue2.jpg" alt="Kids Dress"><span>KIDS DRESS<br>Far far away, behind the
-                                word
-                                mountains, far from the countries</span></td>
-                        <td>$4.90</td>
-                        <td>
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                                <input type="text" value="1" class="quantity-input" readonly>
-                                <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                            </div>
+                        <td id="price1">{{ProductId.price}}</td>
+
+                        <td><button class="add-to-cart-btn" type="button"
+                                onclick="addtocart('{{ProductId._id}}','{{_id}}')">Add
+                                To
+                                Cart</button>
                         </td>
-                        <td>$4.90</td>
-                        <td><button class="add-to-cart-btn">Add To Cart</button></td>
                     </tr>
-                    <tr>
-                        <td class="remove"><button class="remove-btn">x</button></td>
-                        <td><img src="/pictures/blue2.jpg" alt="Kids Dress"><span>KIDS DRESS<br>Far far away, behind
-                                the
-                                word
-                                mountains, far from the countries</span></td>
-                        <td>$4.90</td>
-                        <td>
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
-                                <input type="text" value="1" class="quantity-input" readonly>
-                                <button class="quantity-btn" onclick="increaseQuantity(this)">+</button>
-                            </div>
-                        </td>
-                        <td>$4.90</td>
-                        <td><button class="add-to-cart-btn">Add To Cart</button></td>
-                    </tr>
+                    {{/each}}
                 </tbody>
             </table>
-            <div class="summary">
-                <p>Total Price: <span id="total-price">$4.90</span></p>
-                <p>Discount: <span id="discount">$0.00</span></p>
-                <p>Tax: <span id="tax">$0.00</span></p>
-                <p>Final Total: <span id="final-total">$4.90</span></p>
-                <button class="proceed-btn">Proceed to Cart</button>
-            </div>
+
         </main>
     </div>
 
 </div>
 <script>
+    let flexqty;
     console.log("hiii")
-    function remove(val) {
-        removes = document.getElementById('removeId')
-        removes.remove()
-    }
+    function remove(id) {
 
-    function decreaseQuantity(button) {
-        const quantityInput = button.nextElementSibling;
-        let quantity = parseInt(quantityInput.value);
-        if (quantity > 1) {
-            quantity--;
-            quantityInput.value = quantity;
-            updateTotal(button, quantity);
-        }
-    }
-
-    function increaseQuantity(button) {
-        const quantityInput = button.previousElementSibling;
-        let quantity = parseInt(quantityInput.value);
-        quantity++;
-        quantityInput.value = quantity;
-        updateTotal(button, quantity);
-    }
-
-    function updateTotal(button, quantity) {
-        const row = button.closest('tr');
-        const price = parseFloat(row.children[2].textContent.replace('$', ''));
-        const total = (price * quantity).toFixed(2);
-        row.children[4].textContent = `$${total}`;
-        updateSummary();
-    }
-
-    function updateSummary() {
-        const rows = document.querySelectorAll('#wishlist-items tr');
-        let totalPrice = 0;
-        rows.forEach(row => {
-            const total = parseFloat(row.children[4].textContent.replace('$', ''));
-            totalPrice += total;
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success"
+                }).then(() => {
+                    window.location.href = `/deletewishlist?id=${id}`;
+                });
+            }
         });
 
-        const discount = 0; // You can add logic for discount here
-        const tax = 0; // You can add logic for tax here
-        const finalTotal = totalPrice - discount + tax;
 
-        document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
-        document.getElementById('discount').textContent = `$${discount.toFixed(2)}`;
-        document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
-        document.getElementById('final-total').textContent = `$${finalTotal.toFixed(2)}`;
+
     }
 
+
+    function addtocart(b, d) {
+
+
+
+        id = b;
+
+        price = document.getElementById("price1").innerHTML
+        size = document.getElementById("size1").value
+        name = document.getElementById("name1").innerHTML
+
+        console.log(id, price, size, name, "list")
+
+        window.location.href = `/profile/cart?id=${id}&quandity=1&size=${size}&price=${price}&remove=${d}`
+
+
+    }
 </script>

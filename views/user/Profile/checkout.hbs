@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/assets/UserProfile/checkout.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
     .popup {
@@ -198,14 +198,45 @@
                 <div class="discount">
                     <label for="discount-code">Discount Coupon</label>
                     <input type="text" id="discount-code" name="discount-code">
-                    <button type="button">Apply</button>
+                    <button type="button" onclick="apply()">Apply</button>
                 </div>
-                <div class="total-price">
-                    <p>Total Price: ₹{{totalPrice}}</p>
-                    <p>Tax: ₹100.00</p>
-                    <p>Discount: 5%</p>
-                    <p><strong>Grand Total: ₹{{totalPriceTax}}</strong></p>
-                </div>
+
+                {{#isEmpty Scra}}
+                {{!-- scrach coupens..............--}}
+                {{else}}
+
+                <body>
+                    <a onclick="call()">
+                        <p id="hide" style="display: none;">Remove Coupen</p>
+                    </a>
+                    <p id="seeCoupons" style="cursor: pointer; color: blue; text-decoration: underline;">See your
+                        coupons</p>
+
+                    <!-- Popup Box -->
+                    <div id="couponPopup" class="popup">
+                        <div class="popup-content">
+                            <span class="close">&times;</span>
+                            <h2>Scratch to Reveal Your Coupon Code</h2>
+                            <div class="scratch-card" id="scratchCard">
+                                <div class="coupon-code" id="couponCode">{{Scra.code}}</div>
+                                <p id="Cdiscount">{{Scra.Coupendiscount}}</p>
+                                <canvas></canvas>
+                            </div>
+                            <p>Terms and Conditions: This coupon is valid until the end of the month. It can be used for
+                                one-time purchases only and cannot be combined with other offers.</p>
+                        </div>
+                    </div>
+                    {{!-- scrach coupen Ends.........--}}
+                    {{/isEmpty}}
+
+                    <div class="total-price">
+                        <p>Total Price: ₹{{totalPrice}}</p>
+                        <p>Tax: ₹100.00</p>
+                        <p id="discount">Discount: </p>
+
+                        <p><strong id="gtotal">Grand Total: ₹{{totalPriceTax}}</strong></p>
+
+                    </div>
             </div>
             <div class="payment-section" style="">
                 <h2>Payment Method</h2>
@@ -218,12 +249,12 @@
                     <label for="upi">UPI</label>
                 </div>
                 <div class="payment-method">
-                    <input type="radio" id="internet-banking" name="payment" value="internet-banking">
-                    <label for="internet-banking">Internet Banking</label>
+                    <input type="radio" id="Lux-Wallet" name="payment" value="Lux-Wallet">
+                    <label for="Lux-Wallet">Lux-Wallet</label>
                 </div>
                 <div class="payment-method">
-                    <input type="radio" id="paypal" name="payment" value="paypal">
-                    <label for="paypal">Paypal</label>
+                    <input type="radio" id="razorpay" name="payment" value="razorpay">
+                    <label for="razorpay">Razorpay</label>
                 </div>
                 <div class="terms">
                     <input type="checkbox" id="terms" name="terms">
@@ -252,6 +283,48 @@
     </div>
 </div>
 <script>
+    //apply discount
+    function apply() {
+        let appvalues = document.getElementById("discount-code").value
+        if (appvalues.trim() == "") {
+            alert("emty")
+        }
+        let cod = document.getElementById("couponCode").innerHTML
+        if (appvalues == cod) {
+            let amt = parseInt(document.getElementById("Cdiscount").innerHTML)
+            console.log(amt, "amt")
+            let a = document.getElementById("gtotal").innerHTML
+            b = a.slice(14)
+            let c = Number(b)
+            total = c - amt
+
+
+
+            fetch(`/update/coupen?code=${cod}`).then((re) => {
+                if (re.status == 200) {
+                    document.getElementById("hide").style.display = ""
+                    Swal.fire("Coupen apply!")
+                    document.getElementById("gtotal").innerHTML = `Grand Total: ₹${total}`
+
+                    document.getElementById("discount").innerHTML = `Discount : -${amt}`
+                } else {
+                    document.getElementById("hide").style.display = ""
+                    Swal.fire("Allready used")
+
+                }
+
+            })
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "",
+
+            });
+        }
+    }
+
+
 
     function DeleteAdd() {
         Swal.fire({
@@ -288,42 +361,50 @@
         }
 
         document.getElementById('result').innerText = selectedValue ? `Selected value is: ${selectedValue} ` : 'No option selected';
-
-
+        if (selectedValue == "cod") {
+            payment()
+        } else if (selectedValue == "razorpay") {
+            initiateRazorpayPayment()
+        } else if (selectedValue == "Lux-Wallet") {
+            Lux()
+        }
 
 
     }
 
 
-    var Data = "";
-    document.getElementById('paymentButton').addEventListener('click', function () {
-        if ('No option selected' == document.getElementById('result').innerText) {
-            document.getElementById('result').style.color = "red"
-        } else {
+    let Data = "";
+    function payment() {
 
 
-            const loadingPopup = document.getElementById('loadingPopup');
-            const completionPopup = document.getElementById('completionPopup');
+        document.getElementById('paymentButton').addEventListener('click', function () {
+            if ('No option selected' == document.getElementById('result').innerText) {
+                document.getElementById('result').style.color = "red"
+            } else {
 
-            // Show loading popup
-            loadingPopup.classList.add('active');
 
-            setTimeout(function () {
-                // Hide loading popup
-                loadingPopup.classList.remove('active');
+                const loadingPopup = document.getElementById('loadingPopup');
+                const completionPopup = document.getElementById('completionPopup');
 
-                // Show completion popup
-                completionPopup.classList.add('active');
+                // Show loading popup
+                loadingPopup.classList.add('active');
 
                 setTimeout(function () {
-                    // Hide completion popup
-                    completionPopup.classList.remove('active');
-                }, 20000); // 20 seconds
-            }, 2000); // Simulate loading for 2 seconds}
-        }
-    });
+                    // Hide loading popup
+                    loadingPopup.classList.remove('active');
 
+                    // Show completion popup
+                    completionPopup.classList.add('active');
 
+                    setTimeout(function () {
+                        // Hide completion popup
+                        completionPopup.classList.remove('active');
+                    }, 20000); // 20 seconds
+                }, 2000); // Simulate loading for 2 seconds}
+            }
+        });
+
+    }
     document.getElementById('closeButton').addEventListener('click', function () {
         const completionPopup = document.getElementById('completionPopup');
         completionPopup.classList.remove('active');
@@ -412,5 +493,229 @@
 
     });
 
+    //Razorpay.................
+    function initiateRazorpayPayment() {
+        a = document.getElementById("gtotal").innerHTML
+        b = a.slice(14)
+        let c = Number(b)
+        console.log(c)
+        // Fetch the order ID from the server
+        fetch('/createOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: c, // Amount in INR
+                currency: 'INR',
+                receipt: 'order_rcptid_11'
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                var options = {
+                    "key": "rzp_test_rKKnsBDAE47Z6D", // Enter the Key ID generated from the Dashboard
+                    "amount": data.amount, // Amount is in currency subunits
+                    "currency": data.currency,
+                    "name": "Your Company Name",
+                    "description": "Test Transaction",
+                    "order_id": data.id, // This is the order ID returned by the server
+                    "handler": function (response) {
+                        // Handle payment success here
+                        console.log(response);
+                        // You can make an API call to your server to verify the payment
+                        fetch('/verifyPayment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(response)
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log(data, "succss")
+                                if (data.status === "success") {
+
+                                    window.location.href = '/profile/allorders?info=wallet';
+                                } else {
+
+                                    window.location.href = '/profile/allorders?info=wallet';
+                                }
+                            });
+                    },
+                    "prefill": {
+                        "name": "John Doe",
+                        "email": "john@example.com",
+                        "contact": "9999999999"
+                    },
+                    "theme": {
+                        "color": "#F37254"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            })
+            .catch(error => console.error('Error:', error));
+        return "wallet"
+    }
+    //end Razor
+
+    //scratch....................
+
+
+    // Get the p tag and the popup
+    var pTag = document.getElementById("seeCoupons");
+    var popup = document.getElementById("couponPopup");
+
+    // Get the <span> element that closes the popup
+    var closeBtn = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the p tag, open the popup
+    pTag.onclick = function () {
+        popup.style.display = "block";
+        initScratchCard();
+    }
+
+    // When the user clicks on <span> (x), close the popup
+    closeBtn.onclick = function () {
+        popup.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the popup, close it
+    window.onclick = function (event) {
+        if (event.target == popup) {
+            popup.style.display = "none";
+        }
+    }
+
+    // Scratch card functionality
+    function initScratchCard() {
+        var scratchCard = document.getElementById('scratchCard');
+        var canvas = scratchCard.querySelector('canvas');
+        var ctx = canvas.getContext('2d');
+        var couponCode = document.getElementById('couponCode');
+
+        // Initialize canvas size
+        canvas.width = scratchCard.offsetWidth;
+        canvas.height = scratchCard.offsetHeight;
+
+        // Fill the canvas with a solid color (this simulates the scratch layer)
+        ctx.fillStyle = '#aaa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Scratch functionality
+        canvas.addEventListener('mousedown', function (e) {
+            canvas.addEventListener('mousemove', scratch);
+        });
+
+        canvas.addEventListener('mouseup', function () {
+            canvas.removeEventListener('mousemove', scratch);
+        });
+
+        function scratch(e) {
+            var rect = canvas.getBoundingClientRect();
+            var x = e.clientX - rect.left;
+            var y = e.clientY - rect.top;
+
+            // Erase part of the layer
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 15, 0, Math.PI * 2, false);
+            ctx.fill();
+        }
+    }
+
+    function Lux() {
+        a = document.getElementById("gtotal").innerHTML
+        b = a.slice(14)
+        let c = Number(b)
+        console.log(c)
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+            title: "$" + c,
+            text: `Pay from user Lux-wallet`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Pay it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: true
+        },
+
+        ).then((result) => {
+            if (result.isConfirmed) {
+                //ftech data
+                walletdata().then((res) => {
+                    if (res == "not") {
+                        swalWithBootstrapButtons.fire({
+                            title: "Faild!",
+                            text: "Check your avilable balance",
+                            icon: "Failed"
+                        });
+                    } else {
+                        swalWithBootstrapButtons.fire({
+                            title: "Sucess!",
+                            text: "Check your avilable balance",
+                            icon: "Success"
+                        });
+
+                        window.location.href = `/profile/allorders?WalletAmt=${c}`
+                    }
+                })
+
+
+                //
+
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire({
+                    title: "Cancelled",
+                    text: "Your imaginary file is safe :)",
+                    icon: "error"
+                });
+            }
+        });
+    }
+
+    async function walletdata() {
+        // Extract the amount from the DOM and convert it to a number
+        const a = document.getElementById("gtotal").innerHTML;
+        const b = a.slice(14);
+        const c = Number(b);
+
+        try {
+            // Perform the fetch request with the amount as a query parameter
+            const response = await fetch(`/checkbalance?amount=${c}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Parse the JSON from the response
+            const data = await response.json();
+
+            if (data && data.success) {
+                console.log(data, "data");
+                return "done"; // Return "done" if the request was successful
+            } else {
+                return "not"; // Return "not" if the request was not successful
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            return "not"; // Return "not" in case of an error
+        }
+    }
 
 </script>

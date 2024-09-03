@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dress Sales Report</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #082747;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 13px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+
+        .category-header {
+            background-color: #007bff;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 8px;
+            text-align: center;
+            border: none;
+        }
+
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+
+        form {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dress Sales Report</h1>
+        <h4>Sales Count: {{salesCount}}</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Dress Name</th>
+                    <th>Size</th>
+                    <th>Quantity Sold</th>
+                    <th>Unit Price</th>
+                    <th>Total Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#if m}}
+                <tr class="category-header">
+                    <td colspan="5">Men Dresses</td>
+                </tr>
+                {{#each m}}
+                <tr>
+                    <td>{{productname}}</td>
+                    <td>{{productsize}}</td>
+                    <td>{{productqunatity}}</td>
+                    <td>₹{{productprice}}</td>
+                    <td>₹{{producttotal}}</td>
+                </tr>
+                {{/each}}
+                {{/if}}
+                {{#if w}}
+                <tr class="category-header" style="background-color: #0056b3;">
+                    <td colspan="5">Women Dresses</td>
+                </tr>
+                {{#each w}}
+                <tr>
+                    <td>{{productname}}</td>
+                    <td>{{productsize}}</td>
+                    <td>{{productqunatity}}</td>
+                    <td>₹{{productprice}}</td>
+                    <td>₹{{producttotal}}</td>
+                </tr>
+                {{/each}}
+                {{/if}}
+                {{#if k}}
+                <tr class="category-header" style="background-color: blue;">
+                    <td colspan="5">Kids Dresses</td>
+                </tr>
+                {{#each k}}
+                <tr>
+                    <td>{{productname}}</td>
+                    <td>{{productsize}}</td>
+                    <td>{{productqunatity}}</td>
+                    <td>₹{{productprice}}</td>
+                    <td>₹{{producttotal}}</td>
+                </tr>
+                {{/each}}
+                {{/if}}
+                <tr class="total-row">
+                    <td colspan="4">Total Sales</td>
+                    <td>₹{{total}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Download PDF Button -->
+        <form action="/admin/download-pdf" method="POST">
+            <input type="hidden" name="m" value='{{{json m}}}'>
+            <input type="hidden" name="w" value='{{{json w}}}'>
+            <input type="hidden" name="k" value='{{{json k}}}'>
+            <input type="hidden" name="total" value="{{total}}">
+            <button type="submit" class="download-btn">Download PDF</button>
+        </form>
+    </div>
+</body>
+
+</html>
+
+<script>
+    t = document.getElementById('total1')
+    console.log(t)
+</script>

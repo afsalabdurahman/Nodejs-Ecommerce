@@ -13,7 +13,7 @@
             <div class="basic-section">
                 <h2>Basic</h2>
 
-                <form action="/admin/newlistproduct" method="post" enctype="multipart/form-data" id="form1" check >
+                <form action="/admin/newlistproduct" method="post" enctype="multipart/form-data" id="form1" check>
                     <label for="product-title">Product title</label>
 
 
@@ -75,11 +75,11 @@
             <div class="image-preview" id="image-preview">
                 <!-- Image containers will be added dynamically here -->
 
-                {{!-- {{#each productData.image}}
+                {{#each productData.image}}
 
-                <img class="removeimg" src="/upload/{{this}}" alt="">
-                <button type="button" onclick="remove('{{this}}')">remove</button>
-                {{/each}} --}}
+                <img class="removeimg" id="removeimg" src="/upload/{{this}}" alt="" style="height: 200px;width:200px">
+                <button type="button" id="delete" onclick="remove('{{this}}')">remove</button>
+                {{/each}}
 
 
             </div>
@@ -134,11 +134,13 @@
 
 
     }
-</script>{{!--
+</script>
 <script>
-    // function remove(img,) {
-    // console.log(img)
-    //document.getElementsByClassName('removeimg').style = 'none'
+    function remove(img,) {
+        console.log(img)
+        mm = document.getElementById("removeimg")
+        mm.remove()
+        document.getElementById("delete").remove()
     }
 
-</script> --}}
+</script>

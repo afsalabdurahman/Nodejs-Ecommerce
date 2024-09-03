@@ -97,7 +97,7 @@
           </div>
 
           <div class="mb-3">
-            <span class="h5" id="price">${{productvalue.price}}.00</span>
+            <span class="h5" id="price">₹{{productvalue.price}}.00</span>
             <span class="text-muted">/per box</span>
           </div>
 
@@ -146,8 +146,9 @@
                   id="button-addon1" data-mdb-ripple-color="dark">
                   <i class="fas fa-minus"></i>
                 </button>
-                <input  style="pointer-events: none;" type="text" id="quantity-input" class="form-control text-center border border-secondary"
-                  value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
+                <input style="pointer-events: none;" type="text" id="quantity-input"
+                  class="form-control text-center border border-secondary" value="1"
+                  aria-label="Example text with button addon" aria-describedby="button-addon1" />
                 <button onclick="increaseQuantity({{productvalue.stock}})"
                   class="btn btn-white border border-secondary px-3" type="button" id="button-addon2"
                   data-mdb-ripple-color="dark">
@@ -295,7 +296,7 @@
                   <a href="#" class="nav-link mb-1">
                     {{Similar_product.[0].name}}
                   </a>
-                  <strong class="text-dark"> ${{Similar_product.[0].price}}</strong>
+                  <strong class="text-dark"> ₹{{Similar_product.[0].price}}</strong>
                 </div>
               </div>
 
@@ -309,7 +310,7 @@
                     {{Similar_product.[0].name}} <br />
                     Jeans Shorts
                   </a>
-                  <strong class="text-dark"> ${{Similar_product.[1].price}}</strong>
+                  <strong class="text-dark"> ₹{{Similar_product.[1].price}}</strong>
                 </div>
               </div>
 
@@ -320,7 +321,7 @@
                 </a>
                 <div class="info">
                   <a href="#" class="nav-link mb-1"> T-shirts with multiple colors, for men and lady </a>
-                  <strong class="text-dark"> ${{Similar_product.[0].price}}</strong>
+                  <strong class="text-dark"> ₹{{Similar_product.[0].price}}</strong>
                 </div>
               </div>
 
@@ -345,7 +346,8 @@
   function increaseQuantity(val) {
 
     let quantityInput = document.getElementById('quantity-input');
-    if (5 > quantityInput.value || quantityInput.value > {{ productvalue.stock }}
+    if (5 > quantityInput.value && quantityInput.value < {{ productvalue.stock }}
+  
   ) {
     let currentValue = parseInt(quantityInput.value);
     quantityInput.value = currentValue + 1;
@@ -366,10 +368,11 @@
   }
 
   function buy(id) {
+
     let quandity = document.getElementById('quantity-input')
     console.log(quandity.value)
     let size = document.getElementById('size')
-    let name = document.getElementById("productName").innerHTML
+    let name = document.getElementById("productName").innerText
     let price = document.getElementById('price')
     price = price.innerHTML.split("")
     price.splice(0, 1)

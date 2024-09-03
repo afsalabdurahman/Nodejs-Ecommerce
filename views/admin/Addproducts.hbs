@@ -1,6 +1,13 @@
 <link rel="stylesheet" href="/assets/admin/addproducts.css" type="text/css">
 <script type="text/javascript" src="/js/remove-products.js"></script>
+{{!-- <link href="/node_modules/cropperjs/dist/cropper.min.css" rel="stylesheet"> --}}
 
+{{!-- cropper cdn --}}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+{{!-- end --}}
 
 <section style="background-color: #58736a; z-index:1">
 
@@ -45,7 +52,21 @@
                         </div>
                         <div>
                             <label for="stock - quandity">stock</label>
-                            <input type="text" id="promotional-price" name="stock" placeholder="no" required="">
+                            <input type="text" id="stock" name="stock" placeholder="no" onblur="validate('name','hide')"
+                                required="">
+                            <p id="hide" style="display: none; color:red">must be postive integrity</p>
+                        </div>
+                        <div>
+                            <label for="stock - color"> Color</label>
+                            <input type="text" id="promotional-price" name="color" placeholder="no" required="">
+                        </div>
+                        <div>
+                            <label for="stock - color"> choose</label>
+                            <select type="text" id="size" name="size" placeholder="--choose--">
+                                <option value="small">Small</option>
+                                <option value="mediam">medium</option>
+                                <option value="large">large</option>
+                            </select>
                         </div>
                     </div>
 
@@ -78,3 +99,17 @@
     </form>
 
 </section>
+<script>
+    function validate(name, hide) {
+        hide = document.getElementById("hide")
+        name = document.getElementById("stock")
+        if (name.value.trim() === "" || name.value <= 0) {
+            hide.style.display = "block";
+        } else {
+            hide.style.display = "none";
+        }
+
+
+
+    }
+</script>

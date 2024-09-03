@@ -1,10 +1,14 @@
 let User_schema = require("../../model/userModel");
+const CategoryModel = require("../../model/categoryMode")
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const Wallet = require('../../model/WalletModel')
 const Product = require("../../model/productModel");
-const Wishlist = require("../../model/wishlistModel");
+const Wishlistschema = require("../../model/wishlistModel");
 const UserCart = require("../../model/cartModel");
-const Orders = require("../../model/orderModels");
+const Offer = require("../../model/OfferModel")
+const Coupens = require("../../model/CoupenModel")
+const ReturnOrders = require("../../model/ReturnOrderModel");
 const { request } = require("../../route/adminRouter");
 
 
@@ -180,7 +184,19 @@ const products = async (req, res) => {
     console.log(req.query.pageNo, "qury")
     let pageNumber = Number(req.query.pageNo)
     console.log(pageNumber, "page number")
+    //Category Offers.................................
+    let newoffer;
+    let Productoffer = await Offer.find({ $and: [{ type: "Category" }, { typeName: "Men's shirts" }, { status: 1 }] }).lean()
+    if (Productoffer) {
+      newoffer = Productoffer
+    } else {
+      newoffer = null
+    }
 
+    //Product offer..
+
+
+    //.....................................
 
     const docCount = await Product.countDocuments({
       $and: [{ category: "6699057c3cefcb99d7d7fe63" }, { is_listed: true }]
@@ -195,6 +211,7 @@ const products = async (req, res) => {
 
     let val = docCount / 8
     renderOptions.count = Math.ceil(val)
+    renderOptions.newoffer = newoffer
     console.log(renderOptions, "products")
     if (req.session.user_id) {
       renderOptions.user = user;
@@ -226,6 +243,15 @@ const womenSortedProducts = async (sortCriteria, pageno, count) => {
 ///
 const Womens = async (req, res) => {
   console.log("working")
+  let newoffer;
+  let Productoffer = await Offer.find({ $and: [{ type: "Category" }, { typeName: "Women tops" }, { status: 1 }] }).lean()
+  if (Productoffer) {
+    newoffer = Productoffer
+  } else {
+    newoffer = null
+  }
+
+
   if (req.query) {
     console.log(req.query.pageNo, "qury")
     let pageNumber = Number(req.query.pageNo)
@@ -242,6 +268,7 @@ const Womens = async (req, res) => {
     const products = await womenSortedProducts(req.query.id, pageNumber, docCount);
     const renderOptions = { products };
     renderOptions.value = req.query.id
+    renderOptions.newoffer = newoffer
 
     let val = docCount / 8
     renderOptions.count = Math.ceil(val)
@@ -249,39 +276,45 @@ const Womens = async (req, res) => {
     if (req.session.user_id) {
       renderOptions.user = user;
       renderOptions.value = req.query.id
+
       console.log(renderOptions, "from user")
     }
 
-    res.render("user/Products/women.hbs", renderOptions);
+    res.render("user/Products/women.hbs", renderOptions,);
   }
 };
 
 
 
 
-// const Womens = async (req, res) => {
-//   const products = await Product.find({
-//     $and: [{ category: "669951b01934f70cb7148e6e" }, { is_listed: true }],
-//   }).lean();
-
-//   if (req.session.user_id) {
-//     user = req.session.user_id;
-//     res.render("user/Products/women.hbs", { user, products });
-//   } else {
-//     res.render("user/Products/women.hbs", { products });
-//   }
-// };
 
 // Kids Product Page..........................................
 const Kids = async (req, res) => {
+  let newoffer;
+  let page = req.query.pageno
+  const docount = await Product.countDocuments({
+    $and: [{ category: "669a10c1dfed884d9985a01c" }, { is_listed: true }]
+  });
+  let val = docount / 8
+  let count = Math.ceil(val)
+  let perPage = Math.round(count / 8)
+  console.log(count, "count")
+  let Productoffer = await Offer.find({ $and: [{ type: "Category" }, { typeName: "Kid Collection" }, { status: 1 }] }).lean()
+  if (Productoffer) {
+    newoffer = Productoffer
+  } else {
+    newoffer = null
+  }
+  console.log(newoffer, "offers")
   const products = await Product.find({
     $and: [{ category: "669a10c1dfed884d9985a01c" }, { is_listed: true }],
-  }).lean();
+  }).skip().lean();
+
   if (req.session.user_id) {
     user = req.session.user_id;
-    res.render("user/Products/kid.hbs", { user, products });
+    res.render("user/Products/kid.hbs", { user, products, count, newoffer });
   } else {
-    res.render("user/Products/kid.hbs", { products });
+    res.render("user/Products/kid.hbs", { products, count, newoffer });
   }
 };
 
@@ -318,6 +351,64 @@ const Search = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while searching for products' });
   }
 };
+
+//Apply Filters.....
+const Filters = async (req, res) => {
+  try {
+    const { gender, size, color, brand, priceMin, priceMax } = req.body;
+    console.log(req.body, "bosy")
+    // Build the query object based on the filters
+    let filter = {};
+
+    if (gender == "men") {
+      filter.category = "6699057c3cefcb99d7d7fe63";
+    } else if (gender == "women") {
+      filter.category = "669951b01934f70cb7148e6e";
+    } else if (gender == "kid") {
+      filter.category = "669a10c1dfed884d9985a01c";
+    }
+
+    if (size && size.length > 0) {
+      filter.size = Array.isArray(size) ? { $in: size } : size;
+    }
+    if (color && color.length > 0) {
+      filter.color = Array.isArray(color) ? { $in: color } : color;
+    }
+    if (brand && brand.length > 0) {
+      filter.brand = Array.isArray(brand) ? { $in: brand } : brand;
+    }
+    if (priceMin || priceMax) {
+      filter.price = {};
+      if (priceMin) filter.price.$gte = parseInt(priceMin);
+      if (priceMax) filter.price.$lte = parseInt(priceMax);
+    }
+
+    console.log(filter, "messagee.....>")
+    // Query the database with the filter
+    const products = await Product.find(filter).lean();
+    console.log(products, "productss Fiter")
+    // Render or send the response with filtered products
+
+    if (req.session.user_id) {
+      user = req.session.user_id;
+      res.render("user/Products/Search.hbs", { user, products });
+    } else {
+      res.render("user/Products/Search.hbs", { products });
+    }
+
+
+
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error applying filters', error });
+  }
+
+
+
+
+
+
+}
 
 
 // Whish list.........................................
@@ -387,7 +478,7 @@ details = async (req, res) => {
     }
 
   } catch (error) {
-    console.log(error, "this is errrrr");
+    res.redirect('/error')
   }
 };
 
@@ -485,21 +576,85 @@ const Posteditprofile = async (req, res) => {
 }
 
 
-const WishList = (req, res) => {
-  res.render('user/Profile/WishList.hbs', { user: true })
+const WishList = async (req, res) => {
+
+  let data = await Wishlistschema.find().populate("ProductId").lean()
+  console.log(data, "datat")
+
+  res.render('user/Profile/WishList.hbs', { user: true, data })
+}
+const AddWishlist = async (req, res) => {
+  //if (req.session.user_id)
+  console.log(req.session.user_id, "user id")
+  console.log(req.query, "qurywish.lui")
+  if (req.session.user_id) {
+
+    docCount = await Wishlistschema.countDocuments()
+    if (docCount < 5) {
+
+
+
+      let Insert_into_wishlist = new Wishlistschema({
+        ProductId: req.query.id,
+        UserId: req.session.user_id,
+
+      })
+      const insertedData = await Insert_into_wishlist.save();
+      res.send("hii")
+    } else {
+      res.send("full")
+    }
+
+  }
+
+
+
+}
+
+const DeleteWidhlist = async (req, res) => {
+  let deletes = await Wishlistschema.findByIdAndDelete(req.query.id);
+  console.log(req.query, "qurry")
+  res.redirect('/profile/wishlist')
 }
 const Cart = async (req, res) => {
   try {
+    let discount = 0
+    let showoffer;
     console.log(req.query, "newqundityyyyyy")
+    if (req.query.id) {
+      datacate = await Product.findById(req.query.id).populate("category")
+      console.log(datacate.category.name, "cate")
+      let offers = await Offer.find({ $and: [{ typeName: datacate.category.name }, { status: 1 }] })
 
-    let Amount = req.query.price * req.query.quandity
-    // console.log(Amount, "amtttt")
+      if (offers.length != 0) {
+        discount = offers[0].offerPercentage
+        showoffer = `offer Apply ${discount}`
+      }
+
+    }
+
+    //remove from wishlist
+    if (req.query.remove) {
+      let deletes = await Wishlistschema.findByIdAndDelete(req.query.remove);
+
+    }
+    //  const datacate = await Product.findById(req.query.id)
+    //   let findcategory = datacate.category;
+    //console.log(findcategory, "find category")
+    // let offer = await CategoryModel.findById()
+    console.log(discount, "offerdiscount")
+    let GAmount = req.query.price * req.query.quandity
+    console.log(GAmount, "Gamtttt")
+    let TAmount = GAmount * discount / 100
+    console.log(TAmount, "Tamtttt")
+    let Amount = GAmount - TAmount
+    console.log(Amount, "amtttt")
     user = req.session.user_id
     if (req.session.user_id && req.query.id) {
 
 
       let Product_in_Cart = await UserCart.findOne({ $and: [{ ProductId: req.query.id }, { UserId: req.session.user_id }, { orderStatus: "Pending" }, { size: req.query.size }] })
-      //  console.log(Product_in_Cart, "incart")
+      console.log(Product_in_Cart, "incart")
       if (Product_in_Cart == null) {
 
         const Insert_into_Cart = new UserCart({
@@ -508,7 +663,9 @@ const Cart = async (req, res) => {
           size: req.query.size,
           quandity: req.query.quandity,
           TotalAmount: Amount,
-          orderStatus: "Pending"
+          orderStatus: "Pending",
+          offer: discount,
+
         })
 
         const quantity = await Product.updateOne(
@@ -530,7 +687,7 @@ const Cart = async (req, res) => {
         const totalPrice = Datas.reduce((sum, product) => sum + product.TotalAmount, 0);
         req.session.totalPrice = totalPrice
         console.log("Total Price:", totalPrice);
-        res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice })
+        res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice, showoffer })
 
 
       } else {
@@ -549,7 +706,7 @@ const Cart = async (req, res) => {
       // console.log("Total Price:", totalPrice);
       res.render('user/Profile/Cart.hbs', { user, Datas, totalPrice })
     } else {
-      res.send("user not found")
+      res.redirect('/error')
     }
 
 
@@ -561,8 +718,71 @@ const Cart = async (req, res) => {
 
 
 }
-const NewCart = (req, res) => {
-  console.log(req.query, "new cart")
+const NewCart = async (req, res) => {
+  try {
+    console.log(req.query, "req.qury")
+    let data = await UserCart.findById(req.query.id)
+    let product = await Product.findById(data.ProductId)
+
+    const total = product.price * req.query.newqunadity
+    console.log(total, "total")
+    if (req.session.user_id) {
+
+      let num = Number(req.query.newqunadity)
+
+
+
+      const updateCartQunadity = await UserCart.findByIdAndUpdate({
+        _id: req.query.id
+      },
+        {
+          $set: { quandity: num, TotalAmount: total }
+        }, { upsert: true })
+
+
+
+      if (req.query.newqunadity) {
+        let q = 1
+
+
+        const quantity = await Product.updateOne(
+          { _id: data.ProductId },
+          { $inc: { stock: -q } }
+        );
+        q = 0;
+      }
+
+
+      //     let q = req.query.newqunadity
+      //     console.log(q, "q1")
+      //
+      //     if (req.query.newqunadity) {
+      //       let stocks = product.stock
+      //       console.log(stocks, "stocks")
+      //       lessStock = stocks - q
+      //       console.log(lessStock, "less")
+      //
+      //       const quantity = await Product.findByIdAndUpdate({
+      //         _id: data.ProductId
+      //       },
+      //         {
+      //           $set: { stock:  }
+      //         }, { upsert: true })
+      //     }
+      //
+
+      console.log(data.ProductId, "producId")
+
+      console.log(updateCartQunadity, "update qundity")
+    }
+    console.log(req.query, "new cart")
+  } catch (error) {
+    console.log(error)
+  }
+
+
+
+
 }
 
 
@@ -576,7 +796,7 @@ const Address = async (req, res) => {
 
       res.render('user/Profile/add.hbs', { user, add })
     } else {
-      res.send("user not found")
+      res.redirect('/error')
     }
   } catch (error) {
     console.log(error)
@@ -702,6 +922,14 @@ const postNewpass = async (req, res) => {
 
 const Checkout = async (req, res) => {
   try {
+    //IsCoupen
+    let coupenPrice = 0;
+    if (req.query.coupen) {
+      coupenPrice = req.query.coupen
+    }
+
+
+
     console.log(req.query, "quryyyyyy")
     user = req.session.user_id
     userData = await User_schema.findById({ _id: user }).lean()
@@ -709,11 +937,37 @@ const Checkout = async (req, res) => {
     console.log(user, "user")
     let totalPrice = Number(req.query.total)
     let subtotal = totalPrice + 100;
-    let discount = subtotal * 5 / 100
-    let totalPriceTax = subtotal - discount
-    console.log(subtotal, totalPriceTax, discount, "sub,", "finaltax", "discount,",)
+    let discount = coupenPrice
+    let t = subtotal - discount
+    let totalPriceTax = t.toFixed(2)
+    console.log(totalPrice, "total price tax")
 
-    res.render('user/Profile/checkout.hbs', { user, userData, totalPrice, totalPriceTax })
+
+    //coupen scraching
+    let Scra = {}
+
+    if (totalPrice > 1000) {
+
+      let code = await Coupens.find({
+      });
+      code.map((e) => {
+        console.log(e.minimumAmount, "minimum amount")
+        if (e.minimumAmount < totalPrice && totalPrice < 2000) {
+          Scra.code = e.code
+          Scra.Coupendiscount = e.discount
+        } else if (e.minimumAmount < totalPrice && totalPrice < 3000) {
+          Scra.code = e.code
+          Scra.Coupendiscount = e.discount
+        } else if (e.minimumAmount < totalPrice && totalPrice > 3000) {
+          Scra.code = e.code
+          Scra.Coupendiscount = e.discount
+        }
+      })
+
+    }
+    console.log(Scra, "scratch value")
+    //scraching
+    res.render('user/Profile/checkout.hbs', { user, userData, totalPrice, totalPriceTax, Scra })
   } catch (error) {
     res.redirect('/error')
   }
@@ -726,7 +980,7 @@ const AllOrders = async (req, res) => {
       const Data = await UserCart.find({
         $and: [
           { UserId: user },
-          { orderStatus: { $in: ["Processing", "Cancelled", "Shipped"] } }
+          { orderStatus: { $in: ["Processing", "Cancelled", "Shipped", "Returned"] } }
         ]
       }).sort({ _id: -1 }).populate("ProductId").lean();
       console.log(Data, "datass from checkout")
@@ -796,7 +1050,7 @@ const ProductUserWishlist = async (req, res) => {
 
       res.send("updated")
     } else {
-      res.send("user not found")
+      res.redirect('/error')
     }
 
   } catch (error) {
@@ -822,7 +1076,7 @@ const postforgetPsw = async (req, res) => {
 
       res.render("user/restOtp.hbs");
     } else {
-      res.send("Kindly register ")
+      res.render('user/Profile/forgetpsw.hbs', { msg: "User not Found" })
     }
 
   } catch (error) {
@@ -839,7 +1093,7 @@ const Newpassword = async (req, res) => {
     if (req.session.otp == fullOtp) {
       res.render('user/Profile/forgetpsw1.hbs')
     } else {
-      "wrong otp"
+      res.render("user/restOtp.hbs", { msg: "invalid otp" });
     }
   } catch (error) {
     console.log(error)
@@ -860,6 +1114,7 @@ const Updatepsw = async (req, res) => {
         }
       );
       console.log(updateNewPassword)
+      alert("password updated")
       res.redirect("/login")
     } else {
       res.send("no user")
@@ -883,6 +1138,54 @@ const DeleteProfile = async (req, res) => {
 const CancelOrder = async (req, res) => {
 
   try {
+
+    //update wallet..
+    let addwallet = await UserCart.findOne({ _id: req.query.id })
+    let update = 0
+    //   let currentBalance = await Wallet.find()
+    let Wuser = await Wallet.find({ userId: req.session.user_id })
+    console.log(Wuser, "wuser")
+
+    if (addwallet.paymentMethod == "wallet" && Wuser == null) {
+      const exampleWallet = new Wallet({
+        userId: req.session.user_id, // Replace with an actual user ID from your User collection
+        currentBalance: update,
+        transactions: [
+          {
+            
+            paymentStatus: 'Completed',
+            amount: addwallet.TotalAmount,
+            debit: true
+          }
+
+
+        ]
+      });
+
+      // Save the example data to the database
+      exampleWallet.save()
+    } else if (addwallet.paymentMethod == "wallet") {
+
+      let newtransaction = {
+    
+        paymentStatus: 'Completed',
+        amount: addwallet.TotalAmount,
+        debit: true
+      }
+
+      let updateW = await Wallet.findOneAndUpdate({
+        userId: req.session.user_id
+      }, {
+        $push: { transactions: newtransaction },
+        $inc: { currentBalance: +newtransaction.amount }
+      },
+        { new: true, upsert: true },
+      )
+    }
+
+
+
+
     console.log(req.query.id, "qury id from cart")
     const prettyDate = new Date().toLocaleString('en-IN', {
       weekday: 'long',
@@ -910,7 +1213,73 @@ const CancelOrder = async (req, res) => {
 
 }
 
+const ReturnProduct = async (req, res) => {
+  try {
+    // Validate required fields
+    if (!req.body.cartid || !req.body.accountName || !req.body.accountNumber || !req.body.bankName) {
+      return res.status(400).send("All fields are required.");
+    }
+
+    // Create formatted date
+    const prettyDate = new Date().toLocaleString('en-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    // Update return status in the cart (uncomment if needed)
+    const reqReturn = await UserCart.findByIdAndUpdate(
+      { _id: req.body.cartid },
+      { $set: { ReturnStatus: "ReturnProcessing" } },
+      { upsert: true }
+    );
+
+
+    // Create a new return order
+    const Insert_return_product = new ReturnOrders({
+      OrderId: req.body.cartid,
+      RefundAccholderName: req.body.accountName,
+      RefundAccName: req.body.bankName,
+      RefundAccNumber: req.body.accountNumber,
+      ReturnOption: req.body.returnOption,
+      RefundAccIFSC: req.body.IFSCode,
+      ReturnReason: req.body.reason,
+      Date: prettyDate,
+    });
+
+    // Save return order to database
+    const insertedData = await Insert_return_product.save();
+    console.log(insertedData, "inserts");
+
+    // Redirect to orders page
+    res.redirect('/profile/allorders');
+  } catch (error) {
+    console.error('Error in returning product:', error);
+    res.status(500).send("An error occurred while processing the return.");
+  }
+}
+
+const Wallets = async (req, res) => {
+  try {
+    update = await Wallet.find().lean()
+
+    console.log(update, "upddd")
+    res.render('user/Profile/Wallet.hbs', { update })
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
 module.exports = {
+  Wallets,
+  AddWishlist,
+  DeleteWidhlist,
+  ReturnProduct,
   CancelOrder,
   postNewpass,
   DeleteProfile,
@@ -949,6 +1318,7 @@ module.exports = {
   ProductUserWishlist,
   DeleteAdd,
   Search,
+  Filters,
 };
 
 function generateOtp() {

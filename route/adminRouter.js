@@ -15,7 +15,7 @@ adminRoute.get("/logout", adminAuth.isLogin, adminController.adminLogout);
 
 //home
 adminRoute.get("/home", adminAuth.isLogin, adminController.loadHome);
-
+adminRoute.post('/download-pdf', adminController.PDFDow)
 
 // Product Management
 adminRoute.get("/addproducts", adminAuth.isLogin, productController.addProducts);
@@ -59,8 +59,26 @@ adminRoute.get("/unlist", adminAuth.isLogin, categoryController.unlistCategory);
 adminRoute.get("/listuser", adminAuth.isLogin, adminController.listUser);
 adminRoute.get("/block", adminAuth.isLogin, adminController.blockUser);
 adminRoute.get("/orders", adminAuth.isLogin, adminController.Orders)
-
+//Order Mangement
 adminRoute.get('/orderdetails', adminAuth.isLogin, adminController.OrderDetails)
 adminRoute.get('/cancel-order', adminAuth.isLogin, adminController.Cancel_Order)
 adminRoute.get('/shipped-order', adminAuth.isLogin, adminController.Shipped_Order)
+adminRoute.get('/orders/returnreq', adminAuth.isLogin, adminController.ApproveReturn)
+//coupen management
+adminRoute.get('/listcoupens', adminAuth.isLogin, adminController.ListCoupens)
+adminRoute.get('/addcoupen', adminAuth.isLogin, adminController.AddCoupen)
+adminRoute.post('/postcoupen', adminAuth.isLogin, adminController.PostCoupen)
+adminRoute.get('/deletecoupen', adminAuth.isLogin, adminController.DeleteCoupen)
+//Offer mangement
+adminRoute.get('/listoffers', adminAuth.isLogin, adminController.ListOffers)
+adminRoute.get('/addoffers', adminAuth.isLogin, adminController.AddOffers)
+adminRoute.post('/postoffers', adminAuth.isLogin, adminController.PostOffers)
+
+adminRoute.get('/deleteoffer', adminAuth.isLogin, adminController.DeleteOffer)
+
+
+adminRoute.get('/inactiveoffer', adminAuth.isLogin, adminController.InActiveOffer)
+///sales report
+adminRoute.get('/salesreport', adminAuth.isLogin, adminController.generateSalesReport)
+
 module.exports = adminRoute;

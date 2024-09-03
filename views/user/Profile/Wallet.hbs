@@ -1,0 +1,114 @@
+<style>
+    .body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    .wallet-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .balance-section {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .balance-section h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .balance-amount {
+        font-size: 32px;
+        color: #2ecc71;
+    }
+
+    .transaction-history h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    table td {
+        color: #333;
+    }
+
+    table td:nth-child(4) {
+        text-align: center;
+    }
+</style>
+
+
+<div class="body">
+    <div class="wallet-container">
+        <div class="balance-section">
+            <h2>Current Balance</h2>
+
+            <p class="balance-amount">₹{{update.[0].currentBalance}}</p>
+        </div>
+        <div class="transaction-history">
+            <h3>Transaction History</h3>
+            <table>
+                <thead>
+                    <tr>
+
+                        <th>Date</th>
+                        <th>Payment Status</th>
+                        <th>Amount</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each update.[0].transactions}}
+                    <tr>
+
+                        <td>{{date}}</td>
+                        <td>{{paymentStatus}}</td>
+                        <td>₹{{amount}}</td>
+
+                        <td>{{debit}}</td>
+                        <td>{{credit}}</td>
+                    </tr>
+                    {{/each}}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -103,10 +103,24 @@
                     <td>{{ProductId.name}}</td>
                     <td>₹{{ProductId.price}}</td>
                     {{#ifEquals orderStatus "Cancelled"}}
-                    <td><span style="color: red;" class="status ">Order Cancelled</span></td>
+                    <td><span style="color: red;" class="status">Order Cancelled</span></td>
+                    {{else ifEquals orderStatus "Shipped"}}
+
+                    {{#ifEquals ReturnStatus "ReturnProcessing"}}
+                    <td><span style="color: rgb(18, 186, 68);" class="status">Return request</span></td>
+
+                    {{else ifEquals ReturnStatus "ReturnApprove"}}
+                    <td><span style="color: rgb(18, 186, 68);" class="status">Return Approved</span></td>
+                    {{else}}
+                    <td><span style="color: rgb(18, 186, 68);" class="status">Deliverd</span></td>
+                    {{/ifEquals}}
+                    {{else ifEquals orderStatus "Returned"}}
+                    <td><span style="color: rgb(18, 186, 68);" class="status">Approved Return</span></td>
                     {{else}}
                     <td><span class="status placed">Order Placed</span></td>
+
                     {{/ifEquals}}
+
                     <td><span class="status paid">COD</span></td>
                     <td>{{Date}}</td>
                     <td><a href="/admin/orderdetails?id={{_id}}"><button class="detail-btn">Detail</button></td></a>

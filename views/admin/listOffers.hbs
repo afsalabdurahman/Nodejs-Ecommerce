@@ -1,0 +1,227 @@
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .header p {
+        color: #777;
+    }
+
+    .new-coupon-btn {
+        background-color: #28a745;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .new-coupon-btn:hover {
+        background-color: #218838;
+    }
+
+    .coupon-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .coupon-table th,
+    .coupon-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .coupon-table th {
+        background-color: #f7f7f7;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .coupon-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .coupon-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .status {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .status.active {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .delete-btn {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+
+    .delete-btn:hover {
+        background-color: #c82333;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination-btn {
+        background-color: #ddd;
+        color: #333;
+        border: none;
+        padding: 10px 16px;
+        margin: 0 5px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .pagination-btn.active {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .pagination-btn:hover {
+        background-color: #ccc;
+    }
+</style>
+
+
+
+
+<div class="container">
+    <div class="header">
+        <h1>Offer List</h1>
+        <p>All offers are appear here</p>
+        <a href="/admin/addoffers"><button class="new-coupon-btn">Add Offer</button></a>
+    </div>
+
+    <table class="coupon-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>offerPersonatge</th>
+                <th>Validity</th>
+                <th>Offer Type</th>
+                <th>Offer Categories</th>
+                <th>Status</th>
+                <th>Change Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each Offerdata }}
+            <tr>
+                <td>{{inc @index}}</td>
+                <td>{{name}}</td>
+                <td>{{description}}</td>
+                <td>{{offerPercentage}}</td>
+                <td>{{validity}}</td>
+                <td>{{type}}</td>
+                <td>{{typeName}}</td>
+                {{#if status}}
+                <td><span class="status active">Active</span></td>
+                {{else}}
+                <td><span class="status active">In Active</span></td>
+                {{/if}}
+                <td><button class="delete-btn" onclick="Active('{{_id}}')">Inactive</button></td>
+                <td><button class="delete-btn" onclick="fun('{{_id}}')">Delete</button></td>
+            </tr>
+
+            {{/each}}
+
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button class="pagination-btn">&laquo;</button>
+        <button class="pagination-btn active">1</button>
+        <button class="pagination-btn">&raquo;</button>
+    </div>
+</div>
+<script>
+
+
+    function fun(b) {
+        console.log("hiiii")
+        console.log(b, "working")
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success"
+                });
+                window.location.href = `/admin/deleteoffer?id=${b}`
+            }
+        });
+        console.log(b, "working")
+    }
+
+    function Active(b) {
+        console.log("hiiii")
+        console.log(b, "working")
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to change",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                Swal.fire({
+                    title: "InActive",
+                    text: "Your file has been InActive",
+                    icon: "success"
+                });
+                window.location.href = `/admin/inactiveoffer?id=${b}`
+            }
+        });
+        console.log(b, "working")
+    }
+</script>

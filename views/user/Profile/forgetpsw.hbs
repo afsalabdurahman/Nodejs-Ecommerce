@@ -69,7 +69,11 @@
         <h1>Reset Password Form</h1>
         <div class="reset-password-box">
             <h2>Forgot Password</h2>
+            {{#if msg}}
+            <p style="color: red;">{{msg}}</p>
+            {{else}}
             <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
+            {{/if}}
             <form action="/postforgetpsw" method="post" enctype="application/x-www-form-urlencoded">
                 <input type="email" name="email" placeholder="Your e-mail address" required>
                 <button type="submit">Reset my Password</button>

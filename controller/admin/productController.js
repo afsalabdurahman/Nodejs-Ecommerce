@@ -44,6 +44,8 @@ const uploaded = async (req, res) => {
         category: listCategory._id,
         price: req.body.price,
         stock: req.body.stock,
+        size: req.body.size,
+        color: req.body.color,
         discount_price: req.body.discount_price,
         image: imageData,
       });

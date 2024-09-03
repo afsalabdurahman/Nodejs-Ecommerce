@@ -3,6 +3,7 @@ const Product = require("../../model/productModel");
 const { products } = require("../user/userController");
 
 
+
 // Showing Category Fillup Form................................
 const categoryForm = (req, res) => {
   res.render("admin/category.hbs", { admin: true });
@@ -14,7 +15,7 @@ const postcategoryForm = async (req, res) => {
     let image = req.files[0].filename;
 
 
-    
+
     const existingCategory = await Category.findOne({
       name: { $regex: new RegExp(`^${name}$`, "i") },
     });

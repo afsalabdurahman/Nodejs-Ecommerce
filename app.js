@@ -58,6 +58,17 @@ exhbs.handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
   }
 });
 
+//custome hbs for @index strat with 1
+exhbs.handlebars.registerHelper('inc', function (value, options) {
+  return parseInt(value) + 1;
+});
+// Arthimatic opration find discount price
+
+
+exhbs.handlebars.registerHelper('applyDiscount', function (price, discount) {
+  console.log(price, discount, "hbsssss")
+  return price - (price * (discount / 100));
+});
 
 /////////
 
@@ -68,6 +79,27 @@ app.engine('hbs', hbs.engine({
   layoutsDir: path.join(__dirname + '/views/layout/'),
   partialsDir: __dirname + '/views/partials'
 }))
+
+
+//jsonhbs for pdf..
+
+
+exhbs.handlebars.registerHelper('json', function (context) {
+  return JSON.stringify(context);
+});
+
+
+////
+
+//Is object is emty or not
+exhbs.handlebars.registerHelper('isEmpty', function(obj, options) {
+  if (Object.keys(obj).length === 0) {
+      return options.fn(this); // Return the "true" block if the object is empty
+  } else {
+      return options.inverse(this); // Return the "else" block if the object is not empty
+  }
+});
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());

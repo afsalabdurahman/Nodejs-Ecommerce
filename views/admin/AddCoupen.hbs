@@ -1,0 +1,175 @@
+<style>
+    .form-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        /* Increased max width */
+        width: 100%;
+        margin-left: 25%;
+    }
+
+    .error-message {
+        color: red;
+    }
+
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        /* Ensure full width for better visibility */
+        padding: 14px;
+        /* Slightly increased padding */
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #333;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 14px;
+        /* Slightly increased padding */
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: #218838;
+    }
+</style>
+
+
+<div class="form-container">
+    <h1>Create New Coupon</h1>
+    <form id="couponForm" action="/admin/postcoupen" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="form-group">
+            <label for="name">Coupon Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter coupon name">
+            <p class="error-message" id="nameError"></p>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Enter coupon description"></textarea>
+            <p class="error-message" id="descriptionError"></p>
+        </div>
+        <div class="form-group">
+            <label for="code">Coupon Code</label>
+            <input type="text" id="code" name="code" placeholder="Enter coupon code">
+            <p class="error-message" id="codeError"></p>
+        </div>
+        <div class="form-group">
+            <label for="validity">Validity</label>
+            <input type="date" id="validity" name="validity">
+            <p class="error-message" id="validityError"></p>
+        </div>
+        <div class="form-group">
+            <label for="minAmount">Minimum Amount</label>
+            <input type="number" id="minAmount" name="minAmount" placeholder="Enter minimum amount">
+            <p class="error-message" id="minAmountError"></p>
+        </div>
+        <div class="form-group">
+            <label for="discount">Discount Amount</label>
+            <input type="number" id="discount" name="discount" placeholder="Enter discount amount">
+            <p class="error-message" id="discountError"></p>
+        </div>
+        <button type="submit" class="submit-btn">Create Coupon</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('couponForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        let isValid = true;
+
+        // Clear all previous error messages
+        document.querySelectorAll('.error-message').forEach(function (msg) {
+            msg.textContent = '';
+        });
+
+        // Validate Coupon Name
+        const name = document.getElementById('name').value.trim();
+        if (name === '') {
+            isValid = false;
+            document.getElementById('nameError').textContent = 'Please enter a coupon name.';
+        }
+
+        // Validate Description
+        const description = document.getElementById('description').value.trim();
+        if (description === '') {
+            isValid = false;
+            document.getElementById('descriptionError').textContent = 'Please enter a description.';
+        }
+
+        // Validate Coupon Code
+        const code = document.getElementById('code').value.trim();
+        if (code === '') {
+            isValid = false;
+            document.getElementById('codeError').textContent = 'Please enter a coupon code.';
+        }
+
+        // Validate Validity
+        const validity = document.getElementById('validity').value;
+        if (validity === '') {
+            isValid = false;
+            document.getElementById('validityError').textContent = 'Please select a validity date.';
+        }
+
+        // Validate Minimum Amount
+        const minAmount = document.getElementById('minAmount').value;
+        if (minAmount === '' || minAmount <= 0) {
+            isValid = false;
+            document.getElementById('minAmountError').textContent = 'Please enter a valid minimum amount.';
+        }
+
+        // Validate Discount Amount
+        const discount = document.getElementById('discount').value;
+        if (discount === '' || discount <= 0) {
+            isValid = false;
+            document.getElementById('discountError').textContent = 'Please enter a valid discount amount.';
+        }
+
+        // If the form is valid, you can proceed with the form submission
+        if (isValid) {
+            alert('Form is valid and ready to be submitted!');
+            event.target.submit()
+            // You can replace the alert with an actual form submission if needed:
+            // document.getElementById('couponForm').submit();
+        }
+    });
+
+</script>

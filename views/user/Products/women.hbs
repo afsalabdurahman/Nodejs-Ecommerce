@@ -105,6 +105,53 @@
         background-color: var(--primary-color);
         border-color: var(--primary-color);
     }
+
+    <style>.filter-dropdown {
+        margin-bottom: 20px;
+    }
+
+    .dropdown-btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .filter-section {
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .filter-group {
+        margin-bottom: 15px;
+    }
+
+    .filter-group h4 {
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+</style>
+</style>
 </style>
 
 
@@ -116,23 +163,103 @@
             <h3>Women's Collections</h3>
         </header>
         {{!-- filter.............................. --}}
-        <div class="filter">
-            <div class="dropdown-container">
-                <label for="sort-options">Sort By:</label>
-                <select id="sort-options" class="dropdown">
-                    {{#if value}}
-                    <option value="new">{{value}}</option>
-                    {{else}}
-                    <option value="new-arrival">New Arrival</option>
-                    {{/if}}
-                    <option value="low-price">Low Price</option>
-                    <option value="high-price">High Price</option>
-                    <option value="a-z">A-Z</option>
-                </select>
+        <div class="row">
+            <div class="md-6">
+                <div class="filter">
+                    <div class="dropdown-container">
+                        <label for="sort-options">Sort By:</label>
+                        <select id="sort-options" class="dropdown">
+                            {{#if value}}
+                            <option value="new">{{value}}</option>
+                            {{else}}
+                            <option value="new-arrival">New Arrival</option>
+                            {{/if}}
+                            <option value="low-price">Low Price</option>
+                            <option value="high-price">High Price</option>
+                            <option value="a-z">A-Z</option>
+                        </select>
+                    </div>
+                </div>
             </div>
+            <div class="md-6">
+                {{!-- fiters here.................. --}}
+                <div class="filter-dropdown" style="margin-left: 265px; margin-top:-67px">
+                    <button class="dropdown-btn" type="button" onclick="toggleFilters()">Show Filters</button>
+                    <form id="filter-form" action="/products/filter" method="POST"
+                        enctype="application/x-www-form-urlencoded">
+                        <div id="filter-section" class="filter-section">
+                            <h3>Filter by:</h3>
+
+
+                            <div class="filter-group">
+                                <h4>Gender</h4>
+                                <label><input type="radio" name="gender" value="men"> Men</label><br>
+                                <label><input type="radio" name="gender" value="women"> Women</label><br>
+                                <label><input type="radio" name="gender" value="kids"> Kids</label>
+                            </div>
+                            <!-- Size Filter -->
+
+                            <div class="filter-group">
+                                <h4>Size</h4>
+                                <label><input type="checkbox" name="size" value="small"> Small</label><br>
+                                <label><input type="checkbox" name="size" value="medium"> Medium</label><br>
+                                <label><input type="checkbox" name="size" value="large"> Large</label>
+                            </div>
+
+                            <div class="filter-group">
+                                <h4>Price Range</h4>
+                                <label>Min: <input type="number" name="priceMin" placeholder="0"></label><br>
+                                <label>Max: <input type="number" name="priceMax" placeholder="1000"></label>
+                            </div>
+
+                            <!-- Color Filter -->
+                            <div class="filter-group">
+                                <h4>Color</h4>
+                                <label><input type="checkbox" name="color" value="red"> Red</label><br>
+                                <label><input type="checkbox" name="color" value="blue"> Blue</label><br>
+                                <label><input type="checkbox" name="color" value="black"> Black</label>
+                            </div>
+
+                            <!-- Brand Filter -->
+                            <div class="filter-group">
+                                <h4>Brand</h4>
+                                <label><input type="checkbox" name="brand" value="Symbol"> Symbol</label><br>
+                                <label><input type="checkbox" name="brand" value="Locomotive"> Locomotive</label><br>
+                                <label><input type="checkbox" name="brand" value="brandC"> Brand C</label>
+                            </div>
+
+                            <button type="submit">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Display Section -->
+                <div id="product-list">
+                    <!-- Your product list will go here -->
+                </div>
+
+            </div>
+
+
+
         </div>
         {{!-- ............................................................. --}}
         <div class="row">
+            {{#if newoffer}}
+            <div
+                style="margin-left: 0px; height:37px; background: linear-gradient(135deg, #ff7e5f, #feb47b); padding: 10px; border-radius: 8px; display: inline-block;">
+                <i class="fa-solid fa-tags" style="color: #ffffff; font-size: 18px; margin-right: 8px;"></i>
+                <p
+                    style="display: inline; color: #ffffff; font-size: 18px; font-family: 'Arial, sans-serif'; font-weight: bold; margin: 0;">
+                    {{newoffer.[0].name}} &nbsp; &nbsp; &nbsp; {{newoffer.[0].offerPercentage}}% OFF for these Products
+                    &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                    &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;</p>
+                <p
+                    style="display: inline; margin-left:280px; color: #ffffff; font-size: 18px; font-family: 'Arial, sans-serif'; font-weight: bold;   ">
+                    Offer end &nbsp; &nbsp;{{newoffer.[0].validity}}</p>
+            </div>
+            {{else}}
+            {{/if}}
 
             {{!-- dynamic Data--}}
             {{#if products}}
@@ -153,7 +280,7 @@
                             <strong class="">₹{{price}}</strong>
                         </div>
                         <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                            <a href="#" id="{{_id}}" class="btn btn-outline-primary" onclick="buy('{{_id}}')">
+                            <a href="" id="{{_id}}" class="btn btn-outline-primary" onclick="buy('{{_id}}')">
                                 <i class="fas fa-cart-plus"></i> Add to cart
                             </a>
                             <p>
@@ -223,6 +350,33 @@
 
 
 
+    function buy(b) {
+        console.log(b, "idddd")
+
+        fetch(`  /product/whishlist?id=${b}`)
+            .then(response => response.text()) // Read the response as plain text
+            .then(data => {
+                if (data === "full") {
+                    console.log(data, "data")
+                    alert("full")
+                    Swal.fire("Cart is full!");
+                } else {
+                    let buyButton = document.getElementById(b);
+                    buyButton.style.color = "red";
+                    buyButton.innerHTML = "adding to cart ...";
+                    console.log(data, "not")
+                }
+            })
+    }
 
 
+
+    function toggleFilters() {
+        const filterSection = document.getElementById('filter-section');
+        if (filterSection.style.display === 'none' || filterSection.style.display === '') {
+            filterSection.style.display = 'block';
+        } else {
+            filterSection.style.display = 'none';
+        }
+    }
 </script>

@@ -21,7 +21,7 @@ const Cart = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+    enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
     default: "Pending",
   },
   payment: {
@@ -43,5 +43,21 @@ const Cart = new mongoose.Schema({
   orderId: {
     type: String,
   },
+  ReturnStatus: {
+    type: String,
+    enum: ["ReturnProcessing", "ReturnApprove"],
+
+  },
+  offer: {
+    type: Number,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ["wallet", "cod", "razorpay"]
+  },
+  offerAmount: {
+    type: Number
+    
+  }
 });
 module.exports = mongoose.model("Cart", Cart);

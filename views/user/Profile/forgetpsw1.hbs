@@ -70,10 +70,29 @@
         <div class="reset-password-box">
             <h2>New Password</h2>
             <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
-            <form action="/updatepsw" method="post" enctype="application/x-www-form-urlencoded">
-                <input type="text" name="password" placeholder="Your new password" required>
+            <form id="passwordForm" action="/updatepsw" method="post" enctype="application/x-www-form-urlencoded">
+                <input type="text" id="password" name="password" placeholder="Your new password" required>
+                <p id="errorMessage" style="color: red; display: none;"></p>
                 <button type="submit">Reset my Password</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('passwordForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+        if (!passwordPattern.test(password)) {
+            errorMessage.textContent = 'Password must be at least 8 characters long, include both uppercase and lowercase letters, a number, and a special character.';
+            errorMessage.style.display = 'block';
+        } else {
+            errorMessage.style.display = 'none';
+            this.submit(); // Submit the form if validation passes
+        }
+    });
+</script>
