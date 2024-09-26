@@ -57,7 +57,8 @@ const Cart = new mongoose.Schema({
   },
   offerAmount: {
     type: Number
-    
-  }
+
+  },
+ 
 });
 module.exports = mongoose.model("Cart", Cart);

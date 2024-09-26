@@ -10,6 +10,8 @@ const Offer = require("../../model/OfferModel")
 const Coupens = require("../../model/CoupenModel")
 const ReturnOrders = require("../../model/ReturnOrderModel");
 const { request } = require("../../route/adminRouter");
+const Cart1 = require("../../model/newcartModel");
+const Order = require('../../model/OrderModel')
 
 
 
@@ -186,15 +188,22 @@ const products = async (req, res) => {
     console.log(pageNumber, "page number")
     //Category Offers.................................
     let newoffer;
-    let Productoffer = await Offer.find({ $and: [{ type: "Category" }, { typeName: "Men's shirts" }, { status: 1 }] }).lean()
-    if (Productoffer) {
-      newoffer = Productoffer
+    let CateProductoffer = await Offer.find({ $and: [{ type: "Category" }, { typeName: "Men's shirts" }, { status: 1 }] }).lean()
+    if (CateProductoffer) {
+      newoffer = CateProductoffer
     } else {
       newoffer = null
     }
 
     //Product offer..
+    let specialOffer = null;
 
+    // let specialProductOffer = await Offer.find({ type: "Product" }).lean()
+    // console.log(specialProductOffer, "special offer")
+    // if (specialProductOffer.length > 0) {
+    //   specialOffer = specialProductOffer
+    // }
+  
 
     //.....................................
 
@@ -212,6 +221,7 @@ const products = async (req, res) => {
     let val = docCount / 8
     renderOptions.count = Math.ceil(val)
     renderOptions.newoffer = newoffer
+    renderOptions.specialOffer = specialOffer
     console.log(renderOptions, "products")
     if (req.session.user_id) {
       renderOptions.user = user;
@@ -424,13 +434,23 @@ details = async (req, res) => {
   try {
 
 
-    console.log(req.query, "qury msg about quandity")
+    console.log(req.query, "qury msg about quandity+offer")
 
     let msg = {}
-    let count = await UserCart.countDocuments({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
-    if (count >= 5) {
-      msg.message = "Cart is Full "
+
+    let newcart = await Cart1.findOne({ userId: req.session.user_id });
+    //check number of items
+    if (newcart) {
+      if (newcart.items.length > 4) {
+        msg.message = "Cart is Full "
+
+      }
     }
+
+    // let count = await Cart1.countDocuments({ $and: [{ UserId: req.session.user_id }, { orderStatus: "Pending" }] })
+    // if (count >= 5) {
+    //   msg.message = "Cart is Full "
+    //   }
 
 
     const id = req.query.id;
@@ -449,8 +469,12 @@ details = async (req, res) => {
         { $set: { isVisible: true } }
       );
     }
-
-
+    //If offer avlibale (Category offer)
+    let offerPrice = null;
+    if (req.query.offer != "NaN") {
+      offerPrice = req.query.offer
+    }
+    ////////////
     if (productvalue.category == "6699057c3cefcb99d7d7fe63") {
       Data = "6699057c3cefcb99d7d7fe63";
     } else if (productvalue.category == "669951b01934f70cb7148e6e") {
@@ -472,12 +496,13 @@ details = async (req, res) => {
 
 
       user = req.session.user_id;
-      res.render("user/details.hbs", { user, productvalue, Similar_product, link, msg, });
+      res.render("user/details.hbs", { user, productvalue, Similar_product, link, msg, offerPrice });
     } else {
-      res.render("user/details.hbs", { productvalue, Similar_product, link })
+      res.render("user/details.hbs", { productvalue, Similar_product, link, offerPrice })
     }
 
   } catch (error) {
+    console.log(error)
     res.redirect('/error')
   }
 };
@@ -996,20 +1021,20 @@ const AllOrders = async (req, res) => {
   }
 
 }
-const DeleteCart = async (req, res) => {
-  console.log(req.query, "deklete")
-  console.log(req.query.quandity, "qundity")
+// const DeleteCart = async (req, res) => {
+//   console.log(req.query, "deklete")
+//   console.log(req.query.quandity, "qundity")
 
 
-  const deletedCartItem = await UserCart.findOneAndDelete({ ProductId: req.query.id });
-  console.log(deletedCartItem)
-  const quantity = await Product.updateOne(
-    { _id: req.query.id },
-    { $inc: { stock: req.query.quandity } }
-  );
+//   const deletedCartItem = await UserCart.findOneAndDelete({ ProductId: req.query.id });
+//   console.log(deletedCartItem)
+//   const quantity = await Product.updateOne(
+//     { _id: req.query.id },
+//     { $inc: { stock: req.query.quandity } }
+//   );
 
-  res.redirect('/profile/cart')
-}
+//   res.redirect('/profile/cart')
+// }
 
 //user wishlist cart
 const ProductUserWishlist = async (req, res) => {
@@ -1152,7 +1177,7 @@ const CancelOrder = async (req, res) => {
         currentBalance: update,
         transactions: [
           {
-            
+
             paymentStatus: 'Completed',
             amount: addwallet.TotalAmount,
             debit: true
@@ -1167,7 +1192,7 @@ const CancelOrder = async (req, res) => {
     } else if (addwallet.paymentMethod == "wallet") {
 
       let newtransaction = {
-    
+
         paymentStatus: 'Completed',
         amount: addwallet.TotalAmount,
         debit: true
@@ -1216,30 +1241,19 @@ const CancelOrder = async (req, res) => {
 const ReturnProduct = async (req, res) => {
   try {
     // Validate required fields
-    if (!req.body.cartid || !req.body.accountName || !req.body.accountNumber || !req.body.bankName) {
-      return res.status(400).send("All fields are required.");
+    console.log(req.body, "body")
+
+    if (req.body.returnOption == "Wallet") {
+      let data = await Order.updateOne(
+        { "items._id": req.body.cartid }, // Match the order that contains the item with this ID
+        { $set: { "items.$[element].update": "Return" } }, // Update the price of the specific item
+        { arrayFilters: [{ "element._id": req.body.cartid }] } // Use array filter to target the specific item
+      )
+      console.log(data, "dtat insert")
+
     }
-
     // Create formatted date
-    const prettyDate = new Date().toLocaleString('en-IN', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
 
-    // Update return status in the cart (uncomment if needed)
-    const reqReturn = await UserCart.findByIdAndUpdate(
-      { _id: req.body.cartid },
-      { $set: { ReturnStatus: "ReturnProcessing" } },
-      { upsert: true }
-    );
-
-
-    // Create a new return order
     const Insert_return_product = new ReturnOrders({
       OrderId: req.body.cartid,
       RefundAccholderName: req.body.accountName,
@@ -1248,15 +1262,14 @@ const ReturnProduct = async (req, res) => {
       ReturnOption: req.body.returnOption,
       RefundAccIFSC: req.body.IFSCode,
       ReturnReason: req.body.reason,
-      Date: prettyDate,
-    });
 
-    // Save return order to database
+    })
+    // Update return status in the cart (uncomment if needed)
+
     const insertedData = await Insert_return_product.save();
-    console.log(insertedData, "inserts");
 
     // Redirect to orders page
-    res.redirect('/profile/allorders');
+    res.redirect('/profile/getallorders');
   } catch (error) {
     console.error('Error in returning product:', error);
     res.status(500).send("An error occurred while processing the return.");
@@ -1265,10 +1278,11 @@ const ReturnProduct = async (req, res) => {
 
 const Wallets = async (req, res) => {
   try {
+    let user = req.session.user_id
     update = await Wallet.find().lean()
 
     console.log(update, "upddd")
-    res.render('user/Profile/Wallet.hbs', { update })
+    res.render('user/Profile/Wallet.hbs', { user, update })
   } catch (error) {
     console.log(error)
   }
@@ -1296,7 +1310,7 @@ module.exports = {
   Posteditprofile,
   changePsw,
   Checkout,
-  DeleteCart,
+
   NewCart,
   Address,
   Kids,

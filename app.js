@@ -66,8 +66,9 @@ exhbs.handlebars.registerHelper('inc', function (value, options) {
 
 
 exhbs.handlebars.registerHelper('applyDiscount', function (price, discount) {
-  console.log(price, discount, "hbsssss")
-  return price - (price * (discount / 100));
+  
+  discountedPrice= price - (price * (discount / 100));
+  return Math.round(discountedPrice); 
 });
 
 /////////
@@ -89,14 +90,26 @@ exhbs.handlebars.registerHelper('json', function (context) {
 });
 
 
-////
+////price*quadity custome hook
+
+exhbs.handlebars.registerHelper('totalPrice', function (price, quantity) {
+  return price * quantity;
+});
+
+///object id from id
+exhbs.handlebars.registerHelper('getId', function (idObject) {
+  if (typeof idObject === 'object') {
+    return idObject._id || Object.values(idObject)[0];
+  }
+  return idObject;
+});
 
 //Is object is emty or not
-exhbs.handlebars.registerHelper('isEmpty', function(obj, options) {
+exhbs.handlebars.registerHelper('isEmpty', function (obj, options) {
   if (Object.keys(obj).length === 0) {
-      return options.fn(this); // Return the "true" block if the object is empty
+    return options.fn(this); // Return the "true" block if the object is empty
   } else {
-      return options.inverse(this); // Return the "else" block if the object is not empty
+    return options.inverse(this); // Return the "else" block if the object is not empty
   }
 });
 

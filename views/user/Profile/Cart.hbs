@@ -9,43 +9,36 @@
                     <th></th>
                     <th>Product</th>
                     <th>Price</th>
-                    <td>DiscountRate</td>
                     <th>Quantity</th>
                     <th>Total</th>
                 </tr>
             </thead>
             <tbody>
 
-                {{#each Datas}} <tr>
+
+                {{#each Datas.items}} <tr>
+
+
                     <td>
-                        <a href="/profile/deletecart?id={{ProductId._id}}&quandity={{quandity}}"
+
+                        <a href="/profile/deletecart?id={{getId productId}}&quandity={{quantity}}"
                             class="remove-btn">X</a>
-                        <img src="/upload/{{ProductId.image.[0]}}" alt="Product Image" class="product-image">
+                        <img src="/upload/{{this.productId.image.[0]}}" alt="Product Image" class="product-image">
                     </td>
                     <td>
-                        <p id="productId" style="display: none;">{{ProductId._id}}</p>
-                        {{ProductId.name}}<br>
-                        <span class="size">{{size}}</span>
+                        <p id="productId" style="display: none;">{{ProductId}}</p>
+                        {{this.productId.name}}<br>
+                        <span class="size">{{this.size}}</span>
                     </td>
-                    <td>₹{{ProductId.price}}
+                    <td>₹{{this.price}}</td>
 
-                    </td>
-                    {{#if offer}}
                     <td>
-                        <p id="discountprice"> {{offer }}%</p>
+                        <button class="quantity-btn" onclick="decQuantity(this, -1,'{{getId productId}}')">-</button>
+                        <input type="text" class="quantity-input" value="{{quantity}}" readonly>
+                        <button class="quantity-btn" onclick="updateQuantity(this, 1,'{{getId productId}}' )">+</button>
                     </td>
-                    {{else}}
-                    <td>
-                        <p>NA</p>
-                    </td>
-                    {{/if}}
-                    <td>
+                    <td class="item-total">₹{{totalPrice price quantity}}</td>
 
-                        <input type="text" style=" pointer-events: none;" class="quantity-input" value="{{quandity}}"
-                            readonly>
-
-                    </td>
-                    <td class="item-total">₹{{TotalAmount}}</td>
                 </tr>
 
                 {{/each}}
@@ -56,18 +49,17 @@
                 <input type="text" placeholder="Enter coupon code" id="coupon-code">
                 <button class="apply-btn" onclick="applyDiscount()">Apply</button>
             </div>
-            <p>Subtotal: <span id="subtotal">₹{{totalPrice}}</span></p>
+            <p>Subtotal: <span id="subtotal">₹{{Datas.totalPrice}}</span></p>
             <p>Discount: <span id="discount">0.00</span></p>
-            <p>Total: <span id="total">₹{{totalPrice}}</span></p>
+            <p>Total: <span id="total">₹{{Datas.totalPrice}}</span></p>
             <button class="proceed-btn" onclick="checkout()">Proceed to Checkout</button>
         </div>
     </div>
 </div>
 
-{{!--
 <script>
-    function ajx(quandity, id, productId) {
-        console.log(quandity, "qunadity", id, "product")
+    function ajx(quandity, id) {
+        console.log(quandity, "qunadity")
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
@@ -75,14 +67,85 @@
                 console.log(this.responseText);
             }
         };
-        xhttp.open("GET", `/profile/newcart?id=${id}&newqunadity=${quandity}&productId=${productId}`, true);
+        xhttp.open("GET", `/profile/newcart?id=${id}&newqunadity=${quandity}`, true);
+        xhttp.send();
+    }
+
+    function ajx1(qunadity, id) {
+        console.log(qunadity, id, "q+id")
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                // Handle the response if needed
+                console.log(this.responseText);
+            }
+        };
+        xhttp.open("GET", `/profile/deccart?id=${id}&newqunadity=${qunadity}`, true);
         xhttp.send();
     }
 
 
 
+    function updateQuantity(button, change, id) {
+        console.log(id)
+        const quantityInput = button.parentElement.querySelector('.quantity-input');
+        let quantity = parseInt(quantityInput.value);
+        if (quantity < 5) {
 
-    func { {applyDiscount ProductId.price ProductId.discount_price } }
+
+            quantity += change;
+
+            quantityInput.value = quantity;
+
+
+
+            ajx(quantityInput.value, id)
+            updateItemTotal(button);
+
+        } else {
+            Swal.fire("Exceed!");
+        }
+    }
+    function decQuantity(button, change, id) {
+
+        const quantityInput = button.parentElement.querySelector('.quantity-input');
+        let quantity = parseInt(quantityInput.value);
+        if (quantity > 1) {
+
+
+            quantity += change;
+
+            quantityInput.value = quantity;
+
+            //let productId = document.getElementById("productId").innerHTML
+
+            ajx1(quantityInput.value, id)
+            updateItemTotal(button);
+
+        } else {
+            Swal.fire("should required");
+        }
+
+
+    }
+
+
+    function updateItemTotal(button) {
+        const row = button.closest('tr');
+        const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace('₹', ''));
+        const quantity = parseInt(row.querySelector('.quantity-input').value, 10);
+        const itemTotal = price * quantity;
+        row.querySelector('.item-total').textContent = `₹${itemTotal.toFixed(2)}`;
+        updateSummary();
+    }
+
+    function applyDiscount() {
+        const couponCode = document.getElementById('coupon-code').value;
+        let discount = 0;
+        if (couponCode === 'DISCOUNT10') {
+            discount = 0.1; // 10% discount
+        }
+        updateSummary(discount);
     }
 
     function updateSummary(discount = 0) {
@@ -105,39 +168,28 @@
         console.log(total, "totalssssss")
         window.location.href = `/profile/checkout?total=${total}`;
     }
-</script> --}}
-<script>
-    function ajx(quantity, id, productId) {
-        console.log(quantity, "quantity", id, "product");
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                // Handle the response if needed
-                console.log(this.responseText);
+    const name = "{{msg.name}}"
+    const id = "{{msg.id}}"
+    if (name) {
+
+
+
+        Swal.fire({
+            title: `${name} is out of stock`,
+
+
+            confirmButtonText: "Ok",
+
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.location.href = `/profile/deletecart?id=${id}&quandity=0`
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
             }
-        };
-        xhttp.open("GET", `/profile/newcart?id=${id}&newquantity=${quantity}&productId=${productId}`, true);
-        xhttp.send();
-    }
-
-    function updateSummary(discount = 0) {
-        const rows = document.querySelectorAll('tbody tr');
-        let subtotal = 0;
-        rows.forEach(row => {
-            const itemTotal = parseFloat(row.querySelector('.item-total').textContent.replace('₹', ''));
-            subtotal += itemTotal;
         });
-        const discountAmount = subtotal * discount;
-        const total = subtotal - discountAmount;
 
-        document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
-        document.getElementById('discount').textContent = `₹${discountAmount.toFixed(2)}`;
-        document.getElementById('total').textContent = `₹${total.toFixed(2)}`;
+        //"/profile/deletecart?id={{getId productId}}&quandity={{quantity}}"
     }
 
-    function checkout() {
-        const total = document.getElementById('total').textContent.replace('₹', '');
-        console.log(total, "totalssssss");
-        window.location.href = `/profile/checkout?total=${total}`;
-    }
 </script>

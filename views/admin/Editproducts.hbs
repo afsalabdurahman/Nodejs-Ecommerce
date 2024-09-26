@@ -1,7 +1,8 @@
 <link rel="stylesheet" href="/assets/admin/addproducts.css" type="text/css">
 <script type="text/javascript" src="/js/remove-products.js"></script>
 <link rel="stylesheet" href="/assets/admin/listcate.css">
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
 <section style="background-color: #58736a; z-index:1">
 
@@ -13,13 +14,14 @@
             <div class="basic-section">
                 <h2>Basic</h2>
 
-                <form action="/admin/newlistproduct" method="post" enctype="multipart/form-data" id="form1" check>
+                <form action="/admin/newlistproduct" method="post" onsubmit="return valid()"
+                    enctype="multipart/form-data">
                     <label for="product-title">Product title</label>
 
 
-                    <input type="txt" id="product-title" name="name" placeholder="Type here"
-                        value="{{productData.name}}">
-
+                    <input type="txt" id="product-title" onblur="validateName('product-title','hide1')" name="name"
+                        placeholder="Type here" value="{{productData.name}}">
+                    <p id="hide1" style="display: none; color:red">field is emty</p>
                     <label for="description">Full description</label>
                     <textarea id="full-description" name="description"
                         placeholder="Type here">{{productData.description}}</textarea>
@@ -44,20 +46,38 @@
 
                         <div>
                             <label for="promotional-price"> price</label>
-                            <input type="text" id="promotional-price" name="price" placeholder="$"
+                            <input type="text" id="price" onblur="validates('name','hide')" name="price" placeholder="₹"
                                 value={{productData.price}}>
+                            <p id="hide2" style="display: none; color:red">must be postive integrity</p>
                         </div>
                         <div>
                             <label for="stock - quandity">stock</label>
-                            <input type="text" id="promotional-price" name="stock" placeholder="no"
+                            <input type="text" id="stock" name="stock" onblur="validate('name','hide')" placeholder="no"
                                 value={{productData.stock}}>
+                            <p id="hide" style="display: none; color:red">must be postive integrity</p>
+                        </div>
+                        <div>
+                            <label for="stock - color"> Color</label>
+                            <input type="text" id="promotional-price" name="color" placeholder="no"
+                                value="{{productData.color}}">
+                        </div>
+                        <div>
+                            <label for="stock - color"> choose</label>
+                            <select type="text" id="size" name="size" placeholder="--choose--">
+                                <option value="small">Small</option>
+                                <option value="mediam">medium</option>
+                                <option value="large">large</option>
+                            </select>
                         </div>
                     </div>
 
                     <label for="tax-rate">Discount rate</label>
                     <input type="text" id="Discount" name="discount_price" placeholder="%"
                         value={{productData.discount_price}}>
-
+                    <input id="imgedata" type="text" name="imgdatas" style="display: none;" />
+                    <input id="imgedata1" type="text" name="imgdatas1" style="display: none;" />
+                    <input id="x" type="text" name="x" style="display: none;" />
+                    <input id="y" type="text" name="y" style="display: none;" />
                     <!-- New Category Section -->
 
 
@@ -77,8 +97,10 @@
 
                 {{#each productData.image}}
 
-                <img class="removeimg" id="removeimg" src="/upload/{{this}}" alt="" style="height: 200px;width:200px">
-                <button type="button" id="delete" onclick="remove('{{this}}')">remove</button>
+                <img class="removeimg" id="{{this}}" id="image-upload" src="/upload/{{this}}" alt=""
+                    style="height: 200px;width:200px">
+                <p id="hide-image" style="color: #de4504;"></p>
+                <button type="button" id="delete" onclick="remove('{{this}}','{{../productData._id}}')">remove</button>
                 {{/each}}
 
 
@@ -103,7 +125,7 @@
         <p>Are you sure?</p>
         <p>Please confirm to block this product!</p>
 
-        <button class="btn confirm" form="form1" type="submit" onclick="confirmAction()">Yes, Edit
+        <button class="btn confirm" onclick="submitForm()" type=" submit">Yes, Edit
             it!</button>
         <button class="btn cancel" onclick="closeModal()">Cancel</button>
     </div>
@@ -118,6 +140,7 @@
 
 
 <script>
+
     function showModal() {
 
 
@@ -128,19 +151,75 @@
         document.getElementById('confirmationModal').style.display = 'none';
     }
 
-    function confirmAction() {
-        // Add your action here, e.g., delete the product
+    function submitForm() {
+        // Submit the form when the modal confirmation is clicked
 
+        let hide1 = document.getElementById("hide1");
+        let productTitle = document.getElementById("product-title");
+        let isValid = true;
+
+        if (productTitle.value.trim() === "") {
+            hide1.style.display = "block";
+            isValid = false;
+        } else {
+            hide1.style.display = "none";
+        }
+
+        let hide = document.getElementById("hide");
+        let stock = document.getElementById("stock");
+
+
+        if (stock.value.trim() === "" || stock.value <= 0) {
+            hide.style.display = "block";
+            isValid = false;
+        } else {
+            hide.style.display = "none";
+        }
+        let hide2 = document.getElementById("hide2");
+        let price = document.getElementById("price");
+        if (price.value.trim() === "" || price.value <= 0) {
+            hide2.style.display = "block";
+            isValid = false;
+        } else {
+            hide2.style.display = "none";
+        }
+
+        if (isValid) {
+            document.querySelector('form').submit();
+        }
 
 
     }
 </script>
 <script>
-    function remove(img,) {
-        console.log(img)
-        mm = document.getElementById("removeimg")
+    function remove(img, id) {
+        console.log(img, id,)
+
+        mm = document.getElementById(img)
         mm.remove()
         document.getElementById("delete").remove()
+        //fetch reques
+        // Use the fetch function to send a GET request
+        fetch(`/admin/removeimg?id=${id}&name=${img}`)
+            .then(response => {
+                // Check if the response is successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                // Parse the response as JSON
+                return response.json();
+            })
+            .then(data => {
+                // Handle the JSON data from the response
+                console.log('Data received:', data);
+            })
+            .catch(error => {
+                // Handle any errors that occurred during the fetch
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+
+
     }
 
 </script>

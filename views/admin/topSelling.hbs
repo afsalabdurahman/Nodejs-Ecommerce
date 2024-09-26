@@ -1,0 +1,109 @@
+<style>
+    .body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .product-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+
+    .product-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        width: calc(25% - 20px);
+        margin: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+        text-align: center;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .product-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 15px 0 10px;
+        color: #333;
+    }
+
+    .product-price {
+        font-size: 16px;
+        color: #28a745;
+        margin-bottom: 10px;
+    }
+
+    .product-sales {
+        font-size: 14px;
+        color: #777;
+    }
+
+    @media (max-width: 768px) {
+        .product-card {
+            width: calc(50% - 20px);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .product-card {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="body">
+    <div class="container">
+        <h1>Top 10 Selling Products</h1>
+        <div class="product-list">
+            <!-- Each product card will be repeated for each top-selling product -->
+
+            {{#each data}}
+            <div class="product-card">
+                <img src="/upload/{{image.[0]}}" alt="Product 1" class="product-image">
+                <div class="product-name">{{name}}</div>
+                <div class="product-price">${{price}}</div>
+                <div class="product-sales">Sales: {{topSelling}}</div>
+            </div>
+            {{/each}}
+
+
+
+
+            <!-- Add more product cards for the top 10 products -->
+
+        </div>
+        <div>
+            <h1>Top 10 Selling Brand </h1>
+            {{#each data}}
+            <div class="product-card" style="margin-left: 42%;">
+                <div class="product-name">{{brand}}</div>
+            </div>
+            {{/each}}
+        </div>
+    </div>

@@ -282,52 +282,80 @@
             </thead>
             <tbody>
 
-                {{#each Data}}
-
+                {{#each Datas}}
+                {{#each items}}
                 <tr>
+
                     <td>
-                        <p id="orderIds" style="display: none;">{{orderId}}</p>
-                        <img src="/upload/{{ProductId.image.[0]}}" alt="Product 2">
+
+                        {{!-- <p id="orderIds" style="display: none;">{{orderId}}</p> --}}
+
+                        <img src="/upload/{{productId.image.[0]}}" alt="Product 2">
                         <div class="product-details">
-                            <h2 id="productName">{{ProductId.name}}</h2>
+                            <h2 id="productName">{{productId.name}}</h2>
 
                         </div>
+
+
                     </td>
-                    <td>Rs{{ProductId.price}}</td>
-                    <td>
-                        <p>{{Username}}</p>{{this.address}}
-                    </td>
-                    <td>{{quandity}}</td>
-                    <td>₹{{TotalAmount}}</td>
+
                     <td>
 
-                        {{#ifEquals orderStatus "Cancelled"}}
-                        <p class="status shipped" style="color: red;">Cancelled</p>
-                        <p class="status shipped">{{this.Date}}</p>
-                        {{else ifEquals orderStatus "Shipped"}}
+                        Rs{{price}}
 
-                        {{#ifEquals ReturnStatus "ReturnProcessing"}}
+
+                    </td>
+
+
+                    <td>
+                        <p>{{../shippingAddress.fullName}}</p>
+                        {{../shippingAddress.address}}<br>
+                        <p>{{../shippingAddress.city}},{{../shippingAddress.state}},{{../shippingAddress.postalCode}}
+                        </p>
+                    </td>
+                    <td>{{quantity}} </td>
+                    <td>₹{{totalPrice price quantity}}</td>
+                    <td>
+                        {{#ifEquals update "Pending"}}
+
+                        <p class="status shipped" style="color: rgb(212, 30, 100);">Order Placed - {{../deliveryDate}}
+                        </p>
+                        <button onclick="sweetalert('{{this._id}}')" class="cancel-order-button">Cancel Order</button>
+                        {{else ifEquals update "Shipped"}}
+                        <button onclick="sweetalert('{{this._id}}')" class="cancel-order-button">Cancel Order</button>
+
+
+                        <p class="status shipped" style="color: rgb(37, 218, 13);">Product Shipped --{{../deliveryDate}}
+                        </p>
+                        {{ else ifEquals update "Delivered"}}
+                        <p class="status shipped" style="color: red;"> <br>Deliverd:- {{../deliveryDate}}</p>
+                        <button class="track-order-button"
+                            onclick="openPopup('{{productId.image.[0]}}','{{productId.name}}','{{price}}','{{../OrderId}}','{{_id}}')">Return
+                            Order</button>
+                        <button class="track-order-button" onclick="invoice('{{_id}}','{{../_id}}')">Download
+                            Invoice</button>
+                        {{else ifEquals update "Return"}}
+
                         <div class="spinner-grow" role="status" style="width: 10px; height:10px ; background-color:">
                             <span class="sr-only">Loading...</span>
-
                         </div>
                         <p style="color: red;">Return request is Pending</p>
-
+                        {{else ifEquals update "Approve Return"}}
+                        <p class="status shipped" style="color: rgb(37, 218, 13);">Amount is Debited to Wallet</p>
+                        <p class="date" class="status shipped">{{../orderedAt}}</p>
                         {{else}}
-                        <p class="status shipped" style="color: red;">Deliverd <br>{{Date}}</p>
-                        <button class="track-order-button"
-                            onclick="openPopup('{{ProductId.image.[0]}}','{{ProductId.name}}','{{ProductId.price}}','{{orderId}}','{{_id}}')">Return
-                            Order</button>
+                        <p class="status shipped" style="color: red;">Cancelled</p>
+                        <p class="date" class="status shipped">{{../orderedAt}}</p>
                         {{/ifEquals}}
-                        {{else ifEquals orderStatus "Returned"}}
-                        <P> Refund will initiated with in five business days</P>
+                        {{#ifEquals update "Processing"}}
+                        <p>processing</p>
                         {{else}}
-                        <button class="track-order-button" id="change">Track Order</button>
-                        <button onclick="sweetalert('{{this._id}}')" class="cancel-order-button">Cancel Order</button>
                         {{/ifEquals}}
                     </td>
 
+
                 </tr>
+                {{/each}}
                 {{/each}}
 
 
@@ -433,7 +461,11 @@
             <div class="radio-group">
                 <label><input type="radio" name="returnOption" value="refund" onclick="toggleDetails('refund')"
                         required>
-                    Refund</label>
+                    Refund to Bank</label>
+                <label><input type="radio" name="returnOption" value="Wallet" onclick="toggleDetails('Wallet')"
+                        required>
+                    Wallet
+                </label>
                 <label><input type="radio" name="returnOption" value="replacement"
                         onclick="toggleDetails('replacement')">
                     Replacement</label>
@@ -442,16 +474,16 @@
         <div id="refundDetails" class="conditional-group">
             <h3>Bank Account Details</h3>
             <div class="form-group">
-                <label for="accountName" onfocus="ac(this)">Account Name:</label>
-                <input type="text" id="accountName" name="accountName" pattern="[A-Za-z]+"
-                    title="Account Name should contain only letters and spaces." required>
+                <label for="accountName">Account Name:</label>
+                <input type="text" id="accountName" name="accountName"
+                    title="Account Name should contain only letters and spaces.">
                 <p id="ac" style="color: red;">
                 </p>
             </div>
             <div class="form-group">
                 <label for="accountNumber">Account Number:</label>
-                <input type="text" id="accountNumber" name="accountNumber" pattern="\d{8,16}"
-                    title="Account Number should be between 8 and 16 digits." required>
+                <input type="text" id="accountNumber" name="accountNumber"
+                    title=" Account Number should be between 8 and 16 digits.">
             </div>
             <div class="form-group">
                 <label for="bankName">Bank Name:</label>
@@ -473,6 +505,10 @@
                 </select>
             </div>
         </div>
+        <div id="walletDetails" class="conditional-group">
+            <p type="name" name="Wallets">Wallet</p>
+
+        </div>
         <!-- Submit Button placed here -->
         <button type="submit" class="submit-btn">Submit Return Request</button>
     </form>
@@ -480,6 +516,8 @@
 
 {{!-- end ponp return request--}}
 <script>
+    date = document.getElementById("date").innerHTML
+    console.log(date)
     function sweetalert(id) {
         console.log(id, "iddd")
         Swal.fire({
@@ -549,10 +587,15 @@
 
     function toggleDetails(option) {
         document.getElementById('refundDetails').style.display = option === 'refund' ? 'block' : 'none';
+        document.getElementById('walletDetails').style.display = option === 'Wallet' ? 'block' : 'none';
         document.getElementById('replacementDetails').style.display = option === 'replacement' ? 'block' : 'none';
     }
 
     // Account validation
+    function invoice(pId, oId) {
+        console.log(pId, oId, "idsss")
+        window.location.href = `/cart/invoice?productId=${pId}&orderId=${oId} `;  // Replace ' / edit - page' with your target URL
 
+    }
 
 </script>

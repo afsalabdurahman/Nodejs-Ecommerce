@@ -54,6 +54,10 @@ const Product = new mongoose.Schema({
   },
   size: {
     type: String,
+  },
+  topSelling:{
+    type:Number,
+    default:0
   }
 
 });

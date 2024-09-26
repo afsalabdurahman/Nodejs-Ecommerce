@@ -6,6 +6,7 @@ const productController = require("../controller/admin/productController");
 const categoryController = require("../controller/admin/categoryController");
 const multer = require("multer");
 const storage = require("../multer/multer");
+const productModel = require("../model/productModel");
 var upload = multer({ storage: storage });
 
 // LOGIN
@@ -16,14 +17,11 @@ adminRoute.get("/logout", adminAuth.isLogin, adminController.adminLogout);
 //home
 adminRoute.get("/home", adminAuth.isLogin, adminController.loadHome);
 adminRoute.post('/download-pdf', adminController.PDFDow)
+adminRoute.post('/download-excel', adminController.ExcelDow)
 
 // Product Management
 adminRoute.get("/addproducts", adminAuth.isLogin, productController.addProducts);
-adminRoute.post(
-  "/uploaded",
-  upload.array("uploadimg", 4),
-  productController.uploaded
-);
+adminRoute.post("/uploaded", upload.array("uploadimg", 4), productController.uploaded);
 adminRoute.get("/listproducts", adminAuth.isLogin, productController.Listproducts);
 adminRoute.get("/editproduct", adminAuth.isLogin, productController.Editproduct);
 adminRoute.post(
@@ -33,7 +31,16 @@ adminRoute.post(
 );
 adminRoute.get("/delete", adminAuth.isLogin, productController.productDelete);
 adminRoute.get("/visible", adminAuth.isLogin, productController.productVisible);
+adminRoute.get('/removeimg', async (req, res) => {
+  console.log(req.query, "quryyy")
+  let result = await productModel.findByIdAndUpdate(req.query.id,
+    { $pull: { image: req.query.name } },
+    { new: true, useFindAndModify: false }
 
+  )
+
+  console.log(result, "result")
+})
 
 //Add Category
 adminRoute.get("/category", adminAuth.isLogin, categoryController.categoryForm);
@@ -64,6 +71,10 @@ adminRoute.get('/orderdetails', adminAuth.isLogin, adminController.OrderDetails)
 adminRoute.get('/cancel-order', adminAuth.isLogin, adminController.Cancel_Order)
 adminRoute.get('/shipped-order', adminAuth.isLogin, adminController.Shipped_Order)
 adminRoute.get('/orders/returnreq', adminAuth.isLogin, adminController.ApproveReturn)
+adminRoute.get('/topselling', adminAuth.isLogin, productController.TopSelling)
+adminRoute.get('/topcategory', adminAuth.isLogin, productController.TopCategory)
+adminRoute.get('/deliver-order', adminAuth.isLogin, adminController.Delivered_Order)
+
 //coupen management
 adminRoute.get('/listcoupens', adminAuth.isLogin, adminController.ListCoupens)
 adminRoute.get('/addcoupen', adminAuth.isLogin, adminController.AddCoupen)

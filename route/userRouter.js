@@ -1,5 +1,6 @@
 let express = require("express");
 var UserRouter = express.Router();
+let User_schema = require("../model/userModel");
 let userController = require("../controller/user/userController");
 var bodyParser = require("body-parser");
 UserRouter.use(bodyParser.json());
@@ -12,6 +13,9 @@ const Wallet = require("../model/WalletModel")
 const Razorpay = require('razorpay');
 const Coupens = require("../../e-commerce/model/CoupenModel")
 const crypto = require('crypto');
+const Orders = require("../model/OrderModel")
+const Cart1 = require("../model/newcartModel")
+const CartController = require("../controller/user/cartController")
 const { AddCoupen } = require("../controller/admin/adminControlller");
 
 
@@ -58,16 +62,24 @@ UserRouter.get('/profile', userController.Profile)
 UserRouter.get('/profile/editprofile', userController.EditProfile)
 UserRouter.post('/profile/posteditprofile', userController.Posteditprofile)
 
-UserRouter.get('/profile/cart', userController.Cart)
-UserRouter.get('/profile/newcart', userController.NewCart)
+//UserRouter.get('/profile/cart', userController.Cart)
+UserRouter.get('/profile/cart', CartController.Cart)
+UserRouter.get('/profile/cartitems', CartController.Cartitems)
+//UserRouter.get('/profile/newcart', userController.NewCart)
+UserRouter.get('/profile/newcart', CartController.NewCart)
+UserRouter.get('/profile/deccart', CartController.DecCart)
 UserRouter.get('/profile/address', userController.Address)
 UserRouter.post('/profile/newadd', userController.NewAddress)
 UserRouter.get('/profile/newadd', userController.DeleteAdd)
 UserRouter.get('/profile/changepsw', userController.changePsw)
 UserRouter.get('/postchangepsw', userController.postNewpass)
-UserRouter.get('/profile/checkout', userController.Checkout)
-UserRouter.get('/profile/allorders', Paymentstatus.Checkstatus, userController.AllOrders)
-UserRouter.get('/profile/deletecart', userController.DeleteCart)
+//UserRouter.get('/profile/checkout', userController.Checkout)
+UserRouter.get('/profile/checkout', CartController.Checkout)
+UserRouter.get('/profile/allorders', CartController.AllOrders)
+UserRouter.get('/profile/getallorders', CartController.GetOrders)
+//UserRouter.get('/profile/allorders', Paymentstatus.Checkstatus, userController.AllOrders)
+// UserRouter.get('/profile/deletecart', userController.DeleteCart)
+UserRouter.get('/profile/deletecart', CartController.DeleteCart)
 UserRouter.get('/forgetpsw', userController.ForgetPsw)
 UserRouter.post('/postforgetpsw', userController.postforgetPsw)
 UserRouter.post('/postnewpsw', userController.Newpassword)
@@ -79,7 +91,10 @@ UserRouter.get("/new-arrival", userController.products);
 UserRouter.get('/search', userController.Search)
 UserRouter.post('/products/filter', userController.Filters)
 //Cart............
-UserRouter.get("/cart/cancelorder", userController.CancelOrder)
+//UserRouter.get("/cart/cancelorder", userController.CancelOrder)
+UserRouter.get("/cart/cancelorder", CartController.CancelOrder)
+UserRouter.get('/cart/invoice', CartController.Invoice)
+
 UserRouter.get('/product/user-wish-list', userController.ProductUserWishlist)
 // Google auth
 UserRouter.get(
@@ -117,6 +132,7 @@ UserRouter.post('/createOrder', async (req, res) => {
 
   try {
     const response = await razorpay.orders.create(options);
+    console.log(response, "await response")
     res.json(response);
   } catch (error) {
     res.status(500).send(error);
@@ -130,7 +146,7 @@ UserRouter.post('/verifyPayment', (req, res) => {
   const hmac = crypto.createHmac('sha256', process.env.RazorpayId);
   hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
   const generated_signature = hmac.digest('hex');
-  1 ``
+
   if (generated_signature === razorpay_signature) {
     res.json({ status: "success" });
   } else {
@@ -178,12 +194,81 @@ UserRouter.get('/profile/wallet', userController.Wallets)
 UserRouter.get("/checkbalance", async (req, res) => {
   checkBalance = await Wallet.find({ userId: req.session.user_id })
 
-  console.log(checkBalance[0].currentBalance, "balnce")
+  console.log(checkBalance, "balnce")
   console.log(req.query.amount, "quryy amt")
   console.log(checkBalance[0].currentBalance > req.query.amount, "comapre")
   if (checkBalance[0].currentBalance > req.query.amount) {
+
+    //update in wallet..
+    let newtransaction = {
+
+      paymentStatus: 'Completed',
+      amount: req.query.amount,
+      credit: true
+    }
+
+    let updateW = await Wallet.findOneAndUpdate({
+      userId: req.session.user_id
+    }, {
+      $push: { transactions: newtransaction },
+      $inc: { currentBalance: -newtransaction.amount }
+    },
+      { new: true, upsert: true },
+    )
+
+
+
+
     res.status(200).json({ success: true });
+
   } else {
+    let user = req.session.user_id
+    adds = await User_schema.findOne({ _id: user })
+
+    //address
+    if (req.query.add == "address2") {
+      address = {
+        fullName: adds.address2.name,
+        address: adds.address2.address,
+        city: adds.address2.city,
+        postalCode: adds.address2.zip,
+        state: adds.address2.state
+
+      }
+    } else {
+      address = {
+        fullName: adds.name,
+        address: adds.address,
+        city: adds.location,
+        postalCode: adds.address2.zip,
+        state: adds.address2.state
+
+      }
+    }
+    //end
+
+    let cart = await Cart1.findOne({ userId: user })
+    const order = new Orders({
+      userId: user,
+
+      totalAmount: req.query.amount,
+      cartId: cart._id,
+      paymentMethod: "Wallet",
+      shippingAddress: address,
+      PaymentStatus: "Pending",
+      status:"Faild"
+      // Pass the shipping details (fullName, address, city, etc.)
+    });
+    await order.save();
+    ///Clear from cart......
+
+
+    cart.items = [];
+    cart.totalPrice = 0;
+    cart.totalItems = 0;
+    await cart.save();
+
+
     return res.status(404).json({ failed: false });
   }
 })

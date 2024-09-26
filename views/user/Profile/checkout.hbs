@@ -230,7 +230,7 @@
                     {{/isEmpty}}
 
                     <div class="total-price">
-                        <p>Total Price: ₹{{totalPrice}}</p>
+                        <p>Total Price: ₹{{totalPriced}}</p>
                         <p>Tax: ₹100.00</p>
                         <p id="discount">Discount: </p>
 
@@ -362,9 +362,18 @@
 
         document.getElementById('result').innerText = selectedValue ? `Selected value is: ${selectedValue} ` : 'No option selected';
         if (selectedValue == "cod") {
-            payment()
+            a = document.getElementById("gtotal").innerHTML
+            b = a.slice(14)
+            let c = Number(b)
+            if (c > 1000) {
+                Swal.fire("Cod not Avilable more than ₹1000")
+            } else {
+                payment()
+            }
+
         } else if (selectedValue == "razorpay") {
             initiateRazorpayPayment()
+
         } else if (selectedValue == "Lux-Wallet") {
             Lux()
         }
@@ -415,8 +424,11 @@
         console.log(data1, "vallllll from radioo")
     }
     function showOrder() {
+        a = document.getElementById("gtotal").innerHTML
+        b = a.slice(14)
+        let c = Number(b)
         console.log(Data, "from show order")
-        window.location.href = `/profile/allorders?id=${Data}`;
+        window.location.href = `/profile/allorders?info=COD&amt=${c}&add=${Data}`;
     }
 
 
@@ -533,13 +545,28 @@
                         })
                             .then(res => res.json())
                             .then(data => {
-                                console.log(data, "succss")
+                                console.log(data, "datad")
                                 if (data.status === "success") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Order placed",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
 
-                                    window.location.href = '/profile/allorders?info=wallet';
+                                    //  window.location.href = '/profile/allorders?info=wallet';
                                 } else {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Order placed",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
 
-                                    window.location.href = '/profile/allorders?info=wallet';
+                                    setTimeout(() => {
+                                        window.location.href = `/profile/allorders?info=RazorPay&amt=${c}&add=${Data}`;
+                                    }, 1000)
+
                                 }
                             });
                     },
@@ -638,8 +665,8 @@
             buttonsStyling: false
         });
         swalWithBootstrapButtons.fire({
-            title: "$" + c,
-            text: `Pay from user Lux-wallet`,
+            title: "₹" + c,
+            text: `Pay from user Lux - wallet`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Yes, Pay it!",
@@ -652,11 +679,13 @@
                 //ftech data
                 walletdata().then((res) => {
                     if (res == "not") {
+                        console.log(res, "res")
                         swalWithBootstrapButtons.fire({
                             title: "Faild!",
                             text: "Check your avilable balance",
                             icon: "Failed"
                         });
+
                     } else {
                         swalWithBootstrapButtons.fire({
                             title: "Sucess!",
@@ -664,7 +693,7 @@
                             icon: "Success"
                         });
 
-                        window.location.href = `/profile/allorders?WalletAmt=${c}`
+                        window.location.href = `/profile/allorders?info=Wallet&amt=${c}&add=${Data}`
                     }
                 })
 
@@ -711,6 +740,7 @@
                 return "done"; // Return "done" if the request was successful
             } else {
                 return "not"; // Return "not" if the request was not successful
+                
             }
         } catch (error) {
             console.error('Fetch error:', error);

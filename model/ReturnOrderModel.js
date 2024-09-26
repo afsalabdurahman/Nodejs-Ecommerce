@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const ReturnOrders = new mongoose.Schema({
     OrderId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cart', required: true,
+        ref: 'Cart1', required: true,
     },
     Date: {
         type: String,
@@ -26,9 +26,14 @@ const ReturnOrders = new mongoose.Schema({
     },
     ReturnOption: {
         type: String,
-        enum: ["refund", "replacement"],
+        enum: ["Wallet", "Bank"],
 
+    },
+    ReturnStatus: {
+        type: String,
+        enum: ["Approved", "Rejected"],
     }
+
 
 
 })

@@ -1,0 +1,89 @@
+
+    <style>
+        .body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .chart-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .chart-bar {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .bar {
+            height: 40px;
+            border-radius: 5px;
+            color: #fff;
+            text-align: right;
+            padding-right: 10px;
+            line-height: 40px;
+            font-size: 14px;
+        }
+
+        .bar.men {
+            background-color: #4caf50;
+            width: 70%;
+            /* Adjust width based on percentage of sales */
+        }
+
+        .bar.women {
+            background-color: #2196f3;
+            width: 50%;
+            /* Adjust width based on percentage of sales */
+        }
+
+        .bar.kid {
+            background-color: #ff5722;
+            width: 30%;
+            /* Adjust width based on percentage of sales */
+        }
+
+        .category-label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+
+
+<div class="body">
+    <div class="chart-container">
+        <h1>Top Selling Categories</h1>
+
+        <!-- Men Category -->
+        <div class="chart-bar">
+            <div class="category-label">Men</div>
+            <div class="bar men">70% Sales</div>
+        </div>
+
+        <!-- Women Category -->
+        <div class="chart-bar">
+            <div class="category-label">Women</div>
+            <div class="bar women">50% Sales</div>
+        </div>
+
+        <!-- Kid Category -->
+        <div class="chart-bar">
+            <div class="category-label">Kid</div>
+            <div class="bar kid">30% Sales</div>
+        </div>
+
+    </div>
+
+</div>

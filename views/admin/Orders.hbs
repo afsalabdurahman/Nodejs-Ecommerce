@@ -95,36 +95,44 @@
             </thead>
             <tbody>
                 {{#each Data}}
+                {{#each items}}
                 <tr>
 
-                    <td>{{orderId}}</td>
-                    <td>{{user.name}}</td>
-                    <td>{{this.email}}</td>
-                    <td>{{ProductId.name}}</td>
-                    <td>₹{{ProductId.price}}</td>
-                    {{#ifEquals orderStatus "Cancelled"}}
-                    <td><span style="color: red;" class="status">Order Cancelled</span></td>
-                    {{else ifEquals orderStatus "Shipped"}}
+                    <td>{{../OrderId}}</td>
+                    <td>{{../shippingAddress.fullName}}</td>
+                    <td>{{../userId.email}}</td>
+                    <td>{{productId.name}}</td>
+                    <td>₹{{totalPrice price quantity}}</td>
+                    {{#ifEquals update "Cancelled"}}
 
-                    {{#ifEquals ReturnStatus "ReturnProcessing"}}
+                    <td><span style="color: red;" class="status">Order Cancelled</span></td>
+                    {{else ifEquals update "Shipped"}}
+
+                    <td><span style="color: rgb(11, 170, 219);" class="status">Product is Shipped</span></td>
+                    {{else ifEquals update "Delivered"}}
+                    <td><span style="color: red;" class="status">Delivered</span></td>
+                    {{else ifEquals update "Return"}}
                     <td><span style="color: rgb(18, 186, 68);" class="status">Return request</span></td>
 
-                    {{else ifEquals ReturnStatus "ReturnApprove"}}
-                    <td><span style="color: rgb(18, 186, 68);" class="status">Return Approved</span></td>
+                    {{else ifEquals update "Approve Return"}}
+                    <td><span style="color: rgb(24, 18, 186);" class="status">Return Approved</span></td>
                     {{else}}
-                    <td><span style="color: rgb(18, 186, 68);" class="status">Deliverd</span></td>
+                    <td><span style="color: rgb(240, 225, 10);" class="status">Order is pending</span></td>
                     {{/ifEquals}}
-                    {{else ifEquals orderStatus "Returned"}}
+                    {{!-- {{else ifEquals orderStatus "Returned"}}
                     <td><span style="color: rgb(18, 186, 68);" class="status">Approved Return</span></td>
                     {{else}}
                     <td><span class="status placed">Order Placed</span></td>
 
-                    {{/ifEquals}}
+                    {{/ifEquals}} --}}
 
-                    <td><span class="status paid">COD</span></td>
-                    <td>{{Date}}</td>
-                    <td><a href="/admin/orderdetails?id={{_id}}"><button class="detail-btn">Detail</button></td></a>
+                    <td><span class="status paid">{{../paymentMethod}}</span></td>
+                    <td id="{{../_id}}">{{../orderedAt}}</td>
+                    <p id="date" style="display: none;">{{../_id}}</p>
+                    <td><a href="/admin/orderdetails?id={{_id}}"><button class="detail-btn">Detail</button></td>
+                    </a>
                 </tr>
+                {{/each}}
                 {{/each}}
             </tbody>
         </table>
@@ -149,3 +157,19 @@
         </nav>
     </div>
 </div>
+
+
+<script>
+    console.log({{ Data }}"idd")
+    let id = document.getElementById("date").innerHTML
+    let dateString = document.getElementById(id).innerHTML
+    const dateObject = new Date(dateString);
+    const day = dateObject.getDate();
+    const month = dateObject.toLocaleString('default', { month: 'long' });
+    const year = dateObject.getFullYear();
+
+    // Format the date as DD-MonthName-YYYY
+    const formattedDate = `${day}-${month}-${year}`;
+    document.getElementById(id).innerHTML = formattedDate
+
+</script>

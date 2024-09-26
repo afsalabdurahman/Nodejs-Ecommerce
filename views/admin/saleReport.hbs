@@ -98,82 +98,193 @@
         form {
             text-align: center;
         }
+
+            {
+                {
+                !-- end--
+            }
+        }
+    </style>
+    <style>
+        .body1 {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background-color: #f4f4f4;
+        }
+
+        .container1 {
+
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .options {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .options label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .options input {
+            margin-right: 5px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup h2 {
+            margin: 0 0 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .popup input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .popup .btn {
+            width: 100%;
+        }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <h1>Dress Sales Report</h1>
-        <h4>Sales Count: {{salesCount}}</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>Dress Name</th>
-                    <th>Size</th>
-                    <th>Quantity Sold</th>
-                    <th>Unit Price</th>
-                    <th>Total Revenue</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#if m}}
-                <tr class="category-header">
-                    <td colspan="5">Men Dresses</td>
-                </tr>
-                {{#each m}}
-                <tr>
-                    <td>{{productname}}</td>
-                    <td>{{productsize}}</td>
-                    <td>{{productqunatity}}</td>
-                    <td>₹{{productprice}}</td>
-                    <td>₹{{producttotal}}</td>
-                </tr>
-                {{/each}}
-                {{/if}}
-                {{#if w}}
-                <tr class="category-header" style="background-color: #0056b3;">
-                    <td colspan="5">Women Dresses</td>
-                </tr>
-                {{#each w}}
-                <tr>
-                    <td>{{productname}}</td>
-                    <td>{{productsize}}</td>
-                    <td>{{productqunatity}}</td>
-                    <td>₹{{productprice}}</td>
-                    <td>₹{{producttotal}}</td>
-                </tr>
-                {{/each}}
-                {{/if}}
-                {{#if k}}
-                <tr class="category-header" style="background-color: blue;">
-                    <td colspan="5">Kids Dresses</td>
-                </tr>
-                {{#each k}}
-                <tr>
-                    <td>{{productname}}</td>
-                    <td>{{productsize}}</td>
-                    <td>{{productqunatity}}</td>
-                    <td>₹{{productprice}}</td>
-                    <td>₹{{producttotal}}</td>
-                </tr>
-                {{/each}}
-                {{/if}}
-                <tr class="total-row">
-                    <td colspan="4">Total Sales</td>
-                    <td>₹{{total}}</td>
-                </tr>
-            </tbody>
-        </table>
 
-        <!-- Download PDF Button -->
-        <form action="/admin/download-pdf" method="POST">
-            <input type="hidden" name="m" value='{{{json m}}}'>
-            <input type="hidden" name="w" value='{{{json w}}}'>
-            <input type="hidden" name="k" value='{{{json k}}}'>
-            <input type="hidden" name="total" value="{{total}}">
-            <button type="submit" class="download-btn">Download PDF</button>
-        </form>
+<h1>Dress Sales Report</h1>
+{{!-- Datarange --}}
+<div class="body1">
+
+    <div class="container1">
+        <div class="options">
+            <label><input type="radio" name="range" value="daily"> Daily</label>
+            <label><input type="radio" name="range" value="monthly"> Monthly</label>
+            <label><input type="radio" name="range" value="yearly"> Yearly</label>
+            <label><input type="radio" name="range" value="custom" id="custom-range"> Custom Range</label>
+        </div>
+        <button class="btn" id="submit-btn">Submit</button>
     </div>
+    <!-- Custom Date Range Popup -->
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup">
+            <h2>Select Custom Date Range</h2>
+            <label for="fromDate">From Date:</label>
+            <input type="date" id="fromDate">
+            <label for="toDate">To Date:</label>
+            <input type="date" id="toDate">
+            <button class="btn" id="applyDateRange">Apply</button>
+        </div>
+    </div>
+</div>
+</div>
+{{!-- end --}}
+<h4>Sales Count: {{count }}</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>Dress Name</th>
+            <th>Date</th>
+            <th>Quantity Sold</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+            <th>Offer Discount</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {{#each Sales}}
+        {{#each items}}
+
+
+        <tr>
+            <td>{{productId.name}}</td>
+            <td>{{../orderedAt}}</td>
+            <td>{{quantity}}</td>
+            <td>₹{{productId.price}}</td>
+            <td>₹{{totalPrice productId.price quantity}}</td>
+            <td>₹{{offerPersonatge}}</td>
+
+        </tr>
+        {{/each}}
+        {{/each}}
+
+
+        <tr class="total-row">
+            <td colspan="4">Total Revanue</td>
+            <td>₹{{totalpriced}}</td>
+
+        </tr>
+        <tr class="total-row">
+            <td colspan="4">Total Offer Discount</td>
+            <td>₹{{totaldiscount}}</td>
+        </tr>
+        <tr class="total-row"></tr>
+        <td colspan="4">Total Coupen Discount</td>
+        <td>₹{{copendiscount}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Download PDF Button -->
+<form action="/admin/download-pdf" method="POST">
+    <input type="hidden" name="m" value='{{{json Sales}}}'>
+
+    <input type="hidden" name="total" value="{{totalpriced}}">
+    <button type="submit" class="download-btn">Download PDF</button>
+</form>
+<form action="/admin/download-excel" method="POST">
+    <input type="hidden" name="m" value='{{{json Sales}}}'>
+
+    <input type="hidden" name="total" value="{{totalpriced}}">
+    <button type="submit" class="download-btn">Download Excel</button>
+</form>
+</div>
 </body>
 
 </html>
@@ -181,4 +292,56 @@
 <script>
     t = document.getElementById('total1')
     console.log(t)
+
+
+
+</script>
+<script>
+    // Get elements
+    const customRangeInput = document.getElementById('custom-range');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const applyDateRangeBtn = document.getElementById('applyDateRange');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Show popup when Custom Range is selected
+    customRangeInput.addEventListener('change', function () {
+        if (this.checked) {
+            popupOverlay.style.display = 'flex';
+        }
+    });
+
+    // Hide popup when Apply button is clicked
+    applyDateRangeBtn.addEventListener('click', function () {
+        popupOverlay.style.display = 'none';
+        const fromDate = document.getElementById('fromDate').value;
+        const toDate = document.getElementById('toDate').value;
+        console.log('From:', fromDate, 'To:', toDate);
+    });
+
+    // Close popup when clicking outside the popup content
+    popupOverlay.addEventListener('click', function (e) {
+        if (e.target === popupOverlay) {
+            popupOverlay.style.display = 'none';
+        }
+    });
+    submitBtn.addEventListener('click', function () {
+        const selectedRange = document.querySelector('input[name="range"]:checked').value;
+        if (selectedRange === 'custom') {
+            popupOverlay.style.display = 'flex';
+        } else {
+            console.log(`Selected range: ${selectedRange}`);
+            window.location.href = `/admin/salesreport?range=${selectedRange}`;
+        }
+    });
+    applyDateRangeBtn.addEventListener('click', function () {
+        popupOverlay.style.display = 'none';
+        const fromDate = document.getElementById('fromDate').value;
+        const toDate = document.getElementById('toDate').value;
+        if (fromDate && toDate) {
+            console.log(`Custom Date Range: From ${fromDate} to ${toDate}`);
+            window.location.href = `/admin/salesreport?rangefrom=${fromDate}&to=${toDate}`;
+        } else {
+            console.log('Please select both From and To dates.');
+        }
+    });
 </script>

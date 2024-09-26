@@ -205,33 +205,33 @@
     <div class="order-details-container">
         <div class="order-header">
             <h2>Order details</h2>
-            Details for Order ID: <strong>{{usercart.orderId}}</strong></p>
+            Details for Order ID: <strong>{{Data.OrderId}}</strong></p>
             <div class="order-date"><i class="fas fa-calendar-alt"></i><span>08 03 2024 10:43:40</span></div>
         </div>
         <div class="order-info">
             <div class="customer-info"><i class="fas fa-user-circle"></i>
                 <div>
                     <p><strong>Customer</strong></p>
-                    <p>{{usercart.Username}}</p>
-                    <p>{{usercart.email}}</p>
-                    <p>985558556</p>
+                    <p>{{Data.shippingAddress.fullName}}</p>
+                    <p>{{Data.userId.email}}</p>
+                    <p>{{Data.userId.mobile}}</p>
                 </div>
             </div>
             <div class="order-info-details"><i class="fas fa-info-circle"></i>
                 <div>
                     <p><strong>Order info</strong></p>
-                    <p>Shipping: <strong>COD</strong></p>
-                    <p>Pay method: <strong>COD</strong></p>
+                    <p>Shipping: <strong>{{Data.paymentMethod}}</strong></p>
+                    <p>Pay method: <strong>{{Data.paymentMethod}}</strong></p>
                 </div>
             </div>
             <div class="delivery-info"><i class="fas fa-map-marker-alt"></i>
                 <div>
                     <p><strong>Deliver to</strong></p>
-                    <p>Full Name: {{usercart.Username}}</p>
-                    <p>Address Line: {{usercart.address}}</p>
-                    <p>City: KOZHIKODE</p>
-                    <p>State: Kerala</p>
-                    <p>Pincode: 673501</p>
+                    <p>Full Name: {{Data.shippingAddress.fullName}}</p>
+                    <p>Address Line: {{Data.shippingAddress.address}}</p>
+                    <p>City: {{Data.shippingAddress.city}}</p>
+                    <p>State: {{Data.shippingAddress.state}}</p>
+                    <p>Pincode: {{Data.shippingAddress.postalCode}}</p>
                 </div>
             </div>
         </div>
@@ -248,68 +248,92 @@
                         <th>Return Reason</th>
                         {{else}}
                         {{/if}}
+                        {{#ifEquals Data.items.[0].update "Return"}}
                         <th>Return status</th>
+
+                        <th id="Return">Return</th>
+                        {{else ifEquals Data.items.[0].update "Approve Return" }}
+
+
+                        <th id="Return">Return</th>
+                        {{else}}
                         <th id="cancel2">Order cancel</th>
                         <th id="ship2">Order shipped</th>
+                        {{/ifEquals}}
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><img src="/upload/{{usercart.ProductId.image.[0]}}" alt="Product Image"></td>
-                        <td>₹{{usercart.ProductId.price}}</td>
-                        <td>{{usercart.quandity}}</td>
-                        <td><span class="order-placed" id="status">{{usercart.orderStatus}}</span></td>
-                        <td>₹{{usercart.TotalAmount}}</td>
-                        <td>–</td>
+                        <td><img src="/upload/{{Data.items.[0].productId.image.[0]}}" alt="Product Image"></td>
+                        <td>₹{{Data.items.[0].price}}</td>
+                        <td>{{Data.items.[0].quantity}}</td>
+                        <td><span class="order-placed" id="status">{{Data.items.[0].update}}</span></td>
+                        <td>₹{{totalPrice Data.items.[0].price Data.items.[0].quantity}}</td>
+                        {{#ifEquals Data.items.[0].update "Approve Return" }}
+                        <td>Yes</td>
+                        {{else}}
+                        {{/ifEquals}}
                         {{!-- {{#if usercart.ReturnStatus}} --}}
-
-                        {{#ifEquals usercart.ReturnStatus "ReturnProcessing"}}
-                        <td><button class="approve-btn" id="approve" onclick="togglePopup()">Approve</button></td>
+                        {{#ifEquals Data.items.[0].update "Approve Return" }}
+                        {{else}}
+                        {{#ifEquals Data.items.[0].update "Return"}}
+                        <td><button class="approve-btn" id="approve" onclick="togglePopup()">Check</button></td>
                         {{else}}
 
-                        {{/ifEquals}}
+                        {{#ifEquals Data.items.[0].update "Shipped"}}
 
                         <td id="cancel1"><button class="approve-btn" id="Cancel"
                                 onclick="Cancel('{{id}}')">Cancel</button>
                         </td>
                         <td id="ship"><button class="approve-btn" id="Shipped"
-                                onclick="Shipped('{{id}}')">Shipped</button>
+                                onclick="Deliver('{{id}}','{{Data.items.[0].quantity}}','{{getId Data.items.[0].productId}}')">Deliver</button>
                         </td>
-
+                        {{else ifEquals Data.items.[0].update "Delivered" }}
+                        {{else}}
+                        <td id="ship"><button class="approve-btn" id="Shipped"
+                                onclick="Shipped('{{id}}')">Shipped</button>
+                        <td id="cancel1"><button class="approve-btn" id="Cancel"
+                                onclick="Cancel('{{id}}')">Cancel</button>
+                        </td>
+                        {{/ifEquals}}
+                        {{/ifEquals}}
+                        {{/ifEquals}}
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="payment-info">
             <p><strong>Payment info</strong></p>
-            <p><i class="fas fa-money-bill-alt"></i>COD</p>
+            <p><i class="fas fa-money-bill-alt"></i>{{Data.paymentMethod}}</p>
             <p>{{usercart.Username}}</p>
             <p>7676565434</p>
         </div>
     </div>
 </div>
 {{!-- popup box --}}
-{{#if ReturnStatus}}
+{{#ifEquals Data.items.[0].update "Return"}}
 <div class="overlay" id="popupOverlay">
     <div class="popup-content">
         <span class="close-icon" onclick="togglePopup()">&times;</span>
         <h1>Return Detail</h1>
-        <p><strong>Reason for Return:</strong> {{ReturnStatus.Reason}}</p>
-        <p><strong>Order ID:</strong> {{usercart.orderId}}</p>
-        <p><strong> Name:</strong> {{usercart.Username}}</p>
-        <p><strong> Account Details:</strong><br>{{ReturnStatus.RefundAccholderName}},<br>
+        <p><strong>Reason for Return:</strong> {{ReturnStatus.ReturnReason}}</p>
+        <p><strong>Order ID:</strong> #{{ReturnStatus.OrderId}}</p>
+        <p><strong> Name:</strong> {{Data.shippingAddress.fullName}}</p>
+        </p>
+        <p><strong> Account Details:</strong><br>Lux-{{ReturnStatus.ReturnOption}},<br>
             {{ReturnStatus.RefundAccName}},{{ReturnStatus.RefundAccNumber}},<br>{{ReturnStatus.RefundAccIFSC}}</p>
 
-        <button class="approve-btn" onclick="funs('{{usercart._id}}')">Approve</button>
+        <button class="approve-btn" onclick="funs('{{ReturnStatus.OrderId}}')">Approve</button>
         <button class="reject-btn">Reject</button>
     </div>
 </div>
 {{else}}
-{{/if}}
+{{/ifEquals}}
 
 <script>
 
     function Cancel(b) {
+        console.log(b, "idd")
         Swal.fire({
             title: "Do you want to Cancel this Order?",
             showDenyButton: true,
@@ -333,15 +357,15 @@
 
     }
 
-    function funs(b) {
+    function funs(id) {
+        console.log(b)
 
-
-        window.location.href = `/admin/orders/returnreq?id=${b}`
+        window.location.href = `/admin/orders/returnreq?id=${id}`
     }
 
     function Shipped(ship) {
         Swal.fire({
-            title: "Do you want to Ship this Order?",
+            title: "Do you want to shipped this Order?",
             showDenyButton: true,
 
             confirmButtonText: "Yes",
@@ -351,10 +375,34 @@
             if (result.isConfirmed) {
                 Swal.fire({
                     title: "shipped!",
-                    text: "Order has been shipped.",
+                    text: "Order has been Shipped.",
                     icon: "success"
                 });
                 window.location.href = `/admin/shipped-order?id=${ship}`;
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+
+    }
+    //Deliver
+    function Deliver(ship, qty, Pid) {
+        console.log(qty, "qty++++", Pid, "++++++pid")
+        Swal.fire({
+            title: "Do you want to Deliver this Order?",
+            showDenyButton: true,
+
+            confirmButtonText: "Yes",
+            denyButtonText: `No`
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Delivered!",
+                    text: "Order has been Deliverd.",
+                    icon: "success"
+                });
+                window.location.href = `/admin/deliver-order?id=${ship}&qtyno=${qty}&pId=${Pid}`;
             } else if (result.isDenied) {
                 Swal.fire("Changes are not saved", "", "info");
             }
@@ -378,7 +426,7 @@
 
     b = document.getElementById('status').innerHTML
     console.log(b)
-    if ("Shipped" == document.getElementById('status').innerHTML) {
+    if ("Deliverd" == document.getElementById('status').innerHTML) {
         document.getElementById('ship').style.display = "none"
         document.getElementById('ship2').style.display = "none"
     } else if ("Cancelled" == document.getElementById('status').innerHTML) {

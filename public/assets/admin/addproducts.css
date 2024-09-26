@@ -26,7 +26,17 @@
   cursor: pointer;
   border-radius: 3px;
 }
-
+.cropImg {
+  position: absolute;
+  top: 43px;
+  right: 5px;
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 3px;
+}
 .image-preview {
   display: flex;
   flex-direction: column;
@@ -87,4 +97,3 @@ select {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-

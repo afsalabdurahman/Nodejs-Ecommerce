@@ -248,7 +248,16 @@
                 <small>+10.15% since last week</small>
             </div>
         </div>
-
+        <div>
+            <label>
+                <input type="radio" name="salesToggle" value="monthly" checked>
+                Monthly
+            </label>
+            <label>
+                <input type="radio" name="salesToggle" value="yearly">
+                Yearly
+            </label>
+        </div>
         <div class="chart-container animate-in">
             <h3>Sales Analytics</h3>
             <canvas id="salesChart"></canvas>
@@ -257,8 +266,8 @@
         <div class="products animate-in">
             <h3>Top Selling Products</h3>
             <ul>
-                <li><i class="fas fa-tshirt"></i>Men's Clothes</li>
-                <li><i class="fas fa-dress"></i>Women's Clothes</li>
+                <li><a href="/admin/topselling"><i class="fas fa-tshirt"></i></a>Top Clothes</li>
+                <li><a href="/admin/topcategory"><i class="fas fa-boxes-stacked"></i></a>Top Category</li>
                 <li><i class="fas fa-baby"></i>Kid's Clothes</li>
                 <li><i class="fas fa-boxes-stacked"></i>Miscellaneous</li>
             </ul>
@@ -306,14 +315,38 @@
     </div>
 
     <script>
+        const monthlyData = [0, 0, 1000, 5000, 8000, 19000];
+        const yearlyData = [0, 10000, 19000];
+        let month = "{{ Month }}"
+        let total = '{{Total}}'
+        let year = "{{Year}}"
+
+        let totalArray = total.split(',')
+
+
         const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
+
+        // Define monthly and yearly data
+
+
+        totalArray.map((e) => {
+            monthlyData.push(e)
+            yearlyData.push(e)
+        })
+        console.log(monthlyData, "data monthly")
+
+        // Define monthly and yearly labels
+        const monthLabels = ['March', 'April', 'May', 'June', 'July', 'Augest', 'September'];
+        const yearLabels = ['2021', '2022', '2023', '2024',];
+
+        // Function to create the chart
+        let salesChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: monthLabels, // Default to monthly labels
                 datasets: [{
                     label: 'Sales',
-                    data: [1200, 1900, 3000, 5000, 2300, 4000, 4500],
+                    data: monthlyData, // Default to monthly data
                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                     borderColor: 'rgba(74, 144, 226, 1)',
                     borderWidth: 2,
@@ -335,6 +368,20 @@
             }
         });
 
+        // Add event listener for radio buttons
+        document.querySelectorAll('input[name="salesToggle"]').forEach((radio) => {
+            radio.addEventListener('change', function () {
+                if (this.value === 'monthly') {
+                    salesChart.data.labels = monthLabels; // Switch to month labels
+                    salesChart.data.datasets[0].data = monthlyData; // Switch to monthly data
+                } else if (this.value === 'yearly') {
+                    salesChart.data.labels = yearLabels; // Switch to year labels
+                    salesChart.data.datasets[0].data = yearlyData; // Switch to yearly data
+                }
+                salesChart.update(); // Update the chart with new data and labels
+            });
+        });
+
         // GSAP animations
         gsap.from(".stat", {
             duration: 0.8,
@@ -352,6 +399,7 @@
             ease: "power3.out",
             delay: 0.5
         });
+
     </script>
 </body>
 

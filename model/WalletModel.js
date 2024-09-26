@@ -28,7 +28,7 @@ const walletSchema = new mongoose.Schema({
             },
             debit: {
                 type: Boolean,
-                required: true
+                
             },
             credit: {
                 type: Boolean,

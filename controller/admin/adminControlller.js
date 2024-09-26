@@ -4,13 +4,18 @@ const ReturnOrders = require("../../model/ReturnOrderModel");
 const Category = require("../../model/categoryMode");
 const PDFDocument = require('pdfkit')
 const ExcelJs = require('exceljs')
+
+const ListOrders = require('../../model/OrderModel')
 const fs = require('fs')
+const Coupens = require("../../model/CoupenModel")
+
 const User_schema = require("../../model/userModel");
 const Product = require("../../model/productModel");
 const { products, Cart } = require("../user/userController");
 const UserCart = require("../../model/cartModel");
 const { ObjectId } = require('mongoose').Types;
 const CoupenModel = require('../../model/CoupenModel')
+const Wallet = require("../../model/WalletModel")
 const OfferModel = require('../../model/OfferModel')
 const mongo = require('mongoose')
 mongo.set('strictPopulate', false);
@@ -57,10 +62,51 @@ const adminLogout = async (req, res) => {
 
 const loadHome = async (req, res) => {
   try {
+    //Sales Data...........
+
+    let Month = []
+    let Year = []
+    let Total = []
+
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    const SalesData = await ListOrders.find({
+      items: { $elemMatch: { update: "Delivered" } }
+    }).populate("items.productId").lean().limit(0);
+
+    SalesData.forEach((e) => {
+      const targetDate = new Date(e.deliveryDate);
+      const targetMonthName = monthNames[targetDate.getMonth()];
+      const targetYear = targetDate.getFullYear();
+
+      // Calculate the total amount (assuming you have a property for the amount)
+      const amount = e.items.reduce((sum, item) => sum + item.price, 0); // Adjust according to your data structure
+
+      // Check if the month and year already exist in Graphdata
+      const index = Month.indexOf(targetMonthName);
+      if (index === -1) {
+        // If not found, add it to Graphdata
+        Month.push(targetMonthName);
+        Year.push(targetYear);
+        Total.push(amount);
+      } else {
+        // If found, update the total amount for that month
+        Total[index] += amount;
+      }
+    });
+
+    // Output the Graphdata object to verify
+    console.log(Month, Year, Total);
+
+
     const adminData = await User.findById(req.session.admin_id);
     console.log(req.session.admin_id, "loadHome");
     if (adminData) {
-      res.render("admin/adminHome.hbs", { admin: adminData });
+      res.render("admin/adminHome.hbs", { admin: adminData, Month: Month, Year: Year, Total: Total });
     } else {
       res.status(404).send("User not found");
     }
@@ -119,17 +165,21 @@ const Orders = async (req, res) => {
     pageno = Number(num)
 
     const pages = pageno || 1
-    const docCount = await UserCart.countDocuments();
+    const docCount = await ListOrders.countDocuments();
     console.log(docCount, "count")
 
     let val = docCount / 3
     count = Math.ceil(val)
     const perPage = Math.round(count / 3)
-    let Data = await UserCart.find({ orderStatus: { $in: ["Processing", "Cancelled", "Shipped", "Returned"] } }).sort({ _id: -1 }).skip((pages - 1) * perPage).limit(3).populate("ProductId").lean()
-
+    let Data1 = await ListOrders.find().populate("items.productId").lean()
+    console.log(Data1, "data1111")
+    // let Data = await UserCart.find({ orderStatus: { $in: ["Processing", "Cancelled", "Shipped", "Returned"] } }).sort({ _id: -1 }).skip((pages - 1) * perPage).limit(3).populate("ProductId").lean()
+    let Data = await ListOrders.find().sort({ _id: -1 }).skip((pages - 1) * perPage).limit(3).populate("items.productId").populate("userId").lean()
+    console.log(Data, "yfysfduyf")
     res.render("admin/Orders.hbs", { Data, admin: true, count })
 
   } catch (error) {
+    console.log(error)
     res.redirect('/error');
   }
 
@@ -139,33 +189,45 @@ const Orders = async (req, res) => {
 const OrderDetails = async (req, res) => {
   console.log(req.query.id, "isss")
   id = req.query.id;
-  const usercart = await UserCart.findById(req.query.id).populate("ProductId").lean()
-  console.group(usercart)
+  // const usercart = await UserCart.findById(req.query.id).populate("ProductId").lean()
+  // console.group(usercart)
   const ReturnStatus = await ReturnOrders.findOne({ OrderId: req.query.id }).lean()
-  console.log(ReturnStatus, "retun stat")
-  res.render('admin/OrderDetails.hbs', { admin: true, usercart, id, ReturnStatus })
+  console.log(ReturnStatus, "status return")
+  let Data = await ListOrders.findOne(
+    { "items._id": req.query.id }, // Match the document containing the item with the specific _id
+    { "items.$": 1, "OrderId": 1, "shippingAddress": 1, "paymentMethod": 1, },
+    // Project only the matching item in the array
+  ).lean().populate("items.productId").populate("userId");
+
+  console.log(Data, "data")
+  res.render('admin/OrderDetails.hbs', { admin: true, id, Data, ReturnStatus })
 }
 
 const Cancel_Order = async (req, res) => {
   try {
-    console.log(req.query.id, "qury id from cart")
-    const prettyDate = new Date().toLocaleString('en-IN', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    console.log(req.query, "quaryyy")
+    let data = await ListOrders.updateOne(
+      { "items._id": req.query.id }, // Match the order that contains the item with this ID
+      { $set: { "items.$[element].update": "Cancelled" } }, // Update the price of the specific item
+      { arrayFilters: [{ "element._id": req.query.id }] } // Use array filter to target the specific item
+    )
 
-      hour12: true,
-    });
-    const Data = await UserCart.updateOne({ _id: req.query.id }, {
 
-      $set: {
-        orderStatus: 'Cancelled',
-        Date: prettyDate,
-      }
-    }, { upsert: true })
+
+    res.redirect(`/admin/orderdetails?id=${req.query.id}`)
+  } catch (error) {
+
+  }
+
+}
+
+const Shipped_Order = async (req, res) => {
+  try {
+    let data = await ListOrders.updateOne(
+      { "items._id": req.query.id }, // Match the order that contains the item with this ID
+      { $set: { "items.$[element].update": "Shipped" } }, // Update the price of the specific item
+      { arrayFilters: [{ "element._id": req.query.id }] } // Use array filter to target the specific item
+    )
 
     res.redirect(`/admin/orderdetails?id=${req.query.id}`)
 
@@ -173,44 +235,103 @@ const Cancel_Order = async (req, res) => {
     res.redirect('/error')
   }
 }
-const Shipped_Order = async (req, res) => {
+
+const Delivered_Order = async (req, res) => {
   try {
-    console.log(req.query.id, "qury id from cart")
-    const prettyDate = new Date().toLocaleString('en-IN', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-
-      hour12: true,
-    });
-    const Data = await UserCart.updateOne({ _id: req.query.id }, {
-
-      $set: {
-        orderStatus: 'Shipped',
-        Date: prettyDate,
+    console.log(req.query, "quryy++++++++++")
+    let data = await ListOrders.updateOne(
+      { "items._id": req.query.id }, // Match the order that contains the item with this ID
+      { $set: { "items.$[element].update": "Delivered" } }, // Update the price of the specific item
+      { arrayFilters: [{ "element._id": req.query.id }] } // Use array filter to target the specific item
+    )
+    //top selling.............
+    let update_product = await Product.findByIdAndUpdate(req.query.pId, {
+      $inc: {
+        topSelling: req.query.qtyno
       }
-    }, { upsert: true })
+    });
+    //top category...............................
+
+
+
+
+
+
 
     res.redirect(`/admin/orderdetails?id=${req.query.id}`)
 
   } catch (error) {
     res.redirect('/error')
   }
+
 }
 const ApproveReturn = async (req, res) => {
 
-  console.log(req.query.id)
-  const reqReturn = await UserCart.findByIdAndUpdate(
-    { _id: req.query.id },
-    { $set: { ReturnStatus: "ReturnApprove", orderStatus: "Returned" } },
-    { upsert: true }
+  console.log(req.query.id, "idreturn")
+  // const reqReturn = await UserCart.updateOne(
+  //   { OrderId: req.query.id },
+  //   { $set: { ReturnStatus: "Approved" } },
+  //   { upsert: true }
+  // );
+
+  let updateOrderStatus = await ListOrders.updateOne(
+    { "items._id": req.query.id }, // Match the order that contains the item with this ID
+    { $set: { "items.$[element].update": "Approve Return" } }, // Update the price of the specific item
+    { arrayFilters: [{ "element._id": req.query.id }] } // Use array filter to target the specific item
+  )
+  //update wallet..
+  let findOrderPrice = await ListOrders.findOne(
+    { "items._id": req.query.id },
+    { "items.$": 1, "paymentMethod": 1, "userId": 1, } // This will return only the specific updated item from the items array
   );
+  console.log(findOrderPrice, "orderprice")
+
+  let update = 0
+  //   let currentBalance = await Wallet.find()
+  let Wuser = await Wallet.find({ userId: findOrderPrice.userId })
+  console.log(Wuser, "wuser")
+
+  if (findOrderPrice.paymentMethod == "RazorPay" && Wuser == null) {
+    const exampleWallet = new Wallet({
+      userId: findOrderPrice.userId, // Replace with an actual user ID from your User collection
+      currentBalance: update,
+      transactions: [
+        {
+
+          paymentStatus: 'Completed',
+          amount: findOrderPrice.items[0].price,
+          debit: true
+        }
+
+
+      ]
+    })
+    // Save the example data to the database
+    exampleWallet.save()
+  } else if (findOrderPrice.paymentMethod == "wallet" || findOrderPrice.paymentMethod == "RazorPay") {
+
+    let newtransaction = {
+
+      paymentStatus: 'Completed',
+      amount: findOrderPrice.items[0].price,
+      debit: true
+    }
+
+    let updateW = await Wallet.findOneAndUpdate({
+      userId: findOrderPrice.userId
+    }, {
+      $push: { transactions: newtransaction },
+      $inc: { currentBalance: +newtransaction.amount }
+    },
+      { new: true, upsert: true },
+    )
+  }
+
+
+
 
   res.redirect('/admin/orders')
-  console.log(req.query)
+
 }
 
 const ListCoupens = async (req, res) => {
@@ -282,12 +403,13 @@ const PostOffers = async (req, res) => {
       dynamic = req.body.Categorylists
     } else {
       let offerPer = Number(req.body.offerP)
-      let price = await Product.findOne({ name: req.body.Productlists })
-      let c = price.price - (price.price * offerPer / 100);
-      let discountprice = c.toFixed(0)
+      // let price = await Product.findOne({ name: req.body.Productlists })
+      // let c = price.price - (price.price * offerPer / 100);
+      //let discountprice = c.toFixed(0)
+      //}
       let f = await Product.updateOne(
         { name: req.body.Productlists },  // Filter to find the document by product name
-        { $set: { price: discountprice, offer: price.price } },    // Update operation to set the 'offer' field
+        { $set: { discount_price: offerPer, offer: 1 } },    // Update operation to set the 'offer' field
         { upsert: true }                  // Option to create the document if it doesn't exist
       );
 
@@ -295,7 +417,7 @@ const PostOffers = async (req, res) => {
     }
 
 
-    num = Number(req.body.offerP)
+    let num = Number(req.body.offerP)
     const insertedData = new OfferModel({
       name: req.body.name,
       description: req.body.description,
@@ -334,7 +456,7 @@ const DeleteOffer = async (req, res) => {
         // Step 3: Update the document if the offer value is valid
         let update = await Product.updateOne(
           { name: find.typeName },
-          { $set: { price: offerValue, offer: null } } // Set price to the offer value and reset offer to 0
+          { $set: { offer: 0 } } // Set price to the offer value and reset offer to 0
         );
       } else {
         console.error("Offer value is not a valid number:", product.offer);
@@ -365,7 +487,7 @@ const InActiveOffer = async (req, res) => {
         // Step 3: Update the document if the offer value is valid
         let update = await Product.updateOne(
           { name: find.typeName },
-          { $set: { price: offerValue, offer: null } } // Set price to the offer value and reset offer to 0
+          { $set: { offer: 0 } } // Set price to the offer value and reset offer to 0
         );
       } else {
         console.error("Offer value is not a valid number:", product.offer);
@@ -386,6 +508,10 @@ const InActiveOffer = async (req, res) => {
     res.redirect('/admin/listoffers')
   } else {
     const Active = await OfferModel.findByIdAndUpdate(req.query.id, { $set: { status: 1 } })
+    let update = await Product.updateOne(
+      { name: find.typeName },
+      { $set: { offer: 1 } } // Set price to the offer value and reset offer to 0
+    );
     res.redirect('/admin/listoffers')
   }
   //Product offer inactive
@@ -395,209 +521,173 @@ const InActiveOffer = async (req, res) => {
 
 const generateSalesReport = async (req, res) => {
   try {
-    console.log(req.query, "qury")
-    const { year, month, week, customStartDate, customEndDate } = req.query;
-    let startDate, endDate;
 
-    // Determine the date range based on the query parameters
-    if (year) {
-      startDate = new Date(`${year}-01-01`);
-      endDate = new Date(`${year}-12-31`);
-    } else if (month) {
-      startDate = new Date(`${year}-${month}-01`);
-      endDate = new Date(new Date(startDate).setMonth(startDate.getMonth() + 1) - 1);
-    } else if (week) {
-      const [year, weekNumber] = week.split('-');
-      const firstDayOfYear = new Date(year, 0, 1);
-      const daysOffset = (weekNumber - 1) * 7;
-      startDate = new Date(firstDayOfYear.setDate(firstDayOfYear.getDate() + daysOffset));
-      endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
-    } else if (customStartDate && customEndDate) {
-      startDate = new Date(customStartDate);
-      endDate = new Date(customEndDate);
+    //Date Range sep
+    const currentDate = new Date();
+    const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const startOfYear = new Date(currentDate.getFullYear(), 0, 1)
+    let Data;
+    ///end
+
+
+    if (Object.keys(req.query).length > 0) {
+      if (req.query.range == "daily") {
+        Data = { $gte: startOfDay };
+      } else if (req.query.range == "monthly") {
+        Data = { $gte: startOfMonth }
+      } else if (req.query.range == "yearly") {
+        Data = { $gte: startOfYear }
+      } else if (req.query.rangefrom && req.query.to) {
+        let fromDate = new Date(req.query.rangefrom); // Custom start date
+        let toDate = new Date(req.query.to);
+        Data = { $gte: fromDate, $lte: toDate };
+      }
     } else {
-      // Default to the current year if no filter is provided
-      const currentYear = new Date().getFullYear();
-      startDate = new Date(`${currentYear}-01-01`);
-      endDate = new Date(`${currentYear}-12-31`);
+      Data = { $gte: startOfMonth };
     }
+    console.log(Data)
 
-    // Fetch orders within the specified date range
-    const orders = await UserCart.find({
-      orderStatus: 'Shipped',
-      //  createdAt: { $gte: startDate, $lte: endDate }
-    }).populate("ProductId");
-    console.log(orders, "ordersss")
-    ///pdf Genertae
-
-
-
-    men = orders.map((e) => {
-      let productid = e.ProductId.category
-      if (productid == "6699057c3cefcb99d7d7fe63") {
-        return {
-          productname: e.ProductId.name,
-          productsize: e.size,
-          productqunatity: e.quandity,
-          productprice: e.ProductId.price,
-          producttotal: e.TotalAmount
-        }
+    let Sales = await ListOrders.find({ filterDate: Data, "items.update": "Delivered" }).populate("items.productId").lean();
+    console.log(Sales, "++++Sales")
+    let totalpriced = 0
+    let totaldiscount = 0
+    let count = 0
+    Sales.map((e) => {
+      e.items.map((e) => {
+        count += 1;
+        totalpriced = totalpriced + (e.price * e.quantity)
+        totaldiscount += e.offerPersonatge
+        console.log(totalpriced, "totalpr")
+      })
+    })
+    console.log(totalpriced, "total", totaldiscount)
+    //coupen discount
+    let copendiscount = 0;
+    let coupen = await Coupens.find()
+    coupen.map((e) => {
+      if (e.usedCoupons.length != 0) {
+        copendiscount = copendiscount + (e.usedCoupons.length * e.discount)
+        console.log(e.usedCoupons.length, "one", e.discount)
       }
     })
-    let total = 0
-    m = [];
-    men.map((e) => {
-      if (e != undefined) {
-        m.push(e)
-        total += e.producttotal
-      }
-    })
-    console.log(total)
-    console.log(m, "mmmm")
-    let women = orders.map((e) => {
-      let productid = e.ProductId.category
-      if (productid == "669951b01934f70cb7148e6e") {
-        return {
-          productname: e.ProductId.name,
-          productsize: e.size,
-          productqunatity: e.quandity,
-          productprice: e.ProductId.price,
-          producttotal: e.TotalAmount
-        }
-      }
-    })
-    w = []
-    women.map((e) => {
-      if (e != undefined) {
-        w.push(e)
-        total += e.producttotal
-      }
-    })
-    console.log(total)
-    kid = orders.map((e) => {
-      let productid = e.ProductId.category
-      if (productid == "669a10c1dfed884d9985a01c") {
-        return {
-          productname: e.ProductId.name,
-          productsize: e.size,
-          productqunatity: e.quandity,
-          productprice: e.ProductId.price,
-          producttotal: e.TotalAmount
-        }
-      }
-    })
-    k = []
-    kid.map((e) => {
-      if (e != undefined) {
-        k.push(e)
-        total += e.producttotal
-      }
-    })
-
-    // if (orders.ProductId.category == "6699057c3cefcb99d7d7fe63") {
-    //   men.name = orders.ProductId.name
-    //   men.TotalAmount = orders.ProductId.TotalAmount
-    //}
-
-    // Process data to generate report
-    console.log(total)
-    //total sales count
-
-    const salesCount = await UserCart.countDocuments({
-      orderStatus: 'Shipped',
-    });
-    // total discount
-    discountfind = await UserCart.find({
-      orderStatus: "Shipped",
-
-    })
-    //end
-
-    res.render("admin/saleReport.hbs", { m, w, k, total, salesCount, admin: true })
+    console.log(copendiscount, "dic+coun++")
+    res.render("admin/saleReport.hbs", { admin: true, Sales, totalpriced, totaldiscount, copendiscount, count })
   } catch (error) {
     console.error('Error generating sales report:', error);
     res.status(500).send('Server error');
   }
 };
 
-const PDFDow = (req, res) => {
+const PDFDow = async (req, res) => {
   try {
-    const { m, w, k, total } = req.body;
+    let data = await ListOrders.find({ "items.update": "Deliverd" }).populate("items.productId").lean();
 
-    // Parse the JSON strings back to objects
-    const menData = JSON.parse(m || '[]');  // Default to an empty array if m is undefined
-    const womenData = JSON.parse(w || '[]');
-    const kidsData = JSON.parse(k || '[]');
+    generatePDF(data);
 
-    // Generate PDF
-    const doc = new PDFDocument({ margin: 50 });
-    const pdfFilePath = './saleReport.pdf';
-    doc.pipe(fs.createWriteStream(pdfFilePath));
+    function generatePDF(data) {
+      const doc = new PDFDocument();
+      const pdfFilePath = './saleReport.pdf';
 
-    // Title
-    doc.fontSize(25).text('Sales Report', { align: 'center' });
-    doc.moveDown(2);
+      doc.pipe(fs.createWriteStream(pdfFilePath));
 
-    const tableHeaders = ["Product Name", "Size", "Quantity", "Price", "Total"];
-    const tableColumnPositions = [50, 200, 300, 400, 500]; // X positions for each column
-    const rowHeight = 20;
+      // Header for the PDF
+      doc.fontSize(18).text('Order Summary', { align: 'center', underline: true });
+      doc.moveDown(1);
 
-    // Add a table header
-    const addTableHeader = () => {
-      doc.fontSize(14).fillColor('black');
-      tableHeaders.forEach((header, i) => {
-        doc.text(header, tableColumnPositions[i], doc.y, { width: 100, align: 'left' });
-      });
-      doc.moveDown();
-      doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke(); // Draw a line below the header
-      doc.moveDown(0.5);
-    };
-
-    // Add a table row
-    const addRow = (item) => {
-      doc.fontSize(12).fillColor('black');
-      doc.text(item.productname, tableColumnPositions[0], doc.y, { width: 150, align: 'left' });
-      doc.text(item.productsize, tableColumnPositions[1], doc.y, { width: 100, align: 'left' });
-      doc.text(item.productqunatity, tableColumnPositions[2], doc.y, { width: 100, align: 'left' });
-      doc.text(`$${item.productprice}`, tableColumnPositions[3], doc.y, { width: 100, align: 'left' });
-      doc.text(`$${item.producttotal}`, tableColumnPositions[4], doc.y, { width: 100, align: 'left' });
-      doc.moveDown();
-    };
-
-    // Add a section to the PDF
-    const addSectionToPDF = (sectionName, data) => {
-      if (data.length > 0) {
-        doc.moveDown(1);
-        doc.fontSize(18).fillColor('blue').text(sectionName, { align: 'left' });
+      // Loop through the data to add details for each order
+      data.forEach(order => {
+        doc.fontSize(14).text(`Order ID: ${order.OrderId}`, { bold: true });
+        doc.text(`Payment Method: ${order.paymentMethod}`);
         doc.moveDown(0.5);
-        addTableHeader();
-        data.forEach(item => addRow(item));
+
+        // Adding a table-like structure for the items
+        doc.text('Items:', { underline: true });
+        order.items.forEach(item => {
+          doc.fontSize(12)
+            .text(`Product Name: ${item.productId.name}`, { continued: true })
+            .text(` | Unit Price: ${item.productId.price} | Quantity: ${item.quantity} | Total Price: ${item.quantity * item.productId.price}`, { align: 'right' });
+          doc.text(`Discount Offer: ${item.offerPersonatge || 'N/A'}`);
+          doc.moveDown(0.5);
+        });
         doc.moveDown(1);
-      }
-    };
+      });
 
-    // Add each section
-    addSectionToPDF('Men Dresses', menData);
-    addSectionToPDF('Women Dresses', womenData);
-    addSectionToPDF('Kids Dresses', kidsData);
+      // Display the total at the end of the PDF
+      doc.fontSize(16).text(`Total: ${req.body.total}`, { align: 'right' });
 
-    // Total Sales
-    doc.fontSize(18).fillColor('black').text(`Total Sales: $${total}`, { align: 'left' });
-    doc.moveDown(2);
-    doc.end();
+      doc.end();
 
-    // Download the PDF
-    res.download(pdfFilePath);
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    res.status(500).send('Server error');
+      // Send the file to download
+      res.download(pdfFilePath);
+    }
+  } catch (err) {
+    console.log(err);
   }
-}
+};
 
+const ExcelDow = async (req, res) => {
+  const workbook = new ExcelJs.Workbook();
+  const worksheet = workbook.addWorksheet('Orders');
+  let orders = await ListOrders.find({ "items.update": "Deliverd" }).populate("items.productId").lean();
+
+  worksheet.columns = [
+    { header: 'Order ID', key: 'OrderId', width: 20 },
+    //{ header: 'User ID', key: 'userId', width: 20 },
+    //{ header: 'Cart ID', key: 'cartId', width: 20 },
+    //{ header: 'Total Amount', key: 'totalAmount', width: 15 },
+    { header: 'Payment Method', key: 'paymentMethod', width: 15 },
+    // { header: 'Status', key: 'status', width: 10 },
+    // { header: 'Shipping Full Name', key: 'fullName', width: 20 },
+    // { header: 'Shipping Address', key: 'address', width: 40 },
+    // { header: 'City', key: 'city', width: 15 },
+    // { header: 'Postal Code', key: 'postalCode', width: 10 },
+    // { header: 'State', key: 'state', width: 15 },
+    // { header: 'Product ID', key: 'productId', width: 20 },
+    { header: 'Product Name', key: 'productName', width: 20 },
+    { header: 'Product Price', key: 'productPrice', width: 20 },
+    { header: 'Product Unit', key: 'productUnit', width: 20 },
+
+    { header: 'Total Price', key: 'producttotalPrice', width: 20 },
+    { header: 'Product Discount', key: 'productDiscount', width: 20 }
+    // { header: 'Product Description', key: 'productDescription', width: 30 },
+  ];
+
+  orders.forEach(order => {
+    order.items.forEach(item => {
+      worksheet.addRow({
+        OrderId: order.OrderId,
+        userId: order.userId,
+        cartId: order.cartId,
+        //totalAmount: order.totalAmount,
+        paymentMethod: order.paymentMethod,
+        status: order.status,
+        fullName: order.shippingAddress.fullName,
+        address: order.shippingAddress.address,
+        city: order.shippingAddress.city,
+        postalCode: order.shippingAddress.postalCode,
+        state: order.shippingAddress.state,
+        productId: item.productId._id,
+        productName: item.productId.name,
+        productPrice: item.productId.price,
+        productUnit: item.quantity,
+        producttotalPrice: item.productId.price * item.quantity,
+        productDiscount: item.offerPersonatge,
+      });
+    });
+  });
+
+
+  const filePath = './orders.xlsx';
+  await workbook.xlsx.writeFile(filePath);
+  res.download(filePath);
+  console.log("+++Excel")
+  console.log(req.body, "mmmm")
+}
 
 module.exports = {
   PDFDow,
+  ExcelDow,
   generateSalesReport,
   InActiveOffer,
   DeleteOffer,
@@ -611,6 +701,7 @@ module.exports = {
   ApproveReturn,
   OrderDetails,
   Cancel_Order,
+  Delivered_Order,
   Orders,
   loadAdminLogin,
   blockUser,

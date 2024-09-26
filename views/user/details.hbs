@@ -29,10 +29,10 @@
       <nav class="d-flex">
         <h6 class="mb-0">
           <a href="/" class="text-white-50">Home</a>
-          <span class="text-white-50 mx-2"> > </span>
+          <span class="text-white-50 mx-2"> </span>
 
           <a href="{{link}}" class="text-white-50">products</a>
-          <span class="text-white-50 mx-2"> > </span>
+          <span class="text-white-50 mx-2"> </span>
           <a href="" class="text-white"><u>details</u></a>
         </h6>
       </nav>
@@ -97,7 +97,11 @@
           </div>
 
           <div class="mb-3">
+            {{#if offerPrice}}
+            <span class="h5" id="price">₹{{offerPrice}}.00</span>
+            {{else}}
             <span class="h5" id="price">₹{{productvalue.price}}.00</span>
+            {{/if}}
             <span class="text-muted">/per box</span>
           </div>
 
@@ -161,7 +165,7 @@
           {{#if msg.message}}
 
           <p style="color: red;"> {{msg.message}}</p>
-          <a href="/profile/cart" class="btn btn-success shadow-0"> Go to Cart </a>
+          <a href="/profile/cartitems" class="btn btn-success shadow-0"> Go to Cart </a>
           {{else}}
           <a onclick="buy('{{productvalue._id}}')" class="btn btn-warning shadow-0"> Buy now </a>
           {{/if}}
@@ -341,21 +345,24 @@
 
 
 <script>
-
+  console.log(document.getElementById("price"))
 
   function increaseQuantity(val) {
-
     let quantityInput = document.getElementById('quantity-input');
-    if (5 > quantityInput.value && quantityInput.value < {{ productvalue.stock }}
-  
-  ) {
-    let currentValue = parseInt(quantityInput.value);
-    quantityInput.value = currentValue + 1;
-    document.getElementById("change").innerHTML = ""
-  } else {
-    document.getElementById("change").innerHTML = "Maximum 5 quantities are allowed"
+    if (quantityInput.value > 4) {
+      document.getElementById("change").innerHTML = "Maximum 5 Quantites are allowed"
+    } else if
+      (quantityInput.value >= {{ productvalue.stock}})
+    {
+      document.getElementById("change").innerHTML = "No more Stock is Avilable"
+    }
+    
+     else {
+      let currentValue = parseInt(quantityInput.value);
+      quantityInput.value = currentValue + 1;
+      document.getElementById("change").innerHTML = ""
 
-  }
+    }
 
   }
   function decreaseQuantity() {
