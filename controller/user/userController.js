@@ -203,7 +203,7 @@ const products = async (req, res) => {
     // if (specialProductOffer.length > 0) {
     //   specialOffer = specialProductOffer
     // }
-  
+
 
     //.....................................
 
@@ -238,8 +238,8 @@ const products = async (req, res) => {
 ///sort
 const womenSortedProducts = async (sortCriteria, pageno, count) => {
   const sortOptions = {
-    lowprice: { price: 1 },
-    highprice: { price: -1 },
+    LowPrice: { price: 1 },
+    HighPrice: { price: -1 },
     Az: { name: 1 },
   };
   const perPage = Math.round(count / 8)
@@ -300,6 +300,7 @@ const Womens = async (req, res) => {
 
 // Kids Product Page..........................................
 const Kids = async (req, res) => {
+  console.log(req.query, "qurry")
   let newoffer;
   let page = req.query.pageno
   const docount = await Product.countDocuments({
@@ -329,6 +330,11 @@ const Kids = async (req, res) => {
 };
 
 //Serach Product
+
+const About = (req, res) => {
+  res.render("user/about.hbs")
+}
+
 
 const Search = async (req, res) => {
   try {
@@ -1310,7 +1316,7 @@ module.exports = {
   Posteditprofile,
   changePsw,
   Checkout,
-
+  About,
   NewCart,
   Address,
   Kids,

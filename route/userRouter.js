@@ -50,6 +50,7 @@ UserRouter.get('/logout', userController.Logout)
 UserRouter.get("/products", userController.products);
 UserRouter.get("/women", userController.Womens);
 UserRouter.get("/kid", userController.Kids);
+UserRouter.get("/about", userController.About);
 // UserRouter.get("/cart/checkout", userController.checkout);
 UserRouter.get('/success', userController.GoogleLogin)
 //Whishlist
@@ -64,6 +65,7 @@ UserRouter.post('/profile/posteditprofile', userController.Posteditprofile)
 
 //UserRouter.get('/profile/cart', userController.Cart)
 UserRouter.get('/profile/cart', CartController.Cart)
+UserRouter.get('/profile/deletewishlist', CartController.DeleteWishlist)
 UserRouter.get('/profile/cartitems', CartController.Cartitems)
 //UserRouter.get('/profile/newcart', userController.NewCart)
 UserRouter.get('/profile/newcart', CartController.NewCart)
@@ -94,7 +96,7 @@ UserRouter.post('/products/filter', userController.Filters)
 //UserRouter.get("/cart/cancelorder", userController.CancelOrder)
 UserRouter.get("/cart/cancelorder", CartController.CancelOrder)
 UserRouter.get('/cart/invoice', CartController.Invoice)
-
+UserRouter.get('/cart/paynow', CartController.Paynow)
 UserRouter.get('/product/user-wish-list', userController.ProductUserWishlist)
 // Google auth
 UserRouter.get(
@@ -256,7 +258,7 @@ UserRouter.get("/checkbalance", async (req, res) => {
       paymentMethod: "Wallet",
       shippingAddress: address,
       PaymentStatus: "Pending",
-      status:"Faild"
+      status: "Faild"
       // Pass the shipping details (fullName, address, city, etc.)
     });
     await order.save();

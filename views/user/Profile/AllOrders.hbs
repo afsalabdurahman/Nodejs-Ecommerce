@@ -316,7 +316,13 @@
                     <td>{{quantity}} </td>
                     <td>₹{{totalPrice price quantity}}</td>
                     <td>
-                        {{#ifEquals update "Pending"}}
+                        {{#ifEquals ../status "Faild"}}
+                        <p class="status shipped" style="color: rgb(212, 30, 100);">Payment is Faild -
+                            {{../deliveryDate}}
+                            <button class="track-order-button" onclick="Paynow('{{_id}}','{{../_id}}')">
+                                Pay Now </button>
+                            {{else}}
+                            {{#ifEquals update "Pending"}}
 
                         <p class="status shipped" style="color: rgb(212, 30, 100);">Order Placed - {{../deliveryDate}}
                         </p>
@@ -350,6 +356,7 @@
                         {{#ifEquals update "Processing"}}
                         <p>processing</p>
                         {{else}}
+                        {{/ifEquals}}
                         {{/ifEquals}}
                     </td>
 
@@ -596,6 +603,9 @@
         console.log(pId, oId, "idsss")
         window.location.href = `/cart/invoice?productId=${pId}&orderId=${oId} `;  // Replace ' / edit - page' with your target URL
 
+    }
+    function Paynow(id, id1) {
+        window.location.href = `/cart/paynow?id=${id}&orderId=${id1} `;
     }
 
 </script>

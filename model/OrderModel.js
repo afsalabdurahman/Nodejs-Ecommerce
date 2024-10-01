@@ -41,8 +41,12 @@ const orderSchema = new mongoose.Schema({
         },
         offerPersonatge: {
             type: Number
-        }
-    }],
+        },
+        paymentStatus: {
+            type: String,
+            required: true,
+            enum: ['Pending', 'Processing', 'Failed', "Completed"]
+}}],
     totalAmount: {
         type: Number,
         required: true
@@ -61,7 +65,7 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Pending','Faild', 'Shipped', 'Delivered', 'Cancelled'],
+        enum: ['Pending', 'Faild', 'Shipped', 'Delivered', 'Cancelled'],
         default: 'Pending'
     },
     orderedAt: {
@@ -109,7 +113,8 @@ orderSchema.pre('save', async function (next) {
             color: item.color,
             price: item.price,
             update: item.update,
-            offerPersonatge: item.offerPersonatge
+            offerPersonatge: item.offerPersonatge,
+            paymentStatus:item.paymentStatus
         }));
 
 

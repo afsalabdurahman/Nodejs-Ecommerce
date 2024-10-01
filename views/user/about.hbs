@@ -1,74 +1,299 @@
-<div class="responsive-container-block bigContainer">
-  <div class="responsive-container-block Container">
-    <div class="imgContainer">
-      <img class="blueDots" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/aw3.svg">
-      <img class="mainImg" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/aw2.svg">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Fashion World</title>
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body and Font Styling */
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f0f0f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Header Styling */
+    .header {
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      padding: 80px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .header p {
+      font-size: 1.4rem;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* About Section */
+    .about-section {
+      background-color: white;
+      padding: 80px 20px;
+      margin: 50px auto;
+      max-width: 1200px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+    }
+
+    .about-container {
+      text-align: center;
+    }
+
+    .about-container h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 30px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .about-container h2::after {
+      content: '';
+      display: block;
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    .about-container p {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 40px;
+      line-height: 1.8;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Categories Section */
+    .categories {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .category {
+      flex-basis: 30%;
+      margin: 15px;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .category:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .category::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(45deg);
+      pointer-events: none;
+      transition: all 0.6s ease;
+    }
+
+    .category:hover::before {
+      top: -75%;
+      left: -75%;
+    }
+
+    .category h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .category p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Unique Category Colors */
+    .category-men {
+      background-color: #e3f2fd;
+    }
+
+    .category-men h3 {
+      color: #1976d2;
+    }
+
+    .category-women {
+      background-color: #fce4ec;
+    }
+
+    .category-women h3 {
+      color: #c2185b;
+    }
+
+    .category-kids {
+      background-color: #fff9c4;
+    }
+
+    .category-kids h3 {
+      color: #fbc02d;
+    }
+
+    /* Footer Styling */
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      margin-top: 70px;
+    }
+
+    footer p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .categories {
+        flex-direction: column;
+      }
+
+      .category {
+        flex-basis: 100%;
+      }
+
+      .about-container h2 {
+        font-size: 2.5rem;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>Welcome to lux World</h1>
+    <p>Your Destination for Men, Women, and Kids Fashion</p>
+  </header>
+
+  <section class="about-section">
+    <div class="about-container">
+      <h2>About Us</h2>
+      <p>At Fashion World, we are committed to providing the best fashion for Men, Women, and Kids. Our collections are
+        curated to keep you looking stylish and feeling confident, no matter the occasion. We believe that everyone
+        deserves to dress well, and our store is designed to make fashion accessible for all.</p>
+
+      <div class="categories">
+        <div class="category category-men">
+          <h3>Men's Collection</h3>
+          <p>Explore our men's collection featuring stylish casual wear, formal attire, and everything in between to
+            make you look and feel your best.</p>
+        </div>
+        <div class="category category-women">
+          <h3>Women's Collection</h3>
+          <p>Our women's collection brings you the latest trends, elegant dresses, and casual wear to help you express
+            your personal style.</p>
+        </div>
+        <div class="category category-kids">
+          <h3>Kids' Collection</h3>
+          <p>Shop the cutest and most comfortable outfits for your little ones. Our kids' collection is designed with
+            fun and comfort in mind.</p>
+        </div>
+      </div>
     </div>
-    <div class="responsive-container-block textSide">
-      <p class="text-blk heading">
-        About Us
-      </p>
-      <p class="text-blk subHeading">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget purus lectus viverra in semper nec pretium mus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget purus lectus viverra in semper nec pretium mus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget purus lectus viverra in semper nec pretium mus.
-      </p>
-      <div class="responsive-cell-block wk-desk-6 wk-ipadp-6 wk-tab-12 wk-mobile-12">
-        <div class="cardImgContainer">
-          <img class="cardImg" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/id2.svg">
-        </div>
-        <div class="cardText">
-          <p class="text-blk cardHeading">
-            Value
-          </p>
-          <p class="text-blk cardSubHeading">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-        </div>
-      </div>
-      <div class="responsive-cell-block wk-desk-6 wk-ipadp-6 wk-tab-12 wk-mobile-12">
-        <div class="cardImgContainer">
-          <img class="cardImg" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/id2.svg">
-        </div>
-        <div class="cardText">
-          <p class="text-blk cardHeading">
-            Value
-          </p>
-          <p class="text-blk cardSubHeading">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-        </div>
-      </div>
-      <div class="responsive-cell-block wk-desk-6 wk-ipadp-6 wk-tab-12 wk-mobile-12">
-        <div class="cardImgContainer">
-          <img class="cardImg" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/id2.svg">
-        </div>
-        <div class="cardText">
-          <p class="text-blk cardHeading">
-            Value
-          </p>
-          <p class="text-blk cardSubHeading">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-        </div>
-      </div>
-      <div class="responsive-cell-block wk-desk-6 wk-ipadp-6 wk-tab-12 wk-mobile-12">
-        <div class="cardImgContainer">
-          <img class="cardImg" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/id2.svg">
-        </div>
-        <div class="cardText">
-          <p class="text-blk cardHeading">
-            Value
-          </p>
-          <p class="text-blk cardSubHeading">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-        </div>
-      </div>
-      <a>
-        <button class="explore">
-          Explore our Services
-        </button>
-      </a>
-    </div>
-    <img class="redDots" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/cw3.svg">
-  </div>
-</div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 Fashion World. All Rights Reserved.</p>
+  </footer>
+
+</body>
+
+</html>

@@ -141,8 +141,8 @@
                 <ul>
                     <li><a href="/profile"><i class="fas fa-user"></i> My Details</a></li>
                     <li><a href="/profile/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
-                    <li><a href="/profile/cart"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
-                    <li><a href="/profile/allorders"><i class="fa fa-file-text"></i>All Orders</a></li>
+                    <li><a href="/profile/cartitems"><i class="fas fa-shopping-cart"></i> My Cart</a></li>
+                    <li><a href="/profile/getallorders"><i class="fa fa-file-text"></i>All Orders</a></li>
                     <li><a href="/profile/editprofile"><i class="fas fa-edit"></i> Edit User Details</a></li>
                     <li><a href="/profile/changepsw"><i class="fas fa-key"></i> Change Password</a></li>
                     <li><a href="/profile/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
@@ -162,7 +162,7 @@
                         <th>Size</th>
                         <th>Price</th>
 
-                     
+
                         <th></th>
                     </tr>
                 </thead>
@@ -175,9 +175,9 @@
                             </span></td>
                         <td>
                             <select name="" id="size1">size
-                                <option value="small">small</option>
-                                <option value="medium">medium</option>
-                                <option value="large">large</option>
+                                <option value="Small">Small</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Large">Large</option>
                             </select>
                         </td>
                         <td id="price1">{{ProductId.price}}</td>
@@ -233,12 +233,28 @@
         id = b;
 
         price = document.getElementById("price1").innerHTML
-        size = document.getElementById("size1").value
+        const selectElement = document.getElementById('size1');
+        const size = selectElement.value;
         name = document.getElementById("name1").innerHTML
 
         console.log(id, price, size, name, "list")
 
-        window.location.href = `/profile/cart?id=${id}&quandity=1&size=${size}&price=${price}&remove=${d}`
+        fetch(`/profile/deletewishlist?id=${id}`, {
+            method: 'GET'  // Define the HTTP method
+        })
+            .then(response => response.json())  // Parse JSON response
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `/profile/cart?id=${id}&quandity=1&size=${size}&price=${price}&remove=${d}`
+                } else {
+                    Swal.fire("error ")
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);  // Handle error
+            });
+
+        // window.location.href = `/profile/cart?id=${id}&quandity=1&size=${size}&price=${price}&remove=${d}`
 
 
     }

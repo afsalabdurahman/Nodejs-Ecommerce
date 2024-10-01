@@ -5,6 +5,7 @@ const Order = require("../../model/OrderModel");
 const Wallet = require("../../model/WalletModel")
 const Coupens = require("../../model/CoupenModel")
 const PDFDocument = require('pdfkit')
+const WishList = require("../../model/wishlistModel")
 const fs = require('fs');
 //const { Orders } = require("../admin/adminControlller");
 const Cart = async (req, res) => {
@@ -73,6 +74,7 @@ const Cart = async (req, res) => {
                     color: req.query.color,
                     price: req.query.price,
                     update: "Pending",
+                    paymentStatus: "Pending",
                     offerPersonatge: persontage
                 }
 
@@ -95,7 +97,7 @@ const Cart = async (req, res) => {
             );
 
 
-            res.render('user/Profile/Cart.hbs', { Datas });
+            res.render('user/Profile/Cart.hbs', { user, Datas });
         } else {
             res.status(404).send("User not found or not logged in");
         }
@@ -230,7 +232,30 @@ const DecCart = async (req, res) => {
 
 const Checkout = async (req, res) => {
     try {
+        //PayAgain....
+        let payData = null
+        let totalPriced;
+        let subtotal;
+        let discount;
+        let t;
+        let totalPriceTax;
 
+        console.log(req.query, "+++qurey")
+        if (req.query.paynow) {
+            req.session.payNowId = req.query.paynow;
+            payData = await Order.findOne({
+                "items._id": req.query.paynow
+            })
+            console.log(payData, "paydata")
+            totalPriced = payData.items[0].price * payData.items[0].quantity
+            subtotal = totalPriced + 0;
+            discount = 0
+            t = subtotal - discount
+            totalPriceTax = t.toFixed(2)
+            console.log(totalPriced, "pricedd")
+
+        }
+        //payAgn end
         //coupen
         let coupenPrice = 0;
         if (req.query.coupen) {
@@ -238,28 +263,34 @@ const Checkout = async (req, res) => {
         }
 
 
-
-        data = await Cart1.findOne({ userId: user }).populate("items.productId")
-        console.log(data, "data?????????")
-        data.items.map((e) => {
-            if (!e.productId.isVisible) {
-                console.log("not++")
-
-                res.redirect(`/profile/cartitems?isvisible=${e.productId.name}&id=${e.productId._id}`)
-            }
+        if (payData == null) {
 
 
-        })
-        let Scra = {}
-        user = req.session.user_id
-        userData = await User_schema.findById({ _id: user }).lean()
-        let totalPriced = data.totalPrice
-        let subtotal = totalPriced + 100;
-        let discount = 0
-        let t = subtotal - discount
-        let totalPriceTax = t.toFixed(2)
+            data = await Cart1.findOne({ userId: user }).populate("items.productId")
+            console.log(data, "data?????????")
+            data.items.map((e) => {
+                if (!e.productId.isVisible) {
+                    console.log("not++")
+
+                    res.redirect(`/profile/cartitems?isvisible=${e.productId.name}&id=${e.productId._id}`)
+                }
+
+
+            })
+
+
+
+            totalPriced = data.totalPrice
+            subtotal = totalPriced + 100;
+            discount = 0
+            t = subtotal - discount
+            totalPriceTax = t.toFixed(2)
+        }
 
         //scrach
+        user = req.session.user_id
+        userData = await User_schema.findById({ _id: user }).lean()
+        let Scra = {}
         if (totalPriced > 1000) {
 
             let code = await Coupens.find({
@@ -288,13 +319,59 @@ const Checkout = async (req, res) => {
 }
 const AllOrders = async (req, res) => {
     try {
-        console.log(req.query, "quyryyy")
+        let newOrderId = generateOrderID()
+        let paymentMethod;
+        let totalAmount;
+        let address;
+        let cartId;
+
+
+        if (req.session.payNowId != null) {
+            console.log(req.session.payNowId, "idddddd++++++")
+
+            let cart = await Order.findOne(
+                { 'items._id': req.session.payNowId },
+                { 'items.$': 1 }  // This will return only the matching item in the items array
+            );
+
+
+            //add to cart
+            let newcart = new Cart1({ userId: req.session.user_id, items: [], totalPrice: 0, totalItems: 0 });
+
+            // Add a new item to the cart
+            const cartItem = {
+                productId: cart.items[0].productId,
+                quantity: cart.items[0].quantity,
+                size: cart.items[0].size,
+                color: req.query.color,
+                price: cart.items[0].price,
+                update: "Pending",
+                paymentStatus: "Completed",
+                offerPersonatge: cart.items[0].offerPersonatge
+            }
+            newcart.items.push(cartItem);
+
+            await newcart.save();
+            cartId = newcart._id
+
+            //Orders.....
+            //Delete Order Item
+            await Order.updateOne(
+                { 'items._id': req.session.payNowId },  // Match the order with the item
+                { $pull: { items: { _id: req.session.payNowId } } }  // Remove the item from the array
+            );
+
+
+        }
+
+
+        console.log(req.query, "007")
         let user = req.session.user_id
         if (user) {
-            let newOrderId = generateOrderID()
-            let paymentMethod = req.query.info
-            let totalAmount = req.query.amt
-            let address;
+            newOrderId = generateOrderID()
+            paymentMethod = req.query.info
+            totalAmount = req.query.amt
+            address;
             adds = await User_schema.findOne({ _id: user })
             console.log(adds, "addsss")
             if (req.query) {
@@ -322,7 +399,11 @@ const AllOrders = async (req, res) => {
             }
 
             let cart = await Cart1.findOne({ userId: user })
-            console.log(cart._id, "cart")
+            console.log(cart._id, "cart007")
+            if (req.session.payNowId == null) {
+                cartId = cart._id
+                console.log("!!! working")
+            }
             if (!cart) {
                 res.send("user nothave cart")
             } else {
@@ -330,7 +411,7 @@ const AllOrders = async (req, res) => {
                     userId: user,
                     OrderId: newOrderId,
                     totalAmount: totalAmount,
-                    cartId: cart._id,
+                    cartId: cartId,
                     paymentMethod: paymentMethod,
                     shippingAddress: address // Pass the shipping details (fullName, address, city, etc.)
                 });
@@ -345,6 +426,7 @@ const AllOrders = async (req, res) => {
             cart.totalItems = 0;
             await cart.save();
 
+            req.session.payNowId = null
 
             res.redirect('/profile/getallorders')
         } else {
@@ -357,9 +439,9 @@ const AllOrders = async (req, res) => {
 }
 const GetOrders = async (req, res) => {
     let user = req.session.user_id;
-    let Datas = await Order.find({ userId: user, status: "Pending" }).sort({ _id: -1 }).populate("items.productId").lean()
-    let FailPayment = await Order.find({ userId: user, PaymentStatus: "Pending" }).sort({ _id: -1 }).populate("items.productId").lean()
-    Datas.FailPayment = FailPayment
+    let Datas = await Order.find({ userId: user }).sort({ _id: -1 }).populate("items.productId").lean()
+    //let FailPayment = await Order.find({ userId: user, PaymentStatus: "Pending" }).sort({ _id: -1 }).populate("items.productId").lean()
+    // Datas.FailPayment = FailPayment
     console.log(Datas, "+++++Datsa")
     res.render('user/Profile/AllOrders.hbs', { user, Datas })
 }
@@ -501,11 +583,23 @@ const Invoice = async (req, res) => {
 
 }
 
-
-
+const Paynow = async (req, res) => {
+    let data = await Order.findOne({
+        "items._id": req.query.id
+    })
+    req.session.itemId = req.query.id
+    res.redirect(`/profile/checkout?paynow=${req.query.id}`)
+}
+const DeleteWishlist = async (req, res) => {
+    console.log(req.query, "<quryyy")
+    let deleted = await WishList.deleteOne({ ProductId: req.query.id })
+    res.status(200).json({ success: true, data: "sucess" })
+}
 
 module.exports = {
     Cart,
+    DeleteWishlist,
+    Paynow,
     Invoice,
     CancelOrder,
     GetOrders,

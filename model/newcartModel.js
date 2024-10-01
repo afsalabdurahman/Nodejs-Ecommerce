@@ -31,6 +31,11 @@ const cartItemSchema = new mongoose.Schema({
         required: true,
         enum: ['Pending', 'Processing', 'Cancel',] // Available sizes
     },
+    paymentStatus: {
+        type: String,
+        required: true,
+        enum: ['Pending', 'Processing', 'Failed', "Completed"]
+    },
     offerPersonatge: {
         type: Number
     }
