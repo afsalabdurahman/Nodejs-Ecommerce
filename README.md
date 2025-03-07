@@ -1,4 +1,4 @@
-![Homepage Screenshot](assets/images/homepage_screenshot.png)
+![Homepage Screenshot](public/screencapture-localhost-3000-2025-03-07-11_27_39.png)
 
 # Node.js E-commerce Application
 
