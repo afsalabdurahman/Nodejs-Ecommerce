@@ -1,3 +1,5 @@
+![Homepage Screenshot](assets/images/homepage_screenshot.png)
+
 # Node.js E-commerce Application
 
 This is a full-stack e-commerce web application built using Node.js, Express, and MongoDB. It includes an admin dashboard for managing products, users, and orders, a coupon code feature for discounts, a scratch win functionality for promotions, login via Gmail, and Razorpay for secure payments during checkout.
